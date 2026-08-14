@@ -2,7 +2,7 @@
   "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
   "schema": "wellmanifest.autonomy/profile/v2",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
@@ -42,12 +42,18 @@
         "fsync-checkpoint",
         "canary-recovery",
         "protected-source-preflight",
+        "exact-runtime-pin",
+        "protected-runtime-worktree",
+        "quiesced-rollout",
+        "supervisor-source-isolation",
         "watchdog-reconcile",
         "repository-isolation"
       ],
       "contracts": [
         "repo://subactor/autonom/autonom/pull_request_state.py",
         "repo://subactor/autonom/autonom/pull_request_controller.py",
+        "repo://subactor/autonom/scripts/deploy-pr-controller.sh",
+        "repo://subactor/autonom/systemd/subactor-pr-controller.service",
         "repo://subactor/autonom/systemd/subactor-pr-controller.timer",
         "repo://subactor/validator-agent/config/direct-pr-registry.json"
       ],
@@ -58,7 +64,11 @@
         "checkpoint-before-cleanup",
         "three-attempt-dead-letter",
         "candidate-checkout-excluded",
+        "runtime-checkout-isolated",
+        "supervisor-checkout-excluded",
         "policy-checkout-isolated",
+        "rollout-trigger-quiesced",
+        "rollback-same-boundary",
         "manual-dispatch-not-liveness",
         "registry-digest-required"
       ]

@@ -1,0 +1,95 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-007",
+  "summary": "Bind immutable runtime rollout and supervisor isolation",
+  "workstream": "integration",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-007/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "spec/AUTONOMY_STANDARD.md",
+    "profiles/subactor-semcod.profile.json",
+    "docs/ARCHITECTURE.md",
+    "examples/valid/project.autonomy.json",
+    "examples/dsl-manifest.json",
+    "tests/test_autonomy.py"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": [],
+  "dependsOn": ["ticket-005"],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "44a62e9fde944f11d1e7e29f35e18c9571489f83",
+    "targetBranch": "main",
+    "outcome": "Autonomy 0.4 binds effect-capable runtime and supervisor configuration to an isolated exact revision with quiesced rollout and rollback.",
+    "nonGoals": [
+      "Implement the Subactor runtime inside Wellmanifest",
+      "Expand the controller's autonomous effect authority",
+      "Treat protected-history ancestry as an exact runtime pin",
+      "Delete or rewrite dirty deployment or developer workspaces"
+    ],
+    "complexity": "M",
+    "estimatedMinutes": 25,
+    "budgets": {
+      "maxImplementationFiles": 9,
+      "maxAffectedComponents": 3,
+      "maxPublicInterfaceChanges": 2,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Derive exact runtime and supervisor rollout requirements from the observed linked-unit failure and isolated recovery.",
+      "components": [
+        {
+          "name": "normative-contract",
+          "paths": ["VERSION", "spec/AUTONOMY_STANDARD.md", "examples/dsl-manifest.json"]
+        },
+        {
+          "name": "subactor-profile",
+          "paths": ["profiles/subactor-semcod.profile.json"]
+        },
+        {
+          "name": "conformance-evidence",
+          "paths": [
+            "docs/ARCHITECTURE.md",
+            "examples/valid/project.autonomy.json",
+            "tests/test_autonomy.py",
+            "project/ticket-007/**"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "Autonomy 0.4 requires an isolated exact-SHA runtime and supervisor source",
+        "The selected Subactor profile binds quiesced rollout and rollback contracts"
+      ],
+      "dataChanges": [
+        "Record immutable linked-unit failure, recovery, merge and automatic post-rollout evidence"
+      ],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Select the previous protected exact SHA through the same quiesced deployment boundary and retain both deployment receipts."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-05",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "python3 src/autonomy_check.py self-test",
+          "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json",
+          "python3 -m compileall -q src tests",
+          "python3 -m ruff check src tests",
+          "./project/governance-check.sh --actor agent"
+        ],
+        "evidence": "project/ticket-007/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+$ python3 -m unittest discover -s tests -v
+- 26 tests PASS.
+
+$ python3 src/autonomy_check.py self-test
+- PASS autonomy self-test.
+
+$ python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json
+- DSL-PASS: passed (0 errors).
+
+$ python3 -m compileall -q src tests
+- PASS.
+
+$ python3 -m ruff check src tests
+- All checks passed.
+
+$ ./project/governance-check.sh --actor agent
+- GOV-PASS: passed (0 errors, 0 warnings).
+
+$ sha256sum spec/AUTONOMY_STANDARD.md profiles/subactor-semcod.profile.json docs/ARCHITECTURE.md examples/valid/project.autonomy.json
+- spec: d820bfd62d8726d2cf7e5fb10d349ba615eb1190cc4823482a8639a4a18ed57d
+- profile: 22d33b178cb737823b23e1db3ec11cea42c2f39181b5f822fb6e70575f6e0c19
+- architecture: bffeeae421341c75a9834bd227016713b99d6959cc93907b2fca3d7d87160365
+- valid example: 53099504c9fd0af875989a35395f6160113ba5d050707404d8680ddc19217810
+
+Live practice evidence:
+- linked supervisor failed closed at 2026-08-14T18:47:10Z before Python load;
+- protected old runtime merged subactor/autonom#17 through Validator run
+  31830719505, review 4940318952 and merge
+  88953aa58a48526caf1134ba40b04d0f39e3ff39;
+- automatic post-rollout cycle at 2026-08-14T18:57:40.427Z returned ok=true,
+  dry_run=false and mutations=0 from exact deployed runtime 88953aa.

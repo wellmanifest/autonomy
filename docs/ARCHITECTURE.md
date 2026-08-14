@@ -191,3 +191,43 @@ execution plane and its authority inputs require separate deployment workspaces
 that concurrent development cannot mutate implicitly. A controller self-check
 cannot establish this boundary because the bytes being checked would also own
 the decision.
+
+## Exact-runtime rollout reference: 2026-08-14
+
+The first 0.3 deployment still linked its user-level systemd service and timer
+to the shared `subactor/autonom` checkout. While ticket-010 changed the unit on
+its candidate branch, systemd resolved the new bytes before that pull request
+was merged. The automatic timer start at `2026-08-14T18:47:10Z` therefore saw
+the candidate unit's required exact-runtime pin without a deployed pin and
+failed in `ExecStartPre`. No Python controller was loaded, no cycle receipt was
+created and no external mutation was attempted. The fail-closed behavior was
+correct; the linked supervisor source was not.
+
+Recovery preserved the candidate branch and created the detached runtime
+worktree `subactor/autonom@814e2572e1e9889df847674bd2cb9c44d5f54858`.
+The service and timer were copied to the external user-systemd directory, the
+runtime drop-in bound that exact SHA, and the service loaded Python only from
+the detached path. The next natural timer cycle at
+`2026-08-14T18:52:30.415Z` used that old protected runtime to process
+`subactor/autonom#17` without a manual dispatch.
+
+| Evidence | Immutable binding |
+|---|---|
+| Candidate | head `500862ed0ad486956a8e2c19d9e68a7f1f61a496`, ticket `ticket-010`, correlation `autonom-ticket-010-immutable-runtime-release` |
+| Durable operation | checkpoint `c5ba6476482e20eaf0d1a01727cc9565cec977fe30c14712dd048eb4df3f85c0` |
+| Validator | run `31830719505`, exact-head App review `4940318952` |
+| Protected publication | App merge `88953aa58a48526caf1134ba40b04d0f39e3ff39` at `2026-08-14T18:54:24Z`; source branch deleted |
+| Deployed execution plane | detached runtime and external pin both `88953aa58a48526caf1134ba40b04d0f39e3ff39` |
+| Post-rollout proof | automatic `systemd-timer` cycle at `2026-08-14T18:57:40.427Z`; `ok=true`, `dry_run=false`, zero mutations |
+
+The rollout prepared the new detached worktree before stopping the timer,
+rejected foreign or dirty active deployments, quiesced the timer and service,
+replaced the isolated worktree, copied supervisor units instead of linking
+them, wrote the exact SHA outside the repository, reloaded systemd and resumed
+the timer. Selecting the prior protected SHA through the same command is the
+rollback path.
+
+This incident distinguishes three properties that ancestry alone cannot
+provide: exact byte selection, supervisor-source independence and a transition
+boundary with effects stopped. Operational proof belongs to the first fresh
+automatic cycle after that transition, not to the rollout command itself.
