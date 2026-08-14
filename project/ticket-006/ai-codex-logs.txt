@@ -19,3 +19,13 @@ PASS
 
 Changed implementation files: README.md, CHANGELOG.md
 Normative/schema/profile/executable files changed: none
+
+2026-08-14 protected root documentation publication
+- exact head: c20722625df526bee6a5fd1813fde5347d559206
+- hosted checks: governance / remote lifecycle PASS; standards / autonomy
+  conformance PASS
+- Validator run: 31828838503 PASS
+- App review: 4940151588 by ifuri-validator-agent[bot]
+- merge: 0349f3ae1806057febfb8343bb46652e8674c8a6
+- protected-main read-back: 0349f3ae1806057febfb8343bb46652e8674c8a6
+- source branch: deleted
