@@ -12,3 +12,8 @@
 - Aligned root README status and entry points with the protected 0.3 standard.
 - Recorded 0.2/0.3 operational and protected publication evidence in the root
   changelog without changing normative or executable artifacts.
+
+## [0.3.1] - 2026-08-14
+
+- Closed the documentation ticket after exact-head Validator App approval,
+  explicit merge, protected-main read-back and source branch cleanup.

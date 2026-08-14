@@ -2,8 +2,8 @@
 
 - **ID**: ticket-006
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -26,3 +26,14 @@ changing normative artifacts.
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Hosted governance and Autonomy conformance checks passed on exact head
+  `c20722625df526bee6a5fd1813fde5347d559206`.
+- Validator run `31828838503` completed successfully; App review `4940151588`
+  approved that same head.
+- The Validator App explicitly merged PR #10 as
+  `0349f3ae1806057febfb8343bb46652e8674c8a6`.
+- Protected `main` read-back returned the same commit and the source branch was
+  deleted.

@@ -30,10 +30,11 @@ governance slice can align the public landing page without mixing semantics.
 - Added 0.2 and 0.3 changelog records with exact scheduled and direct protected
   publication identifiers while preserving the original Unreleased history.
 - Passed governance, 26 tests, self-test, compilation, Ruff and diff checks;
-  protected publication remains.
+  protected publication completed on the same exact head.
+- Observed Validator run `31828838503`, exact-head App review `4940151588`,
+  explicit merge `0349f3ae1806057febfb8343bb46652e8674c8a6`,
+  protected-main read-back and source branch cleanup.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
-- New authority remains required for destructive action, secret access, new
-  external coordination, material objective expansion and trusted merge.
+- None. The bounded documentation alignment and publication are complete.
