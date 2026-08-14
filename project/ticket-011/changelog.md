@@ -17,3 +17,10 @@
   for unresolved work.
 - Promoted manifest, profile, checker, example and DSL declaration to v4 /
   stable 0.6.0 with deterministic regression coverage.
+
+## [0.6.1] - 2026-08-15
+
+- Closed ticket-011 after exact-head hosted checks, independent Validator App
+  approval, explicit App merge, protected-main read-back and branch cleanup.
+- Classified close-event run `31845545295` as post-merge lifecycle evidence so
+  it cannot be misrepresented as pre-merge policy convergence.

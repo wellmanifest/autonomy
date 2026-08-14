@@ -48,9 +48,14 @@ closing, otherwise keep the PR open as owner.
   gate pass.
 - Updated the architecture, state flow, Subactor/Semcod publication binding,
   example manifest, DSL schema version and exact artifact digests.
+- Observed exact-head hosted checks, Validator run `31845403893`, App review
+  `4941554180`, explicit merge
+  `463e6996018a31b1a53f1f1b9ec056585e08ceb1`, protected-main read-back and
+  source branch deletion.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
+- None. Autonomy 0.6 is merged; this governance-only successor records terminal
+  state and immutable publication receipts.
 - New authority remains required for destructive action, secret access, new
   external coordination, material objective expansion and trusted merge.
