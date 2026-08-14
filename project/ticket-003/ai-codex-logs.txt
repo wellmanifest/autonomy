@@ -5,3 +5,21 @@
 - `python3 -m compileall -q src tests`: PASS.
 - `./project/governance-check.sh --actor agent`: GOV-PASS, 0 errors and 0 warnings.
 - `git diff --check`: PASS.
+
+2026-08-14 protected publication evidence
+
+- GitHub ruleset `main-autonomy-protection` (ID `20858297`): ACTIVE for the
+  default branch; requires `governance / remote lifecycle`,
+  `standards / autonomy conformance`, one approval, last-push approval and
+  resolved conversations; native auto-merge was not used.
+- Validator Agent onboarding PR `subactor/validator-agent#48`: App approval on
+  exact head `02f2d3d6622585f0dc454edc9ab15a9104fc11f8`; App merge commit
+  `cd3bddfc731a559f241ee06b0781420b27b33e36`; source branch removed.
+- Autonomy infrastructure PR `wellmanifest/autonomy#3`: both required checks
+  PASS on exact head `61234f65da304a484791d3efcc39fefac6986f18`.
+- Validator run `31817558395`: PASS; App approval bound to the same exact head;
+  explicit App merge commit `90447b71d17971ccccd8b5735abd03b937045451`;
+  source branch removed.
+- Protected-main readback: `.github/workflows/standard-conformance.yml` exists
+  at `90447b71d17971ccccd8b5735abd03b937045451` with stable job context
+  `standards / autonomy conformance`.
