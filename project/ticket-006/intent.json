@@ -1,0 +1,65 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-006",
+  "summary": "Align root Autonomy 0.3 release documentation",
+  "workstream": "governance",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P2",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-006/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": [],
+  "dependsOn": ["ticket-005"],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "681376768290e8d9f07e8113d7828d39f9c16ea9",
+    "targetBranch": "main",
+    "outcome": "Root repository documentation accurately identifies the published stable Autonomy 0.3 standard and its protected deployment-source boundary.",
+    "nonGoals": [
+      "Change normative semantics, schema, profile or executable checker",
+      "Create a new release tag",
+      "Rewrite historical changelog entries"
+    ],
+    "complexity": "XS",
+    "estimatedMinutes": 10,
+    "budgets": {
+      "maxImplementationFiles": 2,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Update only governance-owned root release documentation after protected 0.3 publication.",
+      "components": [
+        {"name": "release-documentation", "paths": ["README.md", "CHANGELOG.md", "project/ticket-006/**"]}
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the documentation commit through the protected Validator boundary."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-03",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 -m unittest discover -s tests -v",
+          "git diff --check"
+        ],
+        "evidence": "project/ticket-006/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

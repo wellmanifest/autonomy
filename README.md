@@ -27,7 +27,7 @@ This repository does not host an agent, GitHub App, queue, scheduler, LLM,
 repository mirror, or mutation runtime. Those systems remain owned by
 `subactor/*` and `semcod/*` and adopt this domain pack.
 
-## Planned entry points
+## Current entry points
 
 - `spec/AUTONOMY_STANDARD.md` — normative requirements;
 - `schemas/autonomy-manifest.schema.json` — strict JSON contract;
@@ -35,4 +35,20 @@ repository mirror, or mutation runtime. Those systems remain owned by
 - `src/autonomy_check.py` — deterministic conformance CLI;
 - `docs/ARCHITECTURE.md` and `docs/LOGIC_FLOW.md` — deployment guidance.
 
-Status: `0.1.0-dev`, governed implementation in `project/ticket-001`.
+## Operational proof boundary
+
+Static schema/checker success proves contract conformance, not a live autonomous
+execution path. Runtime conformance additionally requires fresh non-manual
+trigger, claim, validation, protected publication, read-back, cleanup and
+watchdog recovery receipts. Manual or agent-initiated workflow dispatch remains
+publication/diagnostic evidence and does not substitute for scheduler liveness.
+
+The Subactor reference runtime has exercised the durable timer/controller path,
+exact-head Validator App merge and checkpoint recovery. The Wellmanifest
+repository was also published by the independent scheduled Validator target in
+run `31827270068` without a manual dispatch.
+
+Status: stable `0.3.0`. Autonomy 0.3 adds a protected deployment-source
+boundary: runtime code, effect-capable dependencies and authority-policy inputs
+must come from isolated revision/digest-bound deployments, not candidate or
+concurrently mutable development checkouts.
