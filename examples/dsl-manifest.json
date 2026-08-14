@@ -3,8 +3,8 @@
   "schema": "wellmanifest.dsl/manifest/v1",
   "id": "wellmanifest.autonomy",
   "name": "Wellmanifest Autonomy Standard",
-  "version": "0.2.0-dev",
-  "status": "experimental",
+  "version": "0.2.0",
+  "status": "stable",
   "purpose": "Durable, independently watched autonomous software-development continuation without per-pull-request human approval",
   "domain": "autonomous-development",
   "owners": [
@@ -51,12 +51,12 @@
     {
       "path": "spec/AUTONOMY_STANDARD.md",
       "role": "documentation",
-      "digest": "sha256:8b8cdce2cc6ec2660d77241e5010ab8b17b299897127c2a1107b2db34210de25"
+      "digest": "sha256:a74f88dd4933b99485fc5d233603428ec2c9b76a48460f2723fd2f83c3eb63a1"
     },
     {
       "path": "profiles/subactor-semcod.profile.json",
       "role": "profile",
-      "digest": "sha256:61f1c0814360f99f267a55dc214c16518c33e8c5441f083ce2a1e269b83625e9"
+      "digest": "sha256:e3fec1150875b4b807473c42cb8cd8307f5899d50bee492447ccba7af9799b97"
     },
     {
       "path": "src/autonomy_check.py",
@@ -66,7 +66,7 @@
     {
       "path": "examples/valid/project.autonomy.json",
       "role": "example",
-      "digest": "sha256:0065ea513e380022807ae27be2e8c9cead8b0b8ab29c7d6cb868cab9ff1b4788"
+      "digest": "sha256:b6014dd8ea3eba63ffd526a171c65a64a274708c853822d4f6eaf4ae33d736e7"
     },
     {
       "path": "examples/invalid/self-approval.autonomy.json",
@@ -81,7 +81,7 @@
     {
       "path": "docs/ARCHITECTURE.md",
       "role": "documentation",
-      "digest": "sha256:711dafb603c437bbbae030cedbe6f71edf751c809cb0ad00b43dd58142e1e888"
+      "digest": "sha256:a4a13112347c60d14bcc535d13d08bf279b5c6b7cf8fb0144ecad1ccd751c042"
     },
     {
       "path": "docs/LOGIC_FLOW.md",
@@ -136,7 +136,7 @@
   ],
   "lifecycle": {
     "compatibility": "semver",
-    "stability": "experimental",
+    "stability": "stable",
     "breaking": "major",
     "additive": "minor",
     "fix": "patch"

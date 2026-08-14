@@ -1,0 +1,87 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-004",
+  "summary": "Bind live Autonomy 0.2 runtime evidence",
+  "workstream": "integration",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P1",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-004/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "spec/AUTONOMY_STANDARD.md",
+    "profiles/subactor-semcod.profile.json",
+    "docs/ARCHITECTURE.md",
+    "examples/valid/project.autonomy.json",
+    "examples/dsl-manifest.json",
+    "tests/test_autonomy.py"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "8470e0eab270af2b3df8cdba297c5572533d9956",
+    "targetBranch": "main",
+    "outcome": "Autonomy 0.2 is promoted with practice-backed durability rules and fresh non-manual runtime evidence.",
+    "nonGoals": [
+      "Host the Subactor runtime in this standards repository",
+      "Treat a manual dispatch as liveness evidence",
+      "Expand the autonomy grant or high-risk effect scope"
+    ],
+    "complexity": "M",
+    "estimatedMinutes": 25,
+    "budgets": {
+      "maxImplementationFiles": 9,
+      "maxAffectedComponents": 3,
+      "maxPublicInterfaceChanges": 2,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Promote only after a fresh automatic canary and turn its observed crash windows into normative recovery requirements.",
+      "components": [
+        {
+          "name": "normative-contract",
+          "paths": ["VERSION", "spec/AUTONOMY_STANDARD.md", "examples/dsl-manifest.json"]
+        },
+        {"name": "subactor-profile", "paths": ["profiles/subactor-semcod.profile.json"]},
+        {
+          "name": "conformance-evidence",
+          "paths": [
+            "tests/test_autonomy.py",
+            "docs/ARCHITECTURE.md",
+            "examples/valid/project.autonomy.json",
+            "project/ticket-004/**"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "Lease and recovery requirements become explicit normative Autonomy 0.2 behavior",
+        "The selected Subactor profile binds actual protected runtime contracts"
+      ],
+      "dataChanges": ["Documentation records immutable, secret-free GitHub and local receipt identifiers"],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert through the protected Validator publication boundary; do not erase the historical runtime evidence."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-05",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m compileall -q src tests",
+          "./project/governance-check.sh --actor agent"
+        ],
+        "evidence": "project/ticket-004/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

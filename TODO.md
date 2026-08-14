@@ -11,3 +11,8 @@
   consistency, target isolation, explicit protected merge and live canaries.
 - [x] [`ticket-003`](project/ticket-003/README.md) — add hosted autonomy
   conformance, protected branch rules and Validator App onboarding.
+- [ ] [`ticket-004`](project/ticket-004/README.md) — bind the first automatic
+  runtime canary, convert its durability gaps into normative requirements and
+  promote the practice-backed Subactor/Semcod profile to 0.2.0. State:
+  `IN_PROGRESS / PUBLICATION`; the manifest stability projection and all
+  local conformance gates pass; candidate awaits protected publication.

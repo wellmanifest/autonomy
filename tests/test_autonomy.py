@@ -200,6 +200,75 @@ class AutonomyConformanceTests(unittest.TestCase):
         findings = autonomy_check.validate_document(mutation, profile_path=None)
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
+    def test_stable_profile_binds_deployed_durable_controller(self) -> None:
+        self.assertEqual("0.2.0", self.profile["version"])
+        self.assertEqual("stable", self.profile["status"])
+        dispatch = next(
+            binding
+            for binding in self.profile["bindings"]
+            if binding["stage"] == "dispatch"
+            and binding["product"] == "subactor/autonom"
+        )
+        publish = next(
+            binding
+            for binding in self.profile["bindings"]
+            if binding["stage"] == "publish"
+            and binding["product"] == "subactor/autonom"
+        )
+        self.assertLessEqual(
+            {
+                "write-ahead-operation",
+                "fsync-checkpoint",
+                "canary-recovery",
+                "watchdog-reconcile",
+            },
+            set(dispatch["capabilities"]),
+        )
+        self.assertLessEqual(
+            {
+                "repo://subactor/autonom/autonom/pull_request_state.py",
+                "repo://subactor/autonom/autonom/pull_request_controller.py",
+                "repo://subactor/autonom/systemd/subactor-pr-controller.timer",
+                "repo://subactor/validator-agent/config/direct-pr-registry.json",
+            },
+            set(dispatch["contracts"]),
+        )
+        self.assertIn("lease-exceeds-effect-timeout", dispatch["restrictions"])
+        self.assertLessEqual(
+            {
+                "exact-head-app-review",
+                "explicit-app-merge",
+                "merge-sha-read-back",
+                "branch-cleanup",
+                "durable-publication-checkpoint",
+            },
+            set(publish["capabilities"]),
+        )
+        self.assertIn("native-auto-merge-forbidden", publish["restrictions"])
+
+    def test_normative_durability_and_receipt_origin_rules_are_published(self) -> None:
+        standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
+        required_text = (
+            "initial duration MUST exceed the maximum bounded duration",
+            "queue record and claim MUST be durably committed",
+            "flushing\nthe new bytes and directory metadata",
+            "MUST clean an obsolete\nqueue or claim remnant",
+            "checkpoint is the authority for completed local continuation state",
+            "transport named\n`workflow_dispatch` is not by itself evidence of manual execution",
+        )
+        for phrase in required_text:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, standard)
+
+    def test_live_evidence_is_scoped_and_does_not_overclaim_watchdog_recovery(self) -> None:
+        architecture = (ROOT / "docs" / "ARCHITECTURE.md").read_text(encoding="utf-8")
+        canary_receipt = "fd960b35a9816246aec2629f619cf9ce42e68892fb8bab806697768f4ab795e2"
+        self.assertIn(canary_receipt, architecture)
+        self.assertIn("manual_dispatch=false", architecture)
+        self.assertIn("giving a 50-minute lease for a service bounded to\n45 minutes", architecture)
+        self.assertIn("No live missed-trigger watchdog recovery had been observed", architecture)
+        self.assertIn("MUST NOT be presented as full operational\nconformance", architecture)
+
     def test_public_schema_is_draft_2020_12_and_closed(self) -> None:
         schema = json.loads(
             (ROOT / "schemas" / "autonomy-manifest.schema.json").read_text(encoding="utf-8")

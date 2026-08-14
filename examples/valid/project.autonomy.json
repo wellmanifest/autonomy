@@ -11,8 +11,8 @@
     "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
-      "version": "0.2.0-dev",
-      "digest": "sha256:61f1c0814360f99f267a55dc214c16518c33e8c5441f083ce2a1e269b83625e9"
+      "version": "0.2.0",
+      "digest": "sha256:e3fec1150875b4b807473c42cb8cd8307f5899d50bee492447ccba7af9799b97"
     }
   },
   "grant": {
