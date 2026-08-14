@@ -30,10 +30,13 @@ ticket evidence after protected main contains the release.
   publication identifiers.
 - Kept normative, schema, profile, example, source and test artifacts unchanged.
 - Passed governance, 26 tests, self-test, compilation, Ruff and diff checks;
-  protected publication remains pending.
+  protected publication completed on the same exact head.
+- Observed Validator run `31831972095`, exact-head App review `4940427343`,
+  explicit App merge `eab9c7b8cb99560d022e35acf12ea04b5ec708e6`,
+  protected-main read-back and source branch cleanup.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
+- None. The bounded root-documentation alignment is complete.
 - New authority remains required for destructive action, secret access, new
   external coordination, material objective expansion and trusted merge.

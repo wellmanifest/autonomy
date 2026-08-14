@@ -11,3 +11,8 @@
 
 - Aligned the root landing page and changelog with stable Autonomy 0.4 and its
   immutable runtime, standard publication and automatic-cycle evidence.
+
+## [0.4.1] - 2026-08-14
+
+- Closed the documentation ticket after exact-head hosted checks, Validator
+  App approval, explicit merge, protected-main read-back and branch cleanup.
