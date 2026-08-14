@@ -1,6 +1,6 @@
 # Wellmanifest Autonomy Standard 0.2
 
-Status: experimental
+Status: stable
 
 Namespace: `wellmanifest.autonomy`
 
@@ -155,7 +155,10 @@ deduplicated escalation receipt; it MUST NOT create an unbounded retry loop.
 One controller cycle performs at most one external mutation. Parallel tasks MAY
 run only when their write scopes do not overlap and the declared concurrency
 budget permits it. A lease MUST expire and MUST NOT be silently renewed by its
-holder.
+holder. Its initial duration MUST exceed the maximum bounded duration of every
+effect it protects, including host shutdown margin. If that relation cannot be
+proved before an effect, the controller MUST stop rather than let another
+worker reclaim an operation that may still be in flight.
 
 ## 8. Runnable work and continuation
 
@@ -165,6 +168,15 @@ bounded dead-letter attempts, restart from the last checkpoint, and exact
 idempotency bindings for repository, ticket, correlation ID, head SHA, and
 operation. Implementations MUST make effects replay-safe; this standard does
 not promise exactly-once external effects.
+
+The queue record and claim MUST be durably committed before the external
+effect begins. Durable means that the implementation uses a crash-safe commit
+boundary appropriate to its store; a process-visible rename without flushing
+the new bytes and directory metadata is not sufficient for a filesystem
+checkpoint. After restart, the controller MUST first reconcile a protected
+checkpoint and authoritative external read-back. It MUST clean an obsolete
+queue or claim remnant for an already committed checkpoint and MUST NOT replay
+that operation.
 
 The queue MUST expose a deterministic `runnable` decision based on status,
 dependencies, scope ownership, freshness, deduplication, conflict, active
@@ -205,6 +217,13 @@ Duplicate delivery is expected under at-least-once semantics, so a claim and
 every external effect MUST be idempotent over the declared bindings. Recovery
 MUST resume from a durable checkpoint and MUST NOT silently replay an
 unidentified effect.
+
+A checkpoint is the authority for completed local continuation state. A
+failure between checkpoint commit and creation of a derived receipt index,
+dashboard pointer, or canary pointer MUST be recoverable from that complete
+checkpoint. Recovery MAY recreate the missing derived receipt, but MUST NOT
+invent an underlying trigger, claim, validation, publication, read-back, or
+cleanup receipt that the checkpoint does not already bind.
 
 Each repository is an independent outcome domain. A target repository that
 passes all its protected gates MAY continue even when an unrelated repository
@@ -307,6 +326,13 @@ skipped, failed, rolled-back, and completed effects.
 An approval receipt is authoritative only when produced or verified outside the
 candidate checkout. An agent-written receipt is evidence of a claim, not proof
 of external state.
+
+For an automatically dispatched canary, a transport named
+`workflow_dispatch` is not by itself evidence of manual execution. The
+trigger-delivery receipt MUST identify the initiating principal and protected
+scheduler. A human-originated invocation remains manual regardless of the
+transport name; a protected controller-originated invocation remains automatic
+only when its preceding durable trigger and claim receipts are present.
 
 ## 13. Recovery and revocation
 

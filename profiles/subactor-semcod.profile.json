@@ -2,8 +2,8 @@
   "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
   "schema": "wellmanifest.autonomy/profile/v2",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.2.0-dev",
-  "status": "experimental",
+  "version": "0.2.0",
+  "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
     "runtimeOwners": [
@@ -36,15 +36,26 @@
       "mode": "protected-dispatch",
       "capabilities": [
         "durable-trigger",
+        "write-ahead-operation",
         "queue-claim",
         "checkpoint-resume",
+        "fsync-checkpoint",
+        "canary-recovery",
         "watchdog-reconcile",
         "repository-isolation"
       ],
-      "contracts": ["repo://subactor/autonom/organism.yaml"],
+      "contracts": [
+        "repo://subactor/autonom/autonom/pull_request_state.py",
+        "repo://subactor/autonom/autonom/pull_request_controller.py",
+        "repo://subactor/autonom/systemd/subactor-pr-controller.timer",
+        "repo://subactor/validator-agent/config/direct-pr-registry.json"
+      ],
       "restrictions": [
         "at-least-once",
         "idempotency-bound",
+        "lease-exceeds-effect-timeout",
+        "checkpoint-before-cleanup",
+        "three-attempt-dead-letter",
         "manual-dispatch-not-liveness",
         "registry-digest-required"
       ]
@@ -252,9 +263,28 @@
       "product": "subactor/autonom",
       "role": "publisher",
       "mode": "protected-publish",
-      "capabilities": ["pr-controller", "freeze", "trusted-review", "merge", "read-back"],
-      "contracts": ["repo://subactor/autonom/autonom/pull_request_controller.py"],
-      "restrictions": ["same-repository", "exact-head", "current-base", "one-mutation-per-cycle"]
+      "capabilities": [
+        "pr-controller",
+        "freeze",
+        "exact-head-app-review",
+        "explicit-app-merge",
+        "merge-sha-read-back",
+        "branch-cleanup",
+        "durable-publication-checkpoint"
+      ],
+      "contracts": [
+        "repo://subactor/autonom/autonom/pull_request_controller.py",
+        "repo://subactor/autonom/autonom/pull_request_state.py",
+        "repo://subactor/validator-agent/config/direct-pr-registry.json"
+      ],
+      "restrictions": [
+        "same-repository",
+        "exact-head",
+        "current-base",
+        "one-mutation-per-cycle",
+        "validator-identity-from-registry",
+        "native-auto-merge-forbidden"
+      ]
     },
     {
       "stage": "publish",

@@ -27,6 +27,23 @@ portable requirements without moving runtime ownership into Wellmanifest.
 - Recorded `SESSION_EXECUTION_AUTHORIZATION` for autonomous implementation,
   pull-request publication and continuation without per-PR human approval;
   trusted review and merge remain owned by the protected Validator App.
+- Recorded the automatic `ticket-006` canary with its exact five-field
+  operation binding, registry digest, App approval, merge SHA, cleanup,
+  checkpoint and liveness receipt IDs.
+- Converted its observed 15-minute-versus-45-minute lease defect into a
+  fail-closed normative lease relation and crash-safe filesystem rules.
+- Recorded the automatic hardened `ticket-007` publication: a 50-minute
+  claim, exact-head App approval, explicit merge, eight receipt classes,
+  checkpoint and branch cleanup.
+- Required restart reconciliation to remove stale queue/claim remnants and
+  reconstruct only derived canary evidence already bound by a complete
+  checkpoint.
+- Bound the stable Subactor/Semcod 0.2 profile to the deployed controller,
+  durable state module, systemd timer and canonical Validator registry.
+- Updated the valid manifest and DSL artifact digests, added conformance tests,
+  and promoted the standard, profile and repository version to `0.2.0`.
+- Passed all local deterministic, lint and governance gates; publication is
+  pending independent hosted verification and the protected App boundary.
 
 ## Blockers
 

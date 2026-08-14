@@ -16,6 +16,8 @@
     "spec/AUTONOMY_STANDARD.md",
     "profiles/subactor-semcod.profile.json",
     "docs/ARCHITECTURE.md",
+    "examples/valid/project.autonomy.json",
+    "examples/dsl-manifest.json",
     "tests/test_autonomy.py"
   ],
   "forbiddenPaths": ["project/ticket-*/user-*.md"],
@@ -44,9 +46,20 @@
       "status": "accepted",
       "decision": "Promote only after a fresh automatic canary and turn its observed crash windows into normative recovery requirements.",
       "components": [
-        {"name": "normative-contract", "paths": ["spec/AUTONOMY_STANDARD.md"]},
+        {
+          "name": "normative-contract",
+          "paths": ["VERSION", "spec/AUTONOMY_STANDARD.md", "examples/dsl-manifest.json"]
+        },
         {"name": "subactor-profile", "paths": ["profiles/subactor-semcod.profile.json"]},
-        {"name": "conformance-evidence", "paths": ["tests/test_autonomy.py", "docs/ARCHITECTURE.md"]}
+        {
+          "name": "conformance-evidence",
+          "paths": [
+            "tests/test_autonomy.py",
+            "docs/ARCHITECTURE.md",
+            "examples/valid/project.autonomy.json",
+            "project/ticket-004/**"
+          ]
+        }
       ],
       "responsibilityChanges": false,
       "interfaceChanges": [

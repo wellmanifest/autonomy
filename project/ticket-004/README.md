@@ -3,7 +3,7 @@
 - **ID**: ticket-004
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -16,19 +16,19 @@ Subactor/Semcod profile to the actual protected registry and runtime files.
 
 ## Acceptance criteria
 
-- [ ] AC-01: Record immutable live evidence for automatic trigger, exact
+- [x] AC-01: Record immutable live evidence for automatic trigger, exact
   five-field claim, registry digest, exact-head App approval, explicit App
   merge, merge SHA, branch deletion and durable checkpoint.
-- [ ] AC-02: Require a claim lease to outlive every bounded in-flight effect,
+- [x] AC-02: Require a claim lease to outlive every bounded in-flight effect,
   durable state transitions to survive process/power interruption, and restart
   reconciliation to complete a committed checkpoint without replaying an
   unidentified effect.
-- [ ] AC-03: Require interrupted final receipts/canary indexes to be rebuilt
+- [x] AC-03: Require interrupted final receipts/canary indexes to be rebuilt
   from a complete protected checkpoint instead of losing proof or replaying
   publication.
-- [ ] AC-04: Update the Subactor/Semcod integration profile to name the actual
+- [x] AC-04: Update the Subactor/Semcod integration profile to name the actual
   queue, controller, timer and protected Validator registry contracts.
-- [ ] AC-05: Promote repository status to `0.2.0` and pass governance,
+- [x] AC-05: Promote repository status to `0.2.0` and pass governance,
   conformance, self-test, compilation and lint checks.
 
 ## Participants
