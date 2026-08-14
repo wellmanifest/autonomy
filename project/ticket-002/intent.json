@@ -1,0 +1,91 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-002",
+  "summary": "Standardize reliable autonomous execution from operational evidence",
+  "workstream": "integration",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P0",
+    "origin": "requested"
+  },
+  "allowedPaths": [
+    "project/ticket-002/**",
+    "project/ticket-001/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "spec/**",
+    "schemas/**",
+    "profiles/**",
+    "examples/**",
+    "src/**",
+    "tests/**",
+    "docs/**"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    "AGENTS.md",
+    "README.md",
+    "CHANGELOG.md",
+    ".github/**",
+    "pyproject.toml",
+    "project.sh",
+    "project.bat",
+    "project/governance-check.*",
+    "project/new-ticket.sh",
+    "project/readme.sh",
+    "scripts/runtime.sh"
+  ],
+  "stacks": ["python"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "d8a4cf459943b80911de3dc4bb2b02933467fbd8",
+    "targetBranch": "main",
+    "outcome": "Autonomy 0.2 requires durable and independently watched execution, per-repository outcome isolation, protected registry consistency and fresh live canary evidence while retaining no-per-PR-human publication.",
+    "nonGoals": [
+      "Implement a scheduler, queue, watchdog or Validator runtime in Wellmanifest",
+      "Promise exactly-once external effects",
+      "Treat manual workflow dispatch as scheduler liveness evidence",
+      "Permit unrelated repository failures to weaken a target's own gates",
+      "Enable platform-native auto-merge or direct default-branch push"
+    ],
+    "complexity": "L",
+    "estimatedMinutes": 30,
+    "budgets": {
+      "maxImplementationFiles": 15,
+      "maxAffectedComponents": 5,
+      "maxPublicInterfaceChanges": 3,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Standardize a durable execution plane with protected primary trigger, independent watchdog, exact idempotency, per-repository isolation, one protected onboarding registry and freshness-bound canary receipts.",
+      "components": [
+        {"name": "normative-contracts", "paths": ["spec/**", "schemas/**", "profiles/**"]},
+        {"name": "conformance", "paths": ["examples/**", "src/**", "tests/**"]},
+        {"name": "guidance", "paths": ["docs/**"]},
+        {"name": "release-identity", "paths": ["VERSION"]}
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "Introduce wellmanifest.autonomy/manifest/v2",
+        "Introduce wellmanifest.autonomy/profile/v2",
+        "Require the executionLiveness policy and explicit protected merge semantics"
+      ],
+      "dataChanges": [
+        "Add durable queue, trigger, watchdog, registry, isolation and canary bindings",
+        "Add trigger-delivery, queue-claim, registry-resolution, canary and branch-cleanup receipts"
+      ],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the v2 contract commit through the same protected publication boundary; retain v0.1 audit evidence."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {"criterion": "AC-10", "commands": ["python3 -m unittest discover -s tests -v", "python3 src/autonomy_check.py self-test"], "evidence": "project/ticket-002/ai-codex-logs.txt"},
+      {"criterion": "AC-11", "commands": ["./project/governance-check.sh --actor agent", "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json", "python3 -m compileall -q src tests", "ruff check src tests"], "evidence": "project/ticket-002/ai-codex-logs.txt"}
+    ]
+  }
+}
