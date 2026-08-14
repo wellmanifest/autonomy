@@ -19,3 +19,4 @@
 - Promoted schema, profile, examples, checker and DSL metadata to v5 / 0.7.0
   and aligned the normative and operational documentation.
 - Added negative regressions and passed every deterministic conformance gate.
+- Advanced the verified revision to independent protected publication.

@@ -3,7 +3,7 @@
 - [ ] [`ticket-013`](project/ticket-013/README.md) — promote Autonomy 0.7 from
   live GitHub evidence: partition approval-triggered checks from pre-review
   readiness and model source-branch deletion that platform-couples PR closure.
-  State: `IN_PROGRESS / VALIDATION`; classification: `BUG / P1 / regression`;
+  State: `IN_PROGRESS / PUBLICATION`; classification: `BUG / P1 / regression`;
   workstream: `integration`.
 - [x] [`ticket-012`](project/ticket-012/README.md) — align root README and
   changelog with stable Autonomy 0.6 and its exact publication evidence.

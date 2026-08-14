@@ -44,6 +44,8 @@ operator folklore.
   flow, plus negative regressions for incomplete or unsafe projections.
 - Passed JSON Schema Draft 2020-12 validation, conformance, self-test, 32 unit
   tests, compile, Ruff, governance and whitespace checks.
+- Advanced the verified exact head to `PUBLICATION`; independent Validator App
+  review remains the only trusted merge authority.
 
 ## Blockers
 
