@@ -2,8 +2,8 @@
 
 - **ID**: ticket-011
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -64,3 +64,17 @@ otherwise its PR remains open as the branch owner.
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Exact implementation head:
+  `2f07112d012463c7b5c9ec008f69ac8ddbe38c4a`.
+- Hosted standards conformance run `31845381347` and remote lifecycle run
+  `31845381421` passed for that exact head.
+- Validator run `31845403893` completed successfully; App review `4941554180`
+  approved the exact head.
+- The Validator App explicitly merged PR #20 as
+  `463e6996018a31b1a53f1f1b9ec056585e08ceb1`. Protected `main` read-back
+  returned the same SHA and the source branch was deleted.
+- Pull-request close event run `31845545295` started after merge and passed;
+  it is post-merge lifecycle evidence, not a pre-merge convergence claim.
