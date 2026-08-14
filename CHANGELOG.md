@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.7.0 - 2026-08-15
+
+- Partitioned pre-approval protected checks: all non-circular checks must be in
+  authoritative terminal success, while only approval-triggered checks may be
+  deferred until the exact trusted App approval exists.
+- Required a fresh successful attempt after the approval timestamp for every
+  approval-triggered check, followed by the existing two stable protected
+  convergence reads before merge.
+- Added explicit-later and provider-coupled superseded-PR closure modes. Both
+  require a protected path-complete lossless receipt; coupled closure also
+  requires exact read-back of branch absence, closed/unmerged PR state and the
+  preserved archive head.
+- Derived the contract from `wellmanifest/logs#11/#12/#10`: Validator run
+  `31849335166`, fresh post-approval governance run `31849434851`, protected
+  receipt merge `ab268f932dbc09e5091fb8b7b4f4570790fa6254` and GitHub's
+  coupled source-branch deletion/PR closure with archived predecessor head.
+- Published exact Autonomy 0.7 head
+  `f0f07c9d2852f63f99755d6c8ba182423f304d03` through hosted runs
+  `31850464893` and `31850464947`, Validator run `31850486923`, App review
+  `4941897120`, two stable protected reads and merge
+  `39386e759968bea4ca80514e83249a9b5aadd4d1`, followed by protected closure
+  merge `310fafeb60581c81e3aa8824fcc2fd61690bf88f`.
+
 ## 0.6.0 - 2026-08-15
 
 - Required the protected Validator registry to equal the provider's complete

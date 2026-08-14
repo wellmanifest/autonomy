@@ -53,21 +53,33 @@ Validator run `31830719505`; after deployment, the next natural timer cycle at
 published by the independent scheduled Validator target in run `31827270068`
 without a manual dispatch.
 
-Status: stable `0.6.0`. Autonomy 0.6 requires the protected Validator registry
-to equal the complete effective repository policy, including applicable
-rulesets, branch protection and required workflows. A trusted App approval
-starts a new evidence epoch because it may trigger more checks. The publisher
-must observe two stable protected reads with the same head, base, approval,
-policy and required-check set, with every check in authoritative terminal
-success, before explicit merge.
+Status: stable `0.7.0`. Autonomy 0.7 partitions the effective protected check
+set before review. Every check that can run without approval must already be in
+authoritative terminal success. Only checks whose trigger is the exact trusted
+App approval may be deferred; after approval, each deferred check needs a fresh
+successful attempt newer than that approval. The publisher then observes two
+stable protected reads with the same head, base, approval, effective policy and
+required-check set before explicit merge.
 
 A bounded retry is allowed only for an unchanged head/base after convergence;
-it cannot reuse stale evidence. Superseded work is deleted without a new human
-prompt only after a lossless receipt proves every unique implementation,
-governance and audit artifact integrated, archived or intentionally retained.
-The proven-equivalent branch is deleted while its PR remains open and the PR is
-closed in a later cycle. Unresolved work keeps both branch and open PR owner.
+it cannot reuse stale evidence. Superseded work may be disposed without a new
+human prompt only after a protected, path-complete lossless receipt proves
+every unique implementation, governance and audit artifact integrated,
+archived or intentionally retained. The platform may support either an
+`explicit-later` close or a `provider-coupled` close caused by branch deletion.
+The coupled mode is accepted only after exact read-back proves branch absence,
+a closed and unmerged PR, and preservation of the archived head. It does not
+authorize unrelated bundled mutations. Unresolved work retains its branch and
+open PR owner.
 
-Autonomy 0.6 retains the 0.5 boundaries: plan-first intent history, successor
-PRs instead of history rewrite, complete contract-consumer migration,
-authoritative check provenance and authority-preserving bounded provider reads.
+These rules come from the protected `wellmanifest/logs` recovery: PR #11 could
+not satisfy a helper that waited for its own approval-triggered governance
+check, while the Validator correctly approved, observed fresh run
+`31849434851`, converged and merged. After PR #12 protected a path-complete
+receipt, deleting PR #10's source branch caused GitHub to close that PR in the
+same provider operation while preserving `refs/pull/10/head`.
+
+Autonomy 0.7 retains the 0.6 boundaries: complete effective-policy inventory,
+post-approval evidence epochs, lossless superseded-work disposition,
+plan-first intent history, successor PRs instead of history rewrite, complete
+contract-consumer migration and authoritative check provenance.
