@@ -59,7 +59,7 @@
       "status": "accepted",
       "decision": "Add one closed manifest v3 changeControl object that binds intent history, base refresh, contract migration surfaces and authoritative check provenance",
       "components": [
-        {"name": "normative-contract", "paths": ["VERSION", "spec/**", "schemas/**", "examples/valid/**"]},
+        {"name": "normative-contract", "paths": ["VERSION", "spec/**", "schemas/**", "examples/valid/**", "examples/dsl-manifest.json"]},
         {"name": "conformance", "paths": ["src/**", "tests/**"]},
         {"name": "integration-guidance", "paths": ["profiles/**", "docs/**"]}
       ],
