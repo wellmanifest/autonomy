@@ -1,4 +1,4 @@
-# Wellmanifest Autonomy Standard 0.3
+# Wellmanifest Autonomy Standard 0.4
 
 Status: stable
 
@@ -53,6 +53,36 @@ controller code MUST fail closed when the deployment checkout is dirty or its
 revision is not contained in the protected deployment ref. A policy rollout
 MUST update the isolated pin and record its digest without rewriting or
 discarding concurrent developer state.
+
+A clean deployment revision that is merely contained in protected history is
+not an exact runtime pin. Before every cycle, the external supervisor MUST bind
+the executable source to the selected full revision or artifact digest and
+MUST reject any mismatch before loading effect-capable code. The supervisor
+unit, executable path and pin configuration MUST NOT resolve through symlinks
+or files owned by a candidate or concurrently mutable development checkout.
+
+### 2.1 Protected rollout and rollback
+
+A runtime or authority-policy rollout MUST use this order:
+
+1. resolve an exact revision already contained in the protected deployment ref;
+2. prepare and validate an isolated replacement without changing the active
+   deployment;
+3. quiesce every trigger and wait for or safely terminate the bounded active
+   cycle;
+4. reject a dirty, foreign, or unidentifiable current deployment rather than
+   deleting or rewriting it;
+5. update the isolated source and external exact pin as one controlled
+   transition while effects remain stopped;
+6. reload the external supervisor and resume triggers only after its preflight
+   succeeds; and
+7. retain the previous protected revision and deployment receipt so rollback
+   traverses the same boundary.
+
+A failed transition MUST leave either the previous verified deployment active
+or the triggers stopped. It MUST NOT resume an unpinned runtime. Operational
+conformance after rollout additionally requires a fresh automatic cycle bound
+to the new runtime pin; a manual start proves only deployment diagnostics.
 
 ## 3. Standing autonomy grant
 

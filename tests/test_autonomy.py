@@ -201,7 +201,7 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.3.0", self.profile["version"])
+        self.assertEqual("0.4.0", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
         dispatch = next(
             binding
@@ -221,6 +221,10 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "fsync-checkpoint",
                 "canary-recovery",
                 "protected-source-preflight",
+                "exact-runtime-pin",
+                "protected-runtime-worktree",
+                "quiesced-rollout",
+                "supervisor-source-isolation",
                 "watchdog-reconcile",
             },
             set(dispatch["capabilities"]),
@@ -229,6 +233,8 @@ class AutonomyConformanceTests(unittest.TestCase):
             {
                 "repo://subactor/autonom/autonom/pull_request_state.py",
                 "repo://subactor/autonom/autonom/pull_request_controller.py",
+                "repo://subactor/autonom/scripts/deploy-pr-controller.sh",
+                "repo://subactor/autonom/systemd/subactor-pr-controller.service",
                 "repo://subactor/autonom/systemd/subactor-pr-controller.timer",
                 "repo://subactor/validator-agent/config/direct-pr-registry.json",
             },
@@ -236,7 +242,11 @@ class AutonomyConformanceTests(unittest.TestCase):
         )
         self.assertIn("lease-exceeds-effect-timeout", dispatch["restrictions"])
         self.assertIn("candidate-checkout-excluded", dispatch["restrictions"])
+        self.assertIn("runtime-checkout-isolated", dispatch["restrictions"])
+        self.assertIn("supervisor-checkout-excluded", dispatch["restrictions"])
         self.assertIn("policy-checkout-isolated", dispatch["restrictions"])
+        self.assertIn("rollout-trigger-quiesced", dispatch["restrictions"])
+        self.assertIn("rollback-same-boundary", dispatch["restrictions"])
         self.assertLessEqual(
             {
                 "exact-head-app-review",
@@ -260,6 +270,11 @@ class AutonomyConformanceTests(unittest.TestCase):
             "transport named\n`workflow_dispatch` is not by itself evidence of manual execution",
             "MUST NOT be loaded from a workspace used for candidate or\nconcurrent development",
             "supervisor outside the loaded\ncontroller code MUST fail closed",
+            "not an exact runtime pin",
+            "MUST NOT resolve through symlinks\nor files owned by a candidate",
+            "quiesce every trigger and wait for or safely terminate",
+            "MUST NOT resume an unpinned runtime",
+            "requires a fresh automatic cycle bound\nto the new runtime pin",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):
@@ -276,6 +291,14 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn("protected_registry_digest_mismatch", architecture)
         protected_checkpoint = "4c2519ef8d4c4a632907d570ddb4b7aba81aa7b8dc5e24e77cc9f611bc9c19ea"
         self.assertIn(protected_checkpoint, architecture)
+        self.assertIn("failed in `ExecStartPre`", architecture)
+        self.assertIn("No Python controller was loaded", architecture)
+        rollout_checkpoint = "c5ba6476482e20eaf0d1a01727cc9565cec977fe30c14712dd048eb4df3f85c0"
+        self.assertIn(rollout_checkpoint, architecture)
+        self.assertIn("31830719505", architecture)
+        self.assertIn("4940318952", architecture)
+        self.assertIn("88953aa58a48526caf1134ba40b04d0f39e3ff39", architecture)
+        self.assertIn("`ok=true`, `dry_run=false`, zero mutations", architecture)
 
     def test_public_schema_is_draft_2020_12_and_closed(self) -> None:
         schema = json.loads(
