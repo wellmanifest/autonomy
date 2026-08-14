@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free conformance checker for Wellmanifest Autonomy 0.1."""
+"""Dependency-free conformance checker for Wellmanifest Autonomy 0.2."""
 
 from __future__ import annotations
 
@@ -38,12 +38,23 @@ REPOSITORY_RE = re.compile(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
 SEMVER_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$")
 ENV_RE = re.compile(r"^[A-Z][A-Z0-9_]+$")
 
-ROLES = {"observer", "planner", "implementer", "validator", "publisher", "auditor"}
+ROLES = {
+    "observer",
+    "dispatcher",
+    "planner",
+    "implementer",
+    "validator",
+    "publisher",
+    "auditor",
+}
 DIMENSIONS = {"principal", "credential", "workspace", "approval-identity"}
 RISK_ORDER = {"low": 0, "moderate": 1, "high": 2, "critical": 3}
 
 AUTHORITIES = {
     "observe",
+    "trigger-cycle",
+    "claim-cycle",
+    "reconcile-cycle",
     "select-task",
     "propose-plan",
     "create-ticket",
@@ -55,7 +66,6 @@ AUTHORITIES = {
     "open-pull-request",
     "issue-validator-attestation",
     "approve-via-validator-app",
-    "enable-auto-merge",
     "merge-pull-request",
     "post-merge-read-back",
     "append-audit-receipt",
@@ -63,6 +73,7 @@ AUTHORITIES = {
 
 ROLE_AUTHORITY_CEILINGS = {
     "observer": {"observe"},
+    "dispatcher": {"trigger-cycle", "claim-cycle", "reconcile-cycle"},
     "planner": {"select-task", "propose-plan"},
     "implementer": {
         "create-ticket",
@@ -75,7 +86,6 @@ ROLE_AUTHORITY_CEILINGS = {
     "validator": {"issue-validator-attestation", "approve-via-validator-app"},
     "publisher": {
         "open-pull-request",
-        "enable-auto-merge",
         "merge-pull-request",
         "post-merge-read-back",
     },
@@ -98,6 +108,8 @@ MANDATORY_EXCLUDED_EFFECTS = {
     "untrusted-dependency-publish",
 }
 PIPELINE_STATES = [
+    "dispatch",
+    "claim",
     "observe",
     "evidence",
     "plan",
@@ -107,11 +119,15 @@ PIPELINE_STATES = [
     "independent-validate",
     "publish-pr",
     "exact-head-gate",
-    "auto-merge",
+    "protected-merge",
     "post-merge-verify",
+    "checkpoint",
     "continue",
 ]
 REQUIRED_GATES = {
+    "trigger-liveness",
+    "queue-claim",
+    "registry-consistency",
     "grant-active",
     "candidate-scope",
     "deterministic-checks",
@@ -132,6 +148,9 @@ REQUIRED_BINDINGS = {
 REQUIRED_CHECKS = {"governance", "tests", "security", "validator"}
 REQUIRED_RECEIPTS = {
     "observation",
+    "trigger-delivery",
+    "queue-claim",
+    "registry-resolution",
     "plan",
     "grant-check",
     "change",
@@ -139,6 +158,32 @@ REQUIRED_RECEIPTS = {
     "independent-validation",
     "publication",
     "read-back",
+    "liveness-canary",
+    "branch-cleanup",
+}
+REQUIRED_IDEMPOTENCY_BINDINGS = {
+    "repository",
+    "ticket",
+    "correlationId",
+    "headSha",
+    "operation",
+}
+REQUIRED_REGISTRY_BINDINGS = {
+    "repository",
+    "baseBranch",
+    "requiredChecks",
+    "validatorIdentity",
+    "mergePolicy",
+}
+REQUIRED_CANARY_RECEIPTS = {
+    "trigger-delivery",
+    "queue-claim",
+    "registry-resolution",
+    "deterministic-validation",
+    "independent-validation",
+    "publication",
+    "read-back",
+    "branch-cleanup",
 }
 REQUIRED_STOP_CONDITIONS = {
     "grant-revoked",
@@ -151,6 +196,9 @@ REQUIRED_STOP_CONDITIONS = {
     "retry-exhausted",
     "ambiguous-evidence",
     "protected-authority-unavailable",
+    "liveness-proof-stale",
+    "registry-drift",
+    "trigger-quorum-unavailable",
 }
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -303,6 +351,7 @@ class Validator:
             "riskPolicy",
             "budgets",
             "queue",
+            "executionLiveness",
             "pipeline",
             "publication",
             "receipts",
@@ -310,9 +359,9 @@ class Validator:
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.dev/schemas/autonomy-manifest/v1":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v2":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/manifest/v1":
+        if doc["schema"] != "wellmanifest.autonomy/manifest/v2":
             self.add(SYNTAX, f"{path}.schema", "unknown manifest version")
         self.uri(doc["id"], f"{path}.id")
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -325,6 +374,9 @@ class Validator:
         self.risk_shape(doc["riskPolicy"], f"{path}.riskPolicy")
         self.budgets_shape(doc["budgets"], f"{path}.budgets")
         self.queue_shape(doc["queue"], f"{path}.queue")
+        self.execution_liveness_shape(
+            doc["executionLiveness"], f"{path}.executionLiveness"
+        )
         self.pipeline_shape(doc["pipeline"], f"{path}.pipeline")
         self.publication_shape(doc["publication"], f"{path}.publication")
         self.receipts_shape(doc["receipts"], f"{path}.receipts")
@@ -415,8 +467,8 @@ class Validator:
         if not self.closed(value, path, ("roles", "separation"), ("roles", "separation")):
             return
         roles = value["roles"]
-        if not isinstance(roles, list) or len(roles) < 6:
-            self.add(SYNTAX, f"{path}.roles", "expected at least six roles")
+        if not isinstance(roles, list) or len(roles) < 7:
+            self.add(SYNTAX, f"{path}.roles", "expected at least seven roles")
         else:
             for index, role in enumerate(roles):
                 self.role_shape(role, f"{path}.roles[{index}]")
@@ -523,6 +575,12 @@ class Validator:
             "deduplication",
             "humanBoundaryLabels",
             "oneMutationPerCycle",
+            "durable",
+            "delivery",
+            "checkpointStore",
+            "idempotencyBindings",
+            "deadLetterAfterAttempts",
+            "resumeFromCheckpoint",
         )
         if not self.closed(value, path, fields, fields):
             return
@@ -534,19 +592,132 @@ class Validator:
             self.add(SYNTAX, f"{path}.deduplication", "expected fingerprint")
         self.string_set(value["humanBoundaryLabels"], f"{path}.humanBoundaryLabels", minimum=2)
         self.boolean(value["oneMutationPerCycle"], f"{path}.oneMutationPerCycle", True)
+        self.boolean(value["durable"], f"{path}.durable")
+        if value["delivery"] != "at-least-once":
+            self.add(POLICY, f"{path}.delivery", "delivery must be at-least-once")
+        self.uri(value["checkpointStore"], f"{path}.checkpointStore")
+        self.string_set(
+            value["idempotencyBindings"],
+            f"{path}.idempotencyBindings",
+            minimum=1,
+            allowed=REQUIRED_IDEMPOTENCY_BINDINGS,
+        )
+        self.integer(value["deadLetterAfterAttempts"], f"{path}.deadLetterAfterAttempts", 1, 10)
+        self.boolean(value["resumeFromCheckpoint"], f"{path}.resumeFromCheckpoint")
+
+    def execution_liveness_shape(self, value: Any, path: str) -> None:
+        fields = (
+            "primaryTrigger",
+            "watchdog",
+            "independentPrincipals",
+            "manualDispatchProvesLiveness",
+            "missedTriggerStatus",
+            "perRepositoryIsolation",
+            "unrelatedFailureBlocksMerge",
+            "aggregateStatusAuthoritative",
+            "registry",
+            "canary",
+        )
+        if not self.closed(value, path, fields, fields):
+            return
+
+        primary = value["primaryTrigger"]
+        trigger_fields = ("id", "kind", "principal", "protected")
+        if self.closed(primary, f"{path}.primaryTrigger", trigger_fields, trigger_fields):
+            self.string(primary["id"], f"{path}.primaryTrigger.id", pattern=ID_RE)
+            self.enum(
+                primary["kind"],
+                f"{path}.primaryTrigger.kind",
+                {"event", "scheduler", "durable-queue"},
+            )
+            self.string(primary["principal"], f"{path}.primaryTrigger.principal", pattern=ID_RE)
+            self.boolean(primary["protected"], f"{path}.primaryTrigger.protected")
+
+        watchdog = value["watchdog"]
+        watchdog_fields = (
+            "id",
+            "kind",
+            "principal",
+            "protected",
+            "maxSilenceSeconds",
+            "triggerOnSilence",
+        )
+        if self.closed(watchdog, f"{path}.watchdog", watchdog_fields, watchdog_fields):
+            self.string(watchdog["id"], f"{path}.watchdog.id", pattern=ID_RE)
+            if watchdog["kind"] != "independent-scheduler":
+                self.add(POLICY, f"{path}.watchdog.kind", "watchdog must be independent")
+            self.string(watchdog["principal"], f"{path}.watchdog.principal", pattern=ID_RE)
+            self.boolean(watchdog["protected"], f"{path}.watchdog.protected")
+            self.integer(
+                watchdog["maxSilenceSeconds"], f"{path}.watchdog.maxSilenceSeconds", 60, 86400
+            )
+            self.boolean(watchdog["triggerOnSilence"], f"{path}.watchdog.triggerOnSilence")
+
+        for field in (
+            "independentPrincipals",
+            "manualDispatchProvesLiveness",
+            "perRepositoryIsolation",
+            "unrelatedFailureBlocksMerge",
+            "aggregateStatusAuthoritative",
+        ):
+            self.boolean(value[field], f"{path}.{field}")
+        if value["missedTriggerStatus"] != "degraded":
+            self.add(POLICY, f"{path}.missedTriggerStatus", "missed triggers must degrade status")
+
+        registry = value["registry"]
+        registry_fields = (
+            "source",
+            "digest",
+            "protected",
+            "singleSource",
+            "requiredBindings",
+            "driftCheck",
+        )
+        if self.closed(registry, f"{path}.registry", registry_fields, registry_fields):
+            self.uri(registry["source"], f"{path}.registry.source")
+            self.string(registry["digest"], f"{path}.registry.digest", pattern=DIGEST_RE)
+            self.boolean(registry["protected"], f"{path}.registry.protected")
+            self.boolean(registry["singleSource"], f"{path}.registry.singleSource")
+            self.string_set(
+                registry["requiredBindings"],
+                f"{path}.registry.requiredBindings",
+                minimum=1,
+                allowed=REQUIRED_REGISTRY_BINDINGS,
+            )
+            self.boolean(registry["driftCheck"], f"{path}.registry.driftCheck")
+
+        canary = value["canary"]
+        canary_fields = ("mode", "maximumAgeSeconds", "manualDispatchCounts", "requiredReceipts")
+        if self.closed(canary, f"{path}.canary", canary_fields, canary_fields):
+            if canary["mode"] != "protected-low-risk-pr":
+                self.add(
+                    POLICY,
+                    f"{path}.canary.mode",
+                    "canary must traverse protected publication",
+                )
+            self.integer(
+                canary["maximumAgeSeconds"], f"{path}.canary.maximumAgeSeconds", 60, 604800
+            )
+            self.boolean(canary["manualDispatchCounts"], f"{path}.canary.manualDispatchCounts")
+            self.string_set(
+                canary["requiredReceipts"],
+                f"{path}.canary.requiredReceipts",
+                minimum=1,
+                allowed=REQUIRED_CANARY_RECEIPTS,
+            )
 
     def pipeline_shape(self, value: Any, path: str) -> None:
         fields = ("states", "requiredGates", "onFailure", "onOutOfScope")
         if not self.closed(value, path, fields, fields):
             return
-        states = self.string_set(value["states"], f"{path}.states", minimum=12)
+        states = self.string_set(value["states"], f"{path}.states", minimum=15)
         if states is not None and states != PIPELINE_STATES:
             self.add(
                 CONTINUATION, f"{path}.states", "pipeline states must match the normative order"
             )
         gates = value["requiredGates"]
-        if not isinstance(gates, list) or len(gates) < 5:
-            self.add(SYNTAX, f"{path}.requiredGates", "expected at least five gates")
+        if not isinstance(gates, list) or len(gates) < 9:
+            self.add(SYNTAX, f"{path}.requiredGates", "expected at least nine gates")
         else:
             for index, gate in enumerate(gates):
                 item_path = f"{path}.requiredGates[{index}]"
@@ -557,12 +728,19 @@ class Validator:
                 self.enum(
                     gate["stage"],
                     f"{item_path}.stage",
-                    {"pre-edit", "pre-push", "pre-approval", "pre-merge", "post-merge"},
+                    {
+                        "pre-cycle",
+                        "pre-edit",
+                        "pre-push",
+                        "pre-approval",
+                        "pre-merge",
+                        "post-merge",
+                    },
                 )
                 self.enum(
                     gate["kind"],
                     f"{item_path}.kind",
-                    {"deterministic", "independent-attestation", "read-back"},
+                    {"liveness", "deterministic", "independent-attestation", "read-back"},
                 )
                 self.string(gate["producer"], f"{item_path}.producer", pattern=ID_RE)
                 self.boolean(gate["protected"], f"{item_path}.protected")
@@ -580,7 +758,9 @@ class Validator:
             "bindings",
             "sameRepositoryOnly",
             "recheckBaseBeforeMerge",
-            "autoMerge",
+            "autonomousMerge",
+            "mergeMode",
+            "nativeAutoMerge",
             "directDefaultBranchPush",
             "deleteBranchAfterMerge",
             "postMergeReadBack",
@@ -596,22 +776,27 @@ class Validator:
         )
         self.string_set(value["requiredChecks"], f"{path}.requiredChecks", minimum=1)
         self.string_set(value["bindings"], f"{path}.bindings", minimum=1, allowed=REQUIRED_BINDINGS)
-        for field, expected in (
-            ("sameRepositoryOnly", True),
-            ("recheckBaseBeforeMerge", True),
-            ("autoMerge", True),
-            ("directDefaultBranchPush", False),
-            ("deleteBranchAfterMerge", True),
-            ("postMergeReadBack", True),
+        if value["mergeMode"] != "protected-explicit":
+            self.add(HEAD, f"{path}.mergeMode", "merge must use protected explicit execution")
+        for field in (
+            "sameRepositoryOnly",
+            "recheckBaseBeforeMerge",
+            "autonomousMerge",
+            "nativeAutoMerge",
+            "directDefaultBranchPush",
+            "deleteBranchAfterMerge",
+            "postMergeReadBack",
         ):
-            self.boolean(value[field], f"{path}.{field}", expected)
+            self.boolean(value[field], f"{path}.{field}")
 
     def receipts_shape(self, value: Any, path: str) -> None:
         fields = ("store", "required", "redaction", "retentionDays")
         if not self.closed(value, path, fields, fields):
             return
         self.uri(value["store"], f"{path}.store")
-        self.string_set(value["required"], f"{path}.required", minimum=8, allowed=REQUIRED_RECEIPTS)
+        self.string_set(
+            value["required"], f"{path}.required", minimum=13, allowed=REQUIRED_RECEIPTS
+        )
         if value["redaction"] != "secret-free":
             self.add(RISK, f"{path}.redaction", "receipts must be secret-free")
         self.integer(value["retentionDays"], f"{path}.retentionDays", 30, 3650)
@@ -645,9 +830,9 @@ class Validator:
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.dev/schemas/autonomy-manifest/v1":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v2":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/profile/v1":
+        if doc["schema"] != "wellmanifest.autonomy/profile/v2":
             self.add(SYNTAX, f"{path}.schema", "unknown profile version")
         self.string(doc["id"], f"{path}.id", pattern=ID_RE)
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -685,6 +870,10 @@ class Validator:
         boundaries = doc["protectedBoundaries"]
         fields = (
             "profileDigestExternal",
+            "durableQueueProtected",
+            "watchdogPrincipalIndependent",
+            "registryDigestExternal",
+            "targetOutcomeIsolated",
             "validatorPrincipalIndependent",
             "publisherCredentialProtected",
             "llmVerdictAdvisory",
@@ -701,7 +890,16 @@ class Validator:
         self.enum(
             value["stage"],
             f"{path}.stage",
-            {"observe", "evidence", "plan", "implement", "validate", "publish", "audit"},
+            {
+                "dispatch",
+                "observe",
+                "evidence",
+                "plan",
+                "implement",
+                "validate",
+                "publish",
+                "audit",
+            },
         )
         if not self.string(value["product"], f"{path}.product"):
             return
@@ -713,6 +911,7 @@ class Validator:
             f"{path}.mode",
             {
                 "read-only",
+                "protected-dispatch",
                 "propose-only",
                 "candidate-write",
                 "validate-only",
@@ -892,6 +1091,104 @@ class Validator:
                 f"{path}.queue.oneMutationPerCycle",
                 "a cycle may perform only one mutation",
             )
+        if queue.get("durable") is not True or queue.get("delivery") != "at-least-once":
+            self.add(
+                CONTINUATION,
+                f"{path}.queue",
+                "autonomous continuation requires durable at-least-once delivery",
+            )
+        if set(queue.get("idempotencyBindings", [])) != REQUIRED_IDEMPOTENCY_BINDINGS:
+            self.add(
+                CONTINUATION,
+                f"{path}.queue.idempotencyBindings",
+                "all idempotency bindings are required for replay-safe delivery",
+            )
+        if queue.get("resumeFromCheckpoint") is not True:
+            self.add(
+                CONTINUATION,
+                f"{path}.queue.resumeFromCheckpoint",
+                "continuation must resume from a durable checkpoint",
+            )
+
+        liveness = doc.get("executionLiveness", {})
+        primary = liveness.get("primaryTrigger", {})
+        watchdog = liveness.get("watchdog", {})
+        dispatcher = role_map.get("dispatcher", {})
+        if primary.get("principal") != dispatcher.get("principal"):
+            self.add(
+                SEPARATION,
+                f"{path}.executionLiveness.primaryTrigger.principal",
+                "primary trigger must be controlled by the declared dispatcher principal",
+            )
+        if dispatcher.get("workspaceIsolation") != "protected-service":
+            self.add(
+                SEPARATION,
+                f"{path}.fleet.roles",
+                "dispatcher requires protected-service isolation",
+            )
+        if primary.get("principal") == watchdog.get("principal"):
+            self.add(
+                SEPARATION,
+                f"{path}.executionLiveness.watchdog.principal",
+                "watchdog and primary trigger principals must differ",
+            )
+        for object_name, item, fields in (
+            ("primaryTrigger", primary, ("protected",)),
+            ("watchdog", watchdog, ("protected", "triggerOnSilence")),
+        ):
+            for field in fields:
+                if item.get(field) is not True:
+                    self.add(
+                        BOUNDARY,
+                        f"{path}.executionLiveness.{object_name}.{field}",
+                        "execution trigger boundary must be protected and self-recovering",
+                    )
+        for field, expected in (
+            ("independentPrincipals", True),
+            ("manualDispatchProvesLiveness", False),
+            ("perRepositoryIsolation", True),
+            ("unrelatedFailureBlocksMerge", False),
+            ("aggregateStatusAuthoritative", False),
+        ):
+            if liveness.get(field) is not expected:
+                self.add(
+                    BOUNDARY,
+                    f"{path}.executionLiveness.{field}",
+                    "unsafe execution-liveness boundary",
+                )
+        if liveness.get("missedTriggerStatus") != "degraded":
+            self.add(
+                CONTINUATION,
+                f"{path}.executionLiveness.missedTriggerStatus",
+                "a missed trigger must be visible as degraded status",
+            )
+        registry = liveness.get("registry", {})
+        if set(registry.get("requiredBindings", [])) != REQUIRED_REGISTRY_BINDINGS:
+            self.add(
+                BOUNDARY,
+                f"{path}.executionLiveness.registry.requiredBindings",
+                "protected registry must bind every repository execution decision",
+            )
+        for field in ("protected", "singleSource", "driftCheck"):
+            if registry.get(field) is not True:
+                self.add(
+                    BOUNDARY,
+                    f"{path}.executionLiveness.registry.{field}",
+                    "registry authority must be protected, singular, and drift checked",
+                )
+        canary = liveness.get("canary", {})
+        if canary.get("manualDispatchCounts") is not False:
+            self.add(
+                CONTINUATION,
+                f"{path}.executionLiveness.canary.manualDispatchCounts",
+                "manual dispatch is diagnostic evidence, not a liveness proof",
+            )
+        if set(canary.get("requiredReceipts", [])) != REQUIRED_CANARY_RECEIPTS:
+            self.add(
+                CONTINUATION,
+                f"{path}.executionLiveness.canary.requiredReceipts",
+                "canary must prove the complete protected execution path",
+            )
 
         pipeline = doc.get("pipeline", {})
         gate_ids = {
@@ -929,13 +1226,20 @@ class Validator:
         for field, expected in (
             ("sameRepositoryOnly", True),
             ("recheckBaseBeforeMerge", True),
-            ("autoMerge", True),
+            ("autonomousMerge", True),
+            ("nativeAutoMerge", False),
             ("directDefaultBranchPush", False),
             ("deleteBranchAfterMerge", True),
             ("postMergeReadBack", True),
         ):
             if publication.get(field) is not expected:
                 self.add(HEAD, f"{path}.publication.{field}", "unsafe publication boundary")
+        if publication.get("mergeMode") != "protected-explicit":
+            self.add(
+                HEAD,
+                f"{path}.publication.mergeMode",
+                "native queued auto-merge cannot replace protected exact-head publication",
+            )
 
         if set(doc.get("receipts", {}).get("required", [])) != REQUIRED_RECEIPTS:
             self.add(
@@ -999,6 +1303,7 @@ class Validator:
 
     def profile_semantics(self, doc: dict[str, Any], path: str) -> None:
         expected = {
+            "dispatch": ("dispatcher", "protected-dispatch"),
             "observe": ("observer", "read-only"),
             "evidence": ("observer", "read-only"),
             "plan": ("planner", "propose-only"),
@@ -1129,11 +1434,11 @@ def validate_document(
         validator.add(SYNTAX, path, "expected a JSON object")
         return validator.findings
     schema = document.get("schema")
-    if schema == "wellmanifest.autonomy/manifest/v1":
+    if schema == "wellmanifest.autonomy/manifest/v2":
         before = len(validator.findings)
         if validator.manifest_shape(document, path) and len(validator.findings) == before:
             validator.manifest_semantics(document, path)
-    elif schema == "wellmanifest.autonomy/profile/v1":
+    elif schema == "wellmanifest.autonomy/profile/v2":
         before = len(validator.findings)
         if validator.profile_shape(document, path) and len(validator.findings) == before:
             validator.profile_semantics(document, path)

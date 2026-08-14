@@ -55,3 +55,12 @@ Workspace lifecycle audit
   lifecycle findings in other repositories/worktrees under the shared parent.
 - Those unrelated branches and worktrees were not changed or removed because
   their ownership, reachability, and disposition are outside ticket-001.
+
+2026-08-14 publication readback audit
+- PR #1 merged as d8a4cf459943b80911de3dc4bb2b02933467fbd8.
+- Merge actor: tom-sapletta-com.
+- Validator App reviews: none.
+- Protected repository rulesets: none.
+- Native auto-merge: null.
+- Result: implementation is integrated, but independent publication evidence
+  is absent; ticket moved to BLOCKED instead of manufacturing success.

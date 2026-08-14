@@ -67,6 +67,7 @@ class AutonomyConformanceTests(unittest.TestCase):
             "riskPolicy",
             "budgets",
             "queue",
+            "executionLiveness",
             "pipeline",
             "publication",
             "receipts",
@@ -135,6 +136,56 @@ class AutonomyConformanceTests(unittest.TestCase):
         mutation["continuation"]["stopConditions"].remove("ambiguous-evidence")
         findings = self.codes(mutation)
         self.assertIn(autonomy_check.CONTINUATION, findings)
+
+    def test_manual_dispatch_cannot_prove_trigger_or_canary_liveness(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        mutation["executionLiveness"]["manualDispatchProvesLiveness"] = True
+        mutation["executionLiveness"]["canary"]["manualDispatchCounts"] = True
+        findings = self.codes(mutation)
+        self.assertIn(autonomy_check.POLICY, findings)
+        self.assertIn(autonomy_check.BOUNDARY, findings)
+
+    def test_primary_trigger_and_watchdog_must_be_independent(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        mutation["executionLiveness"]["watchdog"]["principal"] = mutation[
+            "executionLiveness"
+        ]["primaryTrigger"]["principal"]
+        self.assertIn(autonomy_check.SEPARATION, self.codes(mutation))
+
+    def test_queue_is_durable_at_least_once_and_replay_safe(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        mutation["queue"]["durable"] = False
+        mutation["queue"]["delivery"] = "at-most-once"
+        mutation["queue"]["idempotencyBindings"].remove("operation")
+        self.assertIn(autonomy_check.POLICY, self.codes(mutation))
+
+    def test_repository_outcomes_cannot_be_globally_fail_fast(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        mutation["executionLiveness"]["perRepositoryIsolation"] = False
+        mutation["executionLiveness"]["unrelatedFailureBlocksMerge"] = True
+        mutation["executionLiveness"]["aggregateStatusAuthoritative"] = True
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(mutation))
+
+    def test_registry_drift_and_incomplete_bindings_fail_closed(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        mutation["executionLiveness"]["registry"]["driftCheck"] = False
+        mutation["executionLiveness"]["registry"]["requiredBindings"].remove("mergePolicy")
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(mutation))
+
+    def test_native_auto_merge_cannot_replace_explicit_app_merge(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        mutation["publication"]["nativeAutoMerge"] = True
+        mutation["publication"]["mergeMode"] = "platform-native"
+        self.assertIn(autonomy_check.HEAD, self.codes(mutation))
+
+    def test_canary_policy_rejects_stale_or_partial_proof_shape(self) -> None:
+        stale = copy.deepcopy(self.valid)
+        stale["executionLiveness"]["canary"]["maximumAgeSeconds"] = 604801
+        self.assertIn(autonomy_check.SYNTAX, self.codes(stale))
+
+        partial = copy.deepcopy(self.valid)
+        partial["executionLiveness"]["canary"]["requiredReceipts"].remove("branch-cleanup")
+        self.assertIn(autonomy_check.POLICY, self.codes(partial))
 
     def test_profile_digest_is_exact_byte_binding(self) -> None:
         mutation = copy.deepcopy(self.valid)

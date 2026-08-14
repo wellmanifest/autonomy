@@ -1,6 +1,6 @@
 {
-  "$schema": "https://wellmanifest.dev/schemas/autonomy-manifest/v1",
-  "schema": "wellmanifest.autonomy/manifest/v1",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
+  "schema": "wellmanifest.autonomy/manifest/v2",
   "id": "subactor://autonomy/project/example-api",
   "version": "1.0.0",
   "status": "active",
@@ -11,8 +11,8 @@
     "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
-      "version": "0.1.0-dev",
-      "digest": "sha256:255ecc1804784d4d2ca4785adb671a1246445cd56c03241cec26a47637a31e1d"
+      "version": "0.2.0-dev",
+      "digest": "sha256:61f1c0814360f99f267a55dc214c16518c33e8c5441f083ce2a1e269b83625e9"
     }
   },
   "grant": {
@@ -38,6 +38,9 @@
       ],
       "actions": [
         "observe",
+        "trigger-cycle",
+        "claim-cycle",
+        "reconcile-cycle",
         "select-task",
         "propose-plan",
         "create-ticket",
@@ -49,7 +52,6 @@
         "open-pull-request",
         "issue-validator-attestation",
         "approve-via-validator-app",
-        "enable-auto-merge",
         "merge-pull-request",
         "post-merge-read-back",
         "append-audit-receipt"
@@ -76,6 +78,16 @@
         "authorities": ["observe"],
         "forbiddenAuthorities": ["edit-candidate", "merge-pull-request"],
         "workspaceIsolation": "read-only"
+      },
+      {
+        "id": "agent:dispatcher",
+        "role": "dispatcher",
+        "principal": "principal:dispatcher-app",
+        "provider": "subactor/autonom",
+        "model": null,
+        "authorities": ["trigger-cycle", "claim-cycle", "reconcile-cycle"],
+        "forbiddenAuthorities": ["edit-candidate", "approve-via-validator-app", "merge-pull-request"],
+        "workspaceIsolation": "protected-service"
       },
       {
         "id": "agent:planner",
@@ -122,7 +134,6 @@
         "model": null,
         "authorities": [
           "open-pull-request",
-          "enable-auto-merge",
           "merge-pull-request",
           "post-merge-read-back"
         ],
@@ -195,10 +206,75 @@
     "freshnessSeconds": 86400,
     "deduplication": "fingerprint",
     "humanBoundaryLabels": ["human", "autonomy-frontier"],
-    "oneMutationPerCycle": true
+    "oneMutationPerCycle": true,
+    "durable": true,
+    "delivery": "at-least-once",
+    "checkpointStore": "artifact://example/example-api/autonomy-checkpoints",
+    "idempotencyBindings": [
+      "repository",
+      "ticket",
+      "correlationId",
+      "headSha",
+      "operation"
+    ],
+    "deadLetterAfterAttempts": 3,
+    "resumeFromCheckpoint": true
+  },
+  "executionLiveness": {
+    "primaryTrigger": {
+      "id": "trigger:repository-events",
+      "kind": "event",
+      "principal": "principal:dispatcher-app",
+      "protected": true
+    },
+    "watchdog": {
+      "id": "watchdog:autonomy-liveness",
+      "kind": "independent-scheduler",
+      "principal": "principal:watchdog-app",
+      "protected": true,
+      "maxSilenceSeconds": 3600,
+      "triggerOnSilence": true
+    },
+    "independentPrincipals": true,
+    "manualDispatchProvesLiveness": false,
+    "missedTriggerStatus": "degraded",
+    "perRepositoryIsolation": true,
+    "unrelatedFailureBlocksMerge": false,
+    "aggregateStatusAuthoritative": false,
+    "registry": {
+      "source": "artifact://example/autonomy/repository-registry",
+      "digest": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "protected": true,
+      "singleSource": true,
+      "requiredBindings": [
+        "repository",
+        "baseBranch",
+        "requiredChecks",
+        "validatorIdentity",
+        "mergePolicy"
+      ],
+      "driftCheck": true
+    },
+    "canary": {
+      "mode": "protected-low-risk-pr",
+      "maximumAgeSeconds": 86400,
+      "manualDispatchCounts": false,
+      "requiredReceipts": [
+        "trigger-delivery",
+        "queue-claim",
+        "registry-resolution",
+        "deterministic-validation",
+        "independent-validation",
+        "publication",
+        "read-back",
+        "branch-cleanup"
+      ]
+    }
   },
   "pipeline": {
     "states": [
+      "dispatch",
+      "claim",
       "observe",
       "evidence",
       "plan",
@@ -208,11 +284,36 @@
       "independent-validate",
       "publish-pr",
       "exact-head-gate",
-      "auto-merge",
+      "protected-merge",
       "post-merge-verify",
+      "checkpoint",
       "continue"
     ],
     "requiredGates": [
+      {
+        "id": "trigger-liveness",
+        "stage": "pre-cycle",
+        "kind": "liveness",
+        "producer": "controller.watchdog",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "queue-claim",
+        "stage": "pre-cycle",
+        "kind": "deterministic",
+        "producer": "controller.dispatcher",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "registry-consistency",
+        "stage": "pre-cycle",
+        "kind": "deterministic",
+        "producer": "controller.registry",
+        "protected": true,
+        "failClosed": true
+      },
       {
         "id": "grant-active",
         "stage": "pre-edit",
@@ -281,7 +382,9 @@
     ],
     "sameRepositoryOnly": true,
     "recheckBaseBeforeMerge": true,
-    "autoMerge": true,
+    "autonomousMerge": true,
+    "mergeMode": "protected-explicit",
+    "nativeAutoMerge": false,
     "directDefaultBranchPush": false,
     "deleteBranchAfterMerge": true,
     "postMergeReadBack": true
@@ -290,13 +393,18 @@
     "store": "artifact://example/example-api/autonomy-receipts",
     "required": [
       "observation",
+      "trigger-delivery",
+      "queue-claim",
+      "registry-resolution",
       "plan",
       "grant-check",
       "change",
       "deterministic-validation",
       "independent-validation",
       "publication",
-      "read-back"
+      "read-back",
+      "liveness-canary",
+      "branch-cleanup"
     ],
     "redaction": "secret-free",
     "retentionDays": 365
@@ -315,7 +423,10 @@
       "budget-exhausted",
       "retry-exhausted",
       "ambiguous-evidence",
-      "protected-authority-unavailable"
+      "protected-authority-unavailable",
+      "liveness-proof-stale",
+      "registry-drift",
+      "trigger-quorum-unavailable"
     ]
   }
 }

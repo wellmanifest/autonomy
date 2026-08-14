@@ -1,4 +1,4 @@
-# Wellmanifest Autonomy Standard 0.1
+# Wellmanifest Autonomy Standard 0.2
 
 Status: experimental
 
@@ -20,7 +20,7 @@ closed capability catalog, risk ceiling, resource budget, and protected
 publication boundary. It is not general permission for an LLM to execute tools.
 
 The canonical interchange form is JSON conforming to
-`wellmanifest.autonomy/manifest/v1`. Implementations MAY project the same
+`wellmanifest.autonomy/manifest/v2`. Implementations MAY project the same
 semantics into YAML, Protobuf, CQRS messages, AQL/EQL, or URI Process contracts,
 but a projection MUST preserve every authority restriction and immutable
 binding.
@@ -49,7 +49,7 @@ not authority.
 The `grant` object is a standing delegation. When all its conditions hold,
 `noPerPullRequestHumanApproval=true` means that no new human consent is required
 for each qualifying pull request. `allowAutomatedMerge=true` permits a protected
-publisher to enable or perform merge after all required gates pass.
+publisher to perform an explicit merge after all required gates pass.
 
 The grant MUST bind:
 
@@ -74,11 +74,12 @@ an operation after expiry or revocation.
 
 ## 4. Roles and separation of duties
 
-A conforming fleet declares six roles:
+A conforming fleet declares seven roles:
 
 | Role | Purpose | Mutation ceiling |
 |---|---|---|
 | `observer` | Collect runtime, repository, LSP, and intent evidence | Read-only |
+| `dispatcher` | Deliver, claim, checkpoint, and reconcile autonomous cycles | Protected dispatch only |
 | `planner` | Select a runnable task and compile a bounded plan | Proposal only |
 | `implementer` | Edit an isolated branch/worktree and produce a candidate | Candidate branch only |
 | `validator` | Reproduce checks and issue a bound verdict | Attestation/review only |
@@ -93,7 +94,8 @@ names, sessions, or agent labels alone do not establish independence.
 An observer or digital twin MUST NOT mutate. A planner or LLM MUST NOT invent a
 URI, transport, secret reference, capability, or execution policy. An
 implementer MUST NOT approve or merge. A validator MUST NOT edit the candidate.
-A publisher MUST NOT weaken policy or manufacture validator evidence.
+A dispatcher MUST NOT edit, validate, approve, or merge a candidate. A
+publisher MUST NOT weaken policy or manufacture validator evidence.
 
 The protected Validator App MAY provide the trusted approval that replaces a
 human review. Its evidence MUST bind repository, pull request, current head,
@@ -138,7 +140,7 @@ The initial standard requires these excluded effects in every grant:
 - publication through an untrusted dependency or package identity.
 
 An adopter MAY exclude more effects but MUST NOT remove these exclusions while
-claiming conformance to version 0.1. A repository MAY define a separate,
+claiming conformance to version 0.2. A repository MAY define a separate,
 externally issued high-risk profile; that profile is not the default autonomous
 code-development grant.
 
@@ -158,6 +160,12 @@ holder.
 ## 8. Runnable work and continuation
 
 Autonomous continuation uses a durable backlog, not free-form model initiative.
+The queue MUST provide at-least-once delivery, a protected checkpoint store,
+bounded dead-letter attempts, restart from the last checkpoint, and exact
+idempotency bindings for repository, ticket, correlation ID, head SHA, and
+operation. Implementations MUST make effects replay-safe; this standard does
+not promise exactly-once external effects.
+
 The queue MUST expose a deterministic `runnable` decision based on status,
 dependencies, scope ownership, freshness, deduplication, conflict, active
 lease, and human-boundary labels.
@@ -175,38 +183,82 @@ work, failed independent validation, exhausted budget, repeated failure,
 ambiguous evidence, or unavailable protected authority. It MUST record the stop
 condition instead of reporting completion.
 
-## 9. Normative lifecycle
+## 9. Execution liveness and operational proof
+
+Execution correctness, trigger liveness, and end-to-end operational proof are
+separate conformance claims:
+
+- execution correctness means a delivered cycle obeys its contract;
+- trigger liveness means the protected execution plane delivers cycles without
+  a person dispatching them; and
+- operational proof means a fresh low-risk canary traversed the whole protected
+  path and produced every required receipt.
+
+A conforming deployment MUST declare one protected primary trigger and an
+independent protected watchdog under a different principal. The watchdog MUST
+detect silence within `maxSilenceSeconds`, mark the execution plane `degraded`,
+and autonomously enqueue or reconcile a cycle. A manual dispatch MAY diagnose a
+broken path, but MUST NOT count as liveness or canary evidence.
+
+The queue MUST survive controller restarts and missed scheduler delivery.
+Duplicate delivery is expected under at-least-once semantics, so a claim and
+every external effect MUST be idempotent over the declared bindings. Recovery
+MUST resume from a durable checkpoint and MUST NOT silently replay an
+unidentified effect.
+
+Each repository is an independent outcome domain. A target repository that
+passes all its protected gates MAY continue even when an unrelated repository
+in the same scan or matrix fails. An aggregate dashboard or workflow MAY report
+partial failure, but its aggregate status MUST NOT replace the target's own
+authoritative checks or block that target's otherwise conforming merge.
+
+Repository, base branch, required checks, validator identity, and merge policy
+MUST resolve from one protected, digest-bound registry. Generated workflows or
+runtime configuration are projections of that registry. Duplicated hand-edited
+allowlists are non-conforming, and detected drift MUST stop the affected target.
+
+The execution plane MUST continuously produce a fresh
+`protected-low-risk-pr` canary. Its proof includes automatic trigger delivery,
+queue claim, registry resolution, deterministic validation, independent
+validation, protected publication, read-back, and branch cleanup. A stale,
+manual, skipped, or partially executed canary is not operational proof.
+
+## 10. Normative lifecycle
 
 The ordered states are:
 
 ```text
-observe → evidence → plan → grant-check → isolated-edit →
+dispatch → claim → observe → evidence → plan → grant-check → isolated-edit →
 deterministic-validate → independent-validate → publish-pr →
-exact-head-gate → auto-merge → post-merge-verify → continue
+exact-head-gate → protected-merge → post-merge-verify → checkpoint → continue
 ```
 
 Required behavior:
 
-1. **Observe** the target and current base without mutation.
-2. **Evidence** materializes provenance-bound repository, runtime, contract,
+1. **Dispatch** receives a protected event or watchdog recovery signal.
+2. **Claim** acquires one replay-safe queue lease using exact idempotency keys.
+3. **Observe** the target and current base without mutation.
+4. **Evidence** materializes provenance-bound repository, runtime, contract,
    LSP, and intent facts.
-3. **Plan** selects one runnable task and compiles only known capabilities.
-4. **Grant check** validates current scope, risk, lease, kill switch, and
+5. **Plan** selects one runnable task and compiles only known capabilities.
+6. **Grant check** validates current scope, risk, lease, kill switch, and
    budgets.
-5. **Isolated edit** starts from the exact current base in a dedicated branch
+7. **Isolated edit** starts from the exact current base in a dedicated branch
    or worktree without live secrets.
-6. **Deterministic validation** runs trusted, versioned checks.
-7. **Independent validation** replays the candidate under a separate principal
+8. **Deterministic validation** runs trusted, versioned checks.
+9. **Independent validation** replays the candidate under a separate principal
    and issues a verdict bound to the exact head and protected profile digest.
-8. **Publish PR** creates a same-repository pull request with one ticket and
+10. **Publish PR** creates a same-repository pull request with one ticket and
    correlation ID.
-9. **Exact-head gate** freezes the candidate, rechecks current base, required
+11. **Exact-head gate** freezes the candidate, rechecks current base, required
    checks, grant activity, and validator evidence.
-10. **Auto-merge** uses only the protected publisher identity. Direct default
-    branch push is forbidden.
-11. **Post-merge verify** reads back the default branch, deployment or release
+12. **Protected merge** is explicitly performed by the protected publisher
+    identity. Platform-native queued auto-merge and direct default-branch push
+    are forbidden.
+13. **Post-merge verify** reads back the default branch, deployment or release
     result as declared by the task.
-12. **Continue** closes the task only from verified receipts and selects the
+14. **Checkpoint** durably commits the verified outcome and releases the claim.
+15. **Continue** closes the task only from verified receipts and selects the
     next runnable task while the grant remains active.
 
 Any change to the candidate head invalidates prior validation and approval.
@@ -214,9 +266,9 @@ Any change to the base requires re-evaluation against that base. A failed
 read-back opens a deduplicated reaction task or rolls back through an approved
 capability; it does not claim success.
 
-## 10. Publication requirements
+## 11. Publication requirements
 
-Automated merge without per-PR human approval is conforming only when all of the
+Autonomous merge without per-PR human approval is conforming only when all of the
 following are true:
 
 - the pull request originates in the same repository and targets the declared
@@ -231,25 +283,32 @@ following are true:
 - the standing grant is active and the kill switch allows mutation;
 - post-merge read-back and branch cleanup are enabled.
 
+The publisher MUST execute the merge explicitly after the exact-head gate.
+Platform-native auto-merge MUST remain disabled because a queued platform merge
+can occur after the protected controller's authority, base, or evidence becomes
+stale. This restriction does not reduce autonomy: the App-owned publisher
+performs the merge without asking a human once all gates pass.
+
 The publisher MUST perform a read-after-write check. A superseded pull request
 MAY be closed without merge only after proving that its declared successor from
 the same repository was merged. Each controller cycle performs at most one
 mutation.
 
-## 11. Receipts and audit
+## 12. Receipts and audit
 
-Required receipt classes are `observation`, `plan`, `grant-check`, `change`,
-`deterministic-validation`, `independent-validation`, `publication`, and
-`read-back`. Receipts MUST share a correlation ID and contain immutable subject
-bindings. They MUST be secret-free, append-only, retained for the declared
-period, and distinguish attempted, skipped, failed, rolled-back, and completed
-effects.
+Required receipt classes are `observation`, `trigger-delivery`, `queue-claim`,
+`registry-resolution`, `plan`, `grant-check`, `change`,
+`deterministic-validation`, `independent-validation`, `publication`,
+`read-back`, `liveness-canary`, and `branch-cleanup`. Receipts MUST share a
+correlation ID and contain immutable subject bindings. They MUST be secret-free,
+append-only, retained for the declared period, and distinguish attempted,
+skipped, failed, rolled-back, and completed effects.
 
 An approval receipt is authoritative only when produced or verified outside the
 candidate checkout. An agent-written receipt is evidence of a claim, not proof
 of external state.
 
-## 12. Recovery and revocation
+## 13. Recovery and revocation
 
 The deployment MUST expose a protected kill switch whose disabled value causes
 all mutation paths to fail closed while observation remains available. A
@@ -262,7 +321,7 @@ Rollback is a separate allowlisted capability with its own preconditions,
 verification, and receipt. It MUST NOT use force push or history rewrite under
 the default profile.
 
-## 13. Conformance
+## 14. Conformance
 
 A manifest conforms when it:
 
@@ -272,8 +331,15 @@ A manifest conforms when it:
 4. contains all mandatory exclusions, roles, lifecycle states, gates,
    bindings, receipts, and stop conditions;
 5. demonstrates at least one valid routine-code example and invalid examples
-   for self-approval and grant expiry; and
-6. passes the target repository's own governance and deterministic tests.
+   for self-approval and grant expiry;
+6. passes the target repository's own governance and deterministic tests; and
+7. for runtime conformance, exposes a fresh automatic canary receipt set no
+   older than `maximumAgeSeconds` and an independent watchdog recovery test.
+
+Schema and checker success establish static contract conformance only. They do
+not prove trigger delivery, credential separation, scheduler behavior, or a
+real merge. A deployment MUST NOT claim operational conformance without fresh
+runtime receipts from the current protected execution plane.
 
 The Subactor/Semcod profile is informative about concrete product ownership but
 normative when an adopter selects its exact ID, version, and digest.

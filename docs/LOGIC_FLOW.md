@@ -4,7 +4,11 @@
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Observe
+    [*] --> Dispatch
+    Dispatch --> Claim: protected automatic delivery
+    Dispatch --> Degraded: trigger silence
+    Degraded --> Claim: independent watchdog recovery
+    Claim --> Observe: idempotent lease acquired
     Observe --> Evidence
     Evidence --> Plan: fresh runnable candidate
     Evidence --> Waiting: no candidate / unknown
@@ -20,11 +24,12 @@ stateDiagram-v2
     Repair --> Escalated: retry exhausted
     PublishPR --> ExactHeadGate
     ExactHeadGate --> IndependentValidate: head or base changed
-    ExactHeadGate --> AutoMerge: current + trusted approval
-    AutoMerge --> PostMergeVerify
-    PostMergeVerify --> Continue: read-back pass
+    ExactHeadGate --> ProtectedMerge: current + trusted approval
+    ProtectedMerge --> PostMergeVerify
+    PostMergeVerify --> Checkpoint: read-back pass
+    Checkpoint --> Continue: durable outcome
     PostMergeVerify --> Reaction: read-back fail
-    Continue --> Observe: grant active
+    Continue --> Dispatch: grant active
     Continue --> [*]: stop condition
     Waiting --> [*]
     Escalated --> [*]
@@ -35,7 +40,11 @@ stateDiagram-v2
 
 ```text
 AUTONOMOUS_MERGE_ALLOWED =
-  grant.active(now)
+  automatic_trigger_receipt is fresh
+  AND durable_claim is idempotently bound
+  AND protected_registry_digest = resolved_registry_digest
+  AND target_repository_outcome is isolated
+  AND grant.active(now)
   AND kill_switch = enabled_value
   AND repository + branch + paths + actions are in scope
   AND classified_risk <= grant.risk_ceiling
@@ -50,6 +59,7 @@ AUTONOMOUS_MERGE_ALLOWED =
   AND independent_validator = pass
   AND unresolved_critical_findings = 0
   AND implementer != validator != publisher
+  AND native_platform_auto_merge = disabled
 ```
 
 If any operand is false or unknown, merge is denied. Unknown never defaults to
@@ -60,13 +70,20 @@ permission.
 ```mermaid
 sequenceDiagram
     participant C as Controller
+    participant T as Trigger / Watchdog
     participant Q as Queue
+    participant R as Registry
     participant O as Observer
     participant I as Implementer
     participant V as Validator App
     participant G as Git provider
     participant A as Audit
 
+    T->>Q: automatic cycle delivery
+    C->>Q: claim idempotency tuple
+    Q-->>C: durable lease + checkpoint
+    C->>R: resolve repository execution policy
+    R-->>C: digest-bound base/check/validator/merge bindings
     C->>Q: next runnable task
     Q-->>C: task + dependency/scope evidence
     C->>O: observe exact base and intent
@@ -80,7 +97,7 @@ sequenceDiagram
     C->>G: one mutation: merge
     G-->>C: merged SHA
     C->>A: append publication + read-back receipts
-    C->>Q: close only after verified read-back
+    C->>Q: checkpoint and close only after verified read-back
 ```
 
 The next cycle may select the next task. Opening a PR, closing a superseded PR,
@@ -92,6 +109,12 @@ be bundled into the same controller cycle.
 | Condition | Required result |
 |---|---|
 | No fresh runnable item | `waiting` or `no_candidate`; no mutation |
+| Primary trigger is silent | `degraded`; independent watchdog enqueues/reconciles a cycle |
+| Manual dispatch succeeds | diagnostic path evidence only; liveness remains unproven |
+| Duplicate delivery | reuse the idempotency tuple and resume from checkpoint; no duplicate effect |
+| Registry projection drifts | stop the affected repository before claim or publication |
+| Unrelated matrix target fails | preserve aggregate failure visibility; do not block a passing target's own gates |
+| Canary is stale or incomplete | operational conformance is false until a fresh automatic canary completes |
 | Head changes after validation | invalidate approval and validate new head |
 | Base changes before merge | rebuild/rebase through an allowlisted path and revalidate |
 | Grant expires or is revoked | stop mutation, release lease, preserve evidence |
@@ -100,6 +123,7 @@ be bundled into the same controller cycle.
 | Read-back fails | reaction/rollback task; merged task remains unverified |
 | Validator or publisher identity overlaps implementer | critical separation failure |
 | Proposed policy/grant change | excluded effect; external authority required |
+| Native auto-merge is enabled | block publication; require protected explicit App merge |
 
 ## Autonomy evolution
 

@@ -1,8 +1,8 @@
 {
-  "$schema": "https://wellmanifest.dev/schemas/autonomy-manifest/v1",
-  "schema": "wellmanifest.autonomy/profile/v1",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
+  "schema": "wellmanifest.autonomy/profile/v2",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.1.0-dev",
+  "version": "0.2.0-dev",
   "status": "experimental",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
@@ -29,6 +29,26 @@
     ]
   },
   "bindings": [
+    {
+      "stage": "dispatch",
+      "product": "subactor/autonom",
+      "role": "dispatcher",
+      "mode": "protected-dispatch",
+      "capabilities": [
+        "durable-trigger",
+        "queue-claim",
+        "checkpoint-resume",
+        "watchdog-reconcile",
+        "repository-isolation"
+      ],
+      "contracts": ["repo://subactor/autonom/organism.yaml"],
+      "restrictions": [
+        "at-least-once",
+        "idempotency-bound",
+        "manual-dispatch-not-liveness",
+        "registry-digest-required"
+      ]
+    },
     {
       "stage": "observe",
       "product": "subactor/autonom",
@@ -266,6 +286,10 @@
   ],
   "protectedBoundaries": {
     "profileDigestExternal": true,
+    "durableQueueProtected": true,
+    "watchdogPrincipalIndependent": true,
+    "registryDigestExternal": true,
+    "targetOutcomeIsolated": true,
     "validatorPrincipalIndependent": true,
     "publisherCredentialProtected": true,
     "llmVerdictAdvisory": true

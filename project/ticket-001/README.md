@@ -2,8 +2,8 @@
 
 - **ID**: ticket-001
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: BLOCKED
+- **Workflow state**: BLOCKED
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -81,8 +81,10 @@ repositories and adopt this standard.
 
 ## Publication state
 
-Local implementation is complete and validated. The user's request
-authorizes public repository creation, branch push, and pull-request creation.
-The ticket remains `IN_PROGRESS` through exact-head protected checks and
-independent review. Publication PR:
-<https://github.com/wellmanifest/autonomy/pull/1>.
+Local implementation is complete and validated. Publication PR
+<https://github.com/wellmanifest/autonomy/pull/1> was merged, but remote
+readback shows that the merge actor was the repository user, no Validator App
+review exists, and no protected ruleset was active. The ticket is therefore
+`BLOCKED / BLOCKED`; it cannot claim the independent publication required by
+AC-05. A new bounded integration ticket owns the current-head operational
+proof and reliability requirements learned from the live autonomy pilot.
