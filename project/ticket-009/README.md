@@ -2,8 +2,8 @@
 
 - **ID**: ticket-009
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -43,3 +43,15 @@ contract consumer and bind required checks to protected producer provenance.
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Local and hosted governance, schema/checker conformance, self-test, 30 unit
+  tests, compilation, Ruff and diff checks passed on exact head
+  `223960199d4d9564422f0d99b3321865cca376f4`.
+- Validator run `31842212753` completed successfully and App review
+  `4941309883` approved that exact head.
+- The Validator App explicitly merged PR #16 as
+  `7e5988e5d07d9695eb2e610b7bd577d4beb3420b`.
+- Protected `main` read-back returned the same merge commit and the source
+  branch was deleted.

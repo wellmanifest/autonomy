@@ -1,9 +1,9 @@
 # Project roadmap
 
-- [ ] [`ticket-009`](project/ticket-009/README.md) — promote Autonomy 0.5 with
+- [x] [`ticket-009`](project/ticket-009/README.md) — promoted Autonomy 0.5 with
   practice-backed change control for intent checkpoints, moving bases,
-  contract-consumer migrations and authoritative check provenance. State:
-  `IN_PROGRESS / EDIT`.
+  contract-consumer migrations and authoritative check provenance; published
+  through independent exact-head Validator App review and merge.
 - [x] [`ticket-008`](project/ticket-008/README.md) — align root README and
   changelog with stable Autonomy 0.4 and its exact-runtime rollout evidence.
 - [x] [`ticket-007`](project/ticket-007/README.md) — bind effect-capable runtime
