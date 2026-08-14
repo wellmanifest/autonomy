@@ -20,3 +20,9 @@
   and aligned the normative and operational documentation.
 - Added negative regressions and passed every deterministic conformance gate.
 - Advanced the verified revision to independent protected publication.
+
+## [0.7.1] - 2026-08-15
+
+- Recorded exact-head hosted checks, Validator App approval, two stable
+  protected reads, explicit merge and source branch cleanup for PR #24.
+- Closed ticket-013 only from protected `main` read-back.

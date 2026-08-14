@@ -1,10 +1,12 @@
 # Project roadmap
 
-- [ ] [`ticket-013`](project/ticket-013/README.md) — promote Autonomy 0.7 from
+- [x] [`ticket-013`](project/ticket-013/README.md) — promote Autonomy 0.7 from
   live GitHub evidence: partition approval-triggered checks from pre-review
   readiness and model source-branch deletion that platform-couples PR closure.
-  State: `IN_PROGRESS / PUBLICATION`; classification: `BUG / P1 / regression`;
-  workstream: `integration`.
+  State: `DONE / DONE`; classification: `BUG / P1 / regression`; workstream:
+  `integration`. Validator App review `4941897120` approved exact head
+  `f0f07c9d`, merged as `39386e759968bea4ca80514e83249a9b5aadd4d1`
+  after two stable reads, with source branch cleanup.
 - [x] [`ticket-012`](project/ticket-012/README.md) — align root README and
   changelog with stable Autonomy 0.6 and its exact publication evidence.
   State: `DONE / DONE`; classification: `SERVICE / P1 / regression`;

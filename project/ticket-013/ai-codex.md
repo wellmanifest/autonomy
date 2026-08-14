@@ -46,6 +46,10 @@ operator folklore.
   tests, compile, Ruff, governance and whitespace checks.
 - Advanced the verified exact head to `PUBLICATION`; independent Validator App
   review remains the only trusted merge authority.
+- Verified hosted conformance and lifecycle checks, exact-head App review
+  `4941897120`, Validator run `31850486923`, two stable protected reads, merge
+  `39386e759968bea4ca80514e83249a9b5aadd4d1` and source branch deletion.
+- Closed ticket-013 only from the integrated protected-main result.
 
 ## Blockers
 
