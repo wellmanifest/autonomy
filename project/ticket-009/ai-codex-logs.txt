@@ -1,0 +1,29 @@
+2026-08-14 planning
+SESSION_EXECUTION_AUTHORIZATION=RECORDED_FROM_USER_CONTINUATION
+ACCEPTED_BASE_SHA=9960c1238158c49a8755fda1e2a02201faba1683
+PRACTICE_SOURCE=wellmanifest/deployment ticket-002 ticket-003 ticket-004 ticket-005
+OBSERVED_FAILURE_1=container dispatcher bypassed by Compose command override
+OBSERVED_FAILURE_2=hosted CI pinned legacy checker outside container migration
+OBSERVED_FAILURE_3=moved target base invalidated acceptedBaseSha
+OBSERVED_FAILURE_4=force update produced ambiguous duplicate push and PR statuses
+OBSERVED_FAILURE_5=GraphQL budget exhausted while REST read path remained available
+IMPLEMENTATION_FILES_MAX=9
+AFFECTED_COMPONENTS_MAX=3
+PUBLIC_INTERFACE_CHANGES_MAX=3
+RUNTIME_DEPENDENCIES_MAX=0
+2026-08-14 plan-correction
+PLAN_CORRECTION=complexity L is required by three public interface changes
+PLAN_CORRECTION=the governed DSL manifest is the tenth implementation file because its version, schema URIs and artifact digests must migrate atomically
+IMPLEMENTATION_FILES_MAX=10
+PLAN_CORRECTION=map examples/dsl-manifest.json to normative-contract ownership before the implementation commit
+2026-08-14 local-validation
+REMOTE_BASE_SHA=9960c1238158c49a8755fda1e2a02201faba1683
+ACCEPTED_BASE_MATCH=true
+JSON_SCHEMA_DRAFT_2020_12=PASS manifest profile
+AUTONOMY_VALIDATE=PASS manifest profile
+AUTONOMY_SELF_TEST=PASS
+UNIT_TESTS=PASS 30
+COMPILEALL=PASS
+RUFF=PASS
+DIFF_CHECK=PASS
+GOVERNANCE=PASS 0 errors 0 warnings

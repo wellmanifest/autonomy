@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
+  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v3",
   "title": "Wellmanifest Autonomy manifest and runtime profile",
   "oneOf": [
     { "$ref": "#/$defs/manifest" },
@@ -184,13 +184,14 @@
         "queue",
         "executionLiveness",
         "pipeline",
+        "changeControl",
         "publication",
         "receipts",
         "continuation"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v2" },
-        "schema": { "const": "wellmanifest.autonomy/manifest/v2" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v3" },
+        "schema": { "const": "wellmanifest.autonomy/manifest/v3" },
         "id": { "$ref": "#/$defs/uri" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["draft", "active", "suspended", "revoked", "expired"] },
@@ -486,10 +487,10 @@
                 "requiredBindings": {
                   "type": "array",
                   "items": {
-                    "enum": ["repository", "baseBranch", "requiredChecks", "validatorIdentity", "mergePolicy"]
+                    "enum": ["repository", "baseBranch", "requiredChecks", "checkProvenance", "validatorIdentity", "mergePolicy"]
                   },
-                  "minItems": 5,
-                  "maxItems": 5,
+                  "minItems": 6,
+                  "maxItems": 6,
                   "uniqueItems": true
                 },
                 "driftCheck": { "const": true }
@@ -510,6 +511,7 @@
                       "trigger-delivery",
                       "queue-claim",
                       "registry-resolution",
+                      "check-provenance",
                       "deterministic-validation",
                       "independent-validation",
                       "publication",
@@ -517,8 +519,8 @@
                       "branch-cleanup"
                     ]
                   },
-                  "minItems": 8,
-                  "maxItems": 8,
+                  "minItems": 9,
+                  "maxItems": 9,
                   "uniqueItems": true
                 }
               }
@@ -555,11 +557,108 @@
             "requiredGates": {
               "type": "array",
               "items": { "$ref": "#/$defs/gate" },
-              "minItems": 9,
+              "minItems": 12,
               "uniqueItems": true
             },
             "onFailure": { "const": "fail-closed" },
             "onOutOfScope": { "const": "escalate" }
+          }
+        },
+        "changeControl": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "intentHistory",
+            "baseRefresh",
+            "contractMigration",
+            "checkProvenance",
+            "providerReads"
+          ],
+          "properties": {
+            "intentHistory": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["checkpointBeforeImplementation", "immutableScope"],
+              "properties": {
+                "checkpointBeforeImplementation": { "const": true },
+                "immutableScope": { "const": true }
+              }
+            },
+            "baseRefresh": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["acceptedBaseRequired", "revalidateAll", "historyRewrite", "mode"],
+              "properties": {
+                "acceptedBaseRequired": { "const": true },
+                "revalidateAll": { "const": true },
+                "historyRewrite": { "const": false },
+                "mode": { "const": "successor-pull-request" }
+              }
+            },
+            "contractMigration": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "exactVersionAllowlist",
+                "resolveBeforeConsumerExecution",
+                "unknownVersion",
+                "consumerInventoryRequired",
+                "allConsumersMustPass",
+                "requiredSurfaces"
+              ],
+              "properties": {
+                "exactVersionAllowlist": { "const": true },
+                "resolveBeforeConsumerExecution": { "const": true },
+                "unknownVersion": { "const": "fail-closed" },
+                "consumerInventoryRequired": { "const": true },
+                "allConsumersMustPass": { "const": true },
+                "requiredSurfaces": {
+                  "type": "array",
+                  "items": {
+                    "enum": ["local", "container-image", "compose", "hosted-ci", "validator"]
+                  },
+                  "minItems": 5,
+                  "maxItems": 5,
+                  "uniqueItems": true
+                }
+              }
+            },
+            "checkProvenance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "protectedRegistry",
+                "requiredBindings",
+                "authoritativeProducerRequired",
+                "duplicateContextPolicy",
+                "nonAuthoritativeStatusBlocksMerge"
+              ],
+              "properties": {
+                "protectedRegistry": { "const": true },
+                "requiredBindings": {
+                  "type": "array",
+                  "items": {
+                    "enum": ["producer", "event", "repository", "headSha", "checkName"]
+                  },
+                  "minItems": 5,
+                  "maxItems": 5,
+                  "uniqueItems": true
+                },
+                "authoritativeProducerRequired": { "const": true },
+                "duplicateContextPolicy": { "const": "reject-ambiguous" },
+                "nonAuthoritativeStatusBlocksMerge": { "const": false }
+              }
+            },
+            "providerReads": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["boundedRetries", "rateLimitStatus", "fallbackMustPreserveAuthority"],
+              "properties": {
+                "boundedRetries": { "const": true },
+                "rateLimitStatus": { "const": "degraded" },
+                "fallbackMustPreserveAuthority": { "const": true }
+              }
+            }
           }
         },
         "publication": {
@@ -630,6 +729,10 @@
                   "trigger-delivery",
                   "queue-claim",
                   "registry-resolution",
+                  "intent-checkpoint",
+                  "base-refresh",
+                  "contract-migration",
+                  "check-provenance",
                   "plan",
                   "grant-check",
                   "change",
@@ -641,8 +744,8 @@
                   "branch-cleanup"
                 ]
               },
-              "minItems": 13,
-              "maxItems": 13,
+              "minItems": 17,
+              "maxItems": 17,
               "uniqueItems": true
             },
             "redaction": { "const": "secret-free" },
@@ -714,8 +817,8 @@
         "protectedBoundaries"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v2" },
-        "schema": { "const": "wellmanifest.autonomy/profile/v2" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v3" },
+        "schema": { "const": "wellmanifest.autonomy/profile/v3" },
         "id": { "$ref": "#/$defs/id" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["experimental", "stable", "deprecated"] },

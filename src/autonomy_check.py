@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free conformance checker for Wellmanifest Autonomy 0.2."""
+"""Dependency-free conformance checker for Wellmanifest Autonomy 0.5."""
 
 from __future__ import annotations
 
@@ -130,7 +130,10 @@ REQUIRED_GATES = {
     "registry-consistency",
     "grant-active",
     "candidate-scope",
+    "intent-history",
+    "contract-consumers",
     "deterministic-checks",
+    "check-provenance",
     "independent-validator",
     "exact-head-current-base",
     "post-merge-read-back",
@@ -151,6 +154,10 @@ REQUIRED_RECEIPTS = {
     "trigger-delivery",
     "queue-claim",
     "registry-resolution",
+    "intent-checkpoint",
+    "base-refresh",
+    "contract-migration",
+    "check-provenance",
     "plan",
     "grant-check",
     "change",
@@ -172,6 +179,7 @@ REQUIRED_REGISTRY_BINDINGS = {
     "repository",
     "baseBranch",
     "requiredChecks",
+    "checkProvenance",
     "validatorIdentity",
     "mergePolicy",
 }
@@ -179,11 +187,26 @@ REQUIRED_CANARY_RECEIPTS = {
     "trigger-delivery",
     "queue-claim",
     "registry-resolution",
+    "check-provenance",
     "deterministic-validation",
     "independent-validation",
     "publication",
     "read-back",
     "branch-cleanup",
+}
+REQUIRED_CONSUMER_SURFACES = {
+    "local",
+    "container-image",
+    "compose",
+    "hosted-ci",
+    "validator",
+}
+REQUIRED_CHECK_PROVENANCE_BINDINGS = {
+    "producer",
+    "event",
+    "repository",
+    "headSha",
+    "checkName",
 }
 REQUIRED_STOP_CONDITIONS = {
     "grant-revoked",
@@ -353,15 +376,16 @@ class Validator:
             "queue",
             "executionLiveness",
             "pipeline",
+            "changeControl",
             "publication",
             "receipts",
             "continuation",
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v2":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v3":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/manifest/v2":
+        if doc["schema"] != "wellmanifest.autonomy/manifest/v3":
             self.add(SYNTAX, f"{path}.schema", "unknown manifest version")
         self.uri(doc["id"], f"{path}.id")
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -378,6 +402,7 @@ class Validator:
             doc["executionLiveness"], f"{path}.executionLiveness"
         )
         self.pipeline_shape(doc["pipeline"], f"{path}.pipeline")
+        self.change_control_shape(doc["changeControl"], f"{path}.changeControl")
         self.publication_shape(doc["publication"], f"{path}.publication")
         self.receipts_shape(doc["receipts"], f"{path}.receipts")
         self.continuation_shape(doc["continuation"], f"{path}.continuation")
@@ -716,8 +741,8 @@ class Validator:
                 CONTINUATION, f"{path}.states", "pipeline states must match the normative order"
             )
         gates = value["requiredGates"]
-        if not isinstance(gates, list) or len(gates) < 9:
-            self.add(SYNTAX, f"{path}.requiredGates", "expected at least nine gates")
+        if not isinstance(gates, list) or len(gates) < 12:
+            self.add(SYNTAX, f"{path}.requiredGates", "expected at least twelve gates")
         else:
             for index, gate in enumerate(gates):
                 item_path = f"{path}.requiredGates[{index}]"
@@ -749,6 +774,137 @@ class Validator:
             self.add(CONTINUATION, f"{path}.onFailure", "failure must fail closed")
         if value["onOutOfScope"] != "escalate":
             self.add(CONTINUATION, f"{path}.onOutOfScope", "out-of-scope work must escalate")
+
+    def change_control_shape(self, value: Any, path: str) -> None:
+        fields = (
+            "intentHistory",
+            "baseRefresh",
+            "contractMigration",
+            "checkProvenance",
+            "providerReads",
+        )
+        if not self.closed(value, path, fields, fields):
+            return
+
+        intent = value["intentHistory"]
+        intent_fields = ("checkpointBeforeImplementation", "immutableScope")
+        if self.closed(intent, f"{path}.intentHistory", intent_fields, intent_fields):
+            self.boolean(
+                intent["checkpointBeforeImplementation"],
+                f"{path}.intentHistory.checkpointBeforeImplementation",
+                True,
+            )
+            self.boolean(intent["immutableScope"], f"{path}.intentHistory.immutableScope", True)
+
+        refresh = value["baseRefresh"]
+        refresh_fields = ("acceptedBaseRequired", "revalidateAll", "historyRewrite", "mode")
+        if self.closed(refresh, f"{path}.baseRefresh", refresh_fields, refresh_fields):
+            self.boolean(
+                refresh["acceptedBaseRequired"],
+                f"{path}.baseRefresh.acceptedBaseRequired",
+                True,
+            )
+            self.boolean(refresh["revalidateAll"], f"{path}.baseRefresh.revalidateAll", True)
+            self.boolean(refresh["historyRewrite"], f"{path}.baseRefresh.historyRewrite", False)
+            if refresh["mode"] != "successor-pull-request":
+                self.add(
+                    BOUNDARY,
+                    f"{path}.baseRefresh.mode",
+                    "base refresh must publish a successor without rewriting history",
+                )
+
+        migration = value["contractMigration"]
+        migration_fields = (
+            "exactVersionAllowlist",
+            "resolveBeforeConsumerExecution",
+            "unknownVersion",
+            "consumerInventoryRequired",
+            "allConsumersMustPass",
+            "requiredSurfaces",
+        )
+        if self.closed(
+            migration,
+            f"{path}.contractMigration",
+            migration_fields,
+            migration_fields,
+        ):
+            for field in (
+                "exactVersionAllowlist",
+                "resolveBeforeConsumerExecution",
+                "consumerInventoryRequired",
+                "allConsumersMustPass",
+            ):
+                self.boolean(migration[field], f"{path}.contractMigration.{field}", True)
+            if migration["unknownVersion"] != "fail-closed":
+                self.add(
+                    POLICY,
+                    f"{path}.contractMigration.unknownVersion",
+                    "unknown contract versions must fail closed",
+                )
+            self.string_set(
+                migration["requiredSurfaces"],
+                f"{path}.contractMigration.requiredSurfaces",
+                minimum=5,
+                allowed=REQUIRED_CONSUMER_SURFACES,
+            )
+
+        provenance = value["checkProvenance"]
+        provenance_fields = (
+            "protectedRegistry",
+            "requiredBindings",
+            "authoritativeProducerRequired",
+            "duplicateContextPolicy",
+            "nonAuthoritativeStatusBlocksMerge",
+        )
+        if self.closed(
+            provenance,
+            f"{path}.checkProvenance",
+            provenance_fields,
+            provenance_fields,
+        ):
+            self.boolean(
+                provenance["protectedRegistry"],
+                f"{path}.checkProvenance.protectedRegistry",
+                True,
+            )
+            self.string_set(
+                provenance["requiredBindings"],
+                f"{path}.checkProvenance.requiredBindings",
+                minimum=5,
+                allowed=REQUIRED_CHECK_PROVENANCE_BINDINGS,
+            )
+            self.boolean(
+                provenance["authoritativeProducerRequired"],
+                f"{path}.checkProvenance.authoritativeProducerRequired",
+                True,
+            )
+            if provenance["duplicateContextPolicy"] != "reject-ambiguous":
+                self.add(
+                    BOUNDARY,
+                    f"{path}.checkProvenance.duplicateContextPolicy",
+                    "ambiguous duplicate check contexts must fail closed",
+                )
+            self.boolean(
+                provenance["nonAuthoritativeStatusBlocksMerge"],
+                f"{path}.checkProvenance.nonAuthoritativeStatusBlocksMerge",
+                False,
+            )
+
+        reads = value["providerReads"]
+        read_fields = ("boundedRetries", "rateLimitStatus", "fallbackMustPreserveAuthority")
+        if self.closed(reads, f"{path}.providerReads", read_fields, read_fields):
+            self.boolean(reads["boundedRetries"], f"{path}.providerReads.boundedRetries", True)
+            if reads["rateLimitStatus"] != "degraded":
+                self.add(
+                    POLICY,
+                    f"{path}.providerReads.rateLimitStatus",
+                    "rate limiting must produce a degraded outcome",
+                )
+            self.boolean(
+                reads["fallbackMustPreserveAuthority"],
+                f"{path}.providerReads.fallbackMustPreserveAuthority",
+                True,
+            )
 
     def publication_shape(self, value: Any, path: str) -> None:
         fields = (
@@ -795,7 +951,7 @@ class Validator:
             return
         self.uri(value["store"], f"{path}.store")
         self.string_set(
-            value["required"], f"{path}.required", minimum=13, allowed=REQUIRED_RECEIPTS
+            value["required"], f"{path}.required", minimum=17, allowed=REQUIRED_RECEIPTS
         )
         if value["redaction"] != "secret-free":
             self.add(RISK, f"{path}.redaction", "receipts must be secret-free")
@@ -830,9 +986,9 @@ class Validator:
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v2":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v3":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/profile/v2":
+        if doc["schema"] != "wellmanifest.autonomy/profile/v3":
             self.add(SYNTAX, f"{path}.schema", "unknown profile version")
         self.string(doc["id"], f"{path}.id", pattern=ID_RE)
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -1434,11 +1590,11 @@ def validate_document(
         validator.add(SYNTAX, path, "expected a JSON object")
         return validator.findings
     schema = document.get("schema")
-    if schema == "wellmanifest.autonomy/manifest/v2":
+    if schema == "wellmanifest.autonomy/manifest/v3":
         before = len(validator.findings)
         if validator.manifest_shape(document, path) and len(validator.findings) == before:
             validator.manifest_semantics(document, path)
-    elif schema == "wellmanifest.autonomy/profile/v2":
+    elif schema == "wellmanifest.autonomy/profile/v3":
         before = len(validator.findings)
         if validator.profile_shape(document, path) and len(validator.findings) == before:
             validator.profile_semantics(document, path)

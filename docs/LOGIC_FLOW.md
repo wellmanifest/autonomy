@@ -12,7 +12,8 @@ stateDiagram-v2
     Observe --> Evidence
     Evidence --> Plan: fresh runnable candidate
     Evidence --> Waiting: no candidate / unknown
-    Plan --> GrantCheck
+    Plan --> IntentCheckpoint: bounded scope + accepted base
+    IntentCheckpoint --> GrantCheck: committed before implementation
     GrantCheck --> IsolatedEdit: active + in scope + budget
     GrantCheck --> Escalated: expired / revoked / excluded
     IsolatedEdit --> DeterministicValidate
@@ -23,7 +24,9 @@ stateDiagram-v2
     Repair --> IsolatedEdit: retry available
     Repair --> Escalated: retry exhausted
     PublishPR --> ExactHeadGate
-    ExactHeadGate --> IndependentValidate: head or base changed
+    ExactHeadGate --> SuccessorPR: protected base changed
+    SuccessorPR --> IntentCheckpoint: renew base; preserve predecessor
+    ExactHeadGate --> IndependentValidate: candidate head changed
     ExactHeadGate --> ProtectedMerge: current + trusted approval
     ProtectedMerge --> PostMergeVerify
     PostMergeVerify --> Checkpoint: read-back pass
@@ -42,6 +45,10 @@ stateDiagram-v2
 AUTONOMOUS_MERGE_ALLOWED =
   automatic_trigger_receipt is fresh
   AND durable_claim is idempotently bound
+  AND intent_checkpoint precedes implementation
+  AND accepted_base = candidate.intent.accepted_base
+  AND contract_consumers = {local, image, compose, hosted_ci, validator}
+  AND every contract consumer resolved an exact allowlisted version and passed
   AND protected_registry_digest = resolved_registry_digest
   AND target_repository_outcome is isolated
   AND grant.active(now)
@@ -56,6 +63,7 @@ AUTONOMOUS_MERGE_ALLOWED =
   AND policy_digest = protected_policy_digest
   AND profile_digest = protected_profile_digest
   AND deterministic_checks = pass
+  AND required_check_provenance uniquely matches protected registry
   AND independent_validator = pass
   AND unresolved_critical_findings = 0
   AND implementer != validator != publisher
@@ -88,12 +96,14 @@ sequenceDiagram
     Q-->>C: task + dependency/scope evidence
     C->>O: observe exact base and intent
     O-->>C: provenance-bound evidence
+    C->>C: commit intent checkpoint before implementation
+    C->>C: inventory and resolve every contract consumer
     C->>C: compile plan and check standing grant
     C->>I: bounded Process Envelope
     I-->>C: candidate head + tests + receipt
     C->>V: validate exact head under protected profile
     V-->>G: bound trusted review/attestation
-    C->>G: re-read base, head and checks
+    C->>G: re-read base, head and authoritative check provenance
     C->>G: one mutation: merge
     G-->>C: merged SHA
     C->>A: append publication + read-back receipts
@@ -116,7 +126,10 @@ be bundled into the same controller cycle.
 | Unrelated matrix target fails | preserve aggregate failure visibility; do not block a passing target's own gates |
 | Canary is stale or incomplete | operational conformance is false until a fresh automatic canary completes |
 | Head changes after validation | invalidate approval and validate new head |
-| Base changes before merge | rebuild/rebase through an allowlisted path and revalidate |
+| Base changes before merge | preserve the candidate; open a successor PR from a renewed accepted base and revalidate every gate |
+| Contract consumer is missing or resolves an unknown version | fail closed before that consumer executes |
+| Same-named checks have ambiguous provenance | fail closed; do not count aggregate or non-authoritative status |
+| Provider API is rate-limited | `degraded`; bounded fallback only with identical authority and subject bindings |
 | Grant expires or is revoked | stop mutation, release lease, preserve evidence |
 | Budget or retries exhausted | one deduplicated escalation receipt |
 | Required check is missing/unknown | fail closed; never infer success |

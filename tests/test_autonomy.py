@@ -69,6 +69,7 @@ class AutonomyConformanceTests(unittest.TestCase):
             "queue",
             "executionLiveness",
             "pipeline",
+            "changeControl",
             "publication",
             "receipts",
             "continuation",
@@ -172,6 +173,60 @@ class AutonomyConformanceTests(unittest.TestCase):
         mutation["executionLiveness"]["registry"]["requiredBindings"].remove("mergePolicy")
         self.assertIn(autonomy_check.BOUNDARY, self.codes(mutation))
 
+    def test_intent_checkpoint_and_base_refresh_fail_closed(self) -> None:
+        missing_checkpoint = copy.deepcopy(self.valid)
+        missing_checkpoint["changeControl"]["intentHistory"][
+            "checkpointBeforeImplementation"
+        ] = False
+        self.assertIn(autonomy_check.SYNTAX, self.codes(missing_checkpoint))
+
+        rewrite = copy.deepcopy(self.valid)
+        rewrite["changeControl"]["baseRefresh"]["historyRewrite"] = True
+        self.assertIn(autonomy_check.SYNTAX, self.codes(rewrite))
+
+        unsafe_mode = copy.deepcopy(self.valid)
+        unsafe_mode["changeControl"]["baseRefresh"]["mode"] = "force-rebase"
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(unsafe_mode))
+
+    def test_contract_migration_requires_every_consumer_surface(self) -> None:
+        partial = copy.deepcopy(self.valid)
+        partial["changeControl"]["contractMigration"]["requiredSurfaces"].remove(
+            "compose"
+        )
+        self.assertIn(autonomy_check.SYNTAX, self.codes(partial))
+
+        late_resolution = copy.deepcopy(self.valid)
+        late_resolution["changeControl"]["contractMigration"][
+            "resolveBeforeConsumerExecution"
+        ] = False
+        self.assertIn(autonomy_check.SYNTAX, self.codes(late_resolution))
+
+    def test_check_provenance_is_authoritative_and_unambiguous(self) -> None:
+        ambiguous = copy.deepcopy(self.valid)
+        ambiguous["changeControl"]["checkProvenance"][
+            "duplicateContextPolicy"
+        ] = "prefer-success"
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(ambiguous))
+
+        incomplete = copy.deepcopy(self.valid)
+        incomplete["changeControl"]["checkProvenance"]["requiredBindings"].remove(
+            "event"
+        )
+        self.assertIn(autonomy_check.SYNTAX, self.codes(incomplete))
+
+        unsafe_status = copy.deepcopy(self.valid)
+        unsafe_status["changeControl"]["checkProvenance"][
+            "nonAuthoritativeStatusBlocksMerge"
+        ] = True
+        self.assertIn(autonomy_check.SYNTAX, self.codes(unsafe_status))
+
+    def test_provider_read_fallback_preserves_authority(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        mutation["changeControl"]["providerReads"][
+            "fallbackMustPreserveAuthority"
+        ] = False
+        self.assertIn(autonomy_check.SYNTAX, self.codes(mutation))
+
     def test_native_auto_merge_cannot_replace_explicit_app_merge(self) -> None:
         mutation = copy.deepcopy(self.valid)
         mutation["publication"]["nativeAutoMerge"] = True
@@ -201,7 +256,7 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.4.0", self.profile["version"])
+        self.assertEqual("0.5.0", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
         dispatch = next(
             binding
@@ -225,6 +280,9 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "protected-runtime-worktree",
                 "quiesced-rollout",
                 "supervisor-source-isolation",
+                "intent-checkpoint",
+                "contract-consumer-inventory",
+                "provider-read-fallback",
                 "watchdog-reconcile",
             },
             set(dispatch["capabilities"]),
@@ -247,17 +305,28 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn("policy-checkout-isolated", dispatch["restrictions"])
         self.assertIn("rollout-trigger-quiesced", dispatch["restrictions"])
         self.assertIn("rollback-same-boundary", dispatch["restrictions"])
+        self.assertIn("intent-before-implementation", dispatch["restrictions"])
+        self.assertIn("exact-contract-version-allowlist", dispatch["restrictions"])
+        self.assertIn("all-validation-surfaces", dispatch["restrictions"])
+        self.assertIn("bounded-provider-retries", dispatch["restrictions"])
         self.assertLessEqual(
             {
                 "exact-head-app-review",
                 "explicit-app-merge",
                 "merge-sha-read-back",
                 "branch-cleanup",
+                "successor-pr-base-refresh",
+                "authoritative-check-provenance",
                 "durable-publication-checkpoint",
             },
             set(publish["capabilities"]),
         )
         self.assertIn("native-auto-merge-forbidden", publish["restrictions"])
+        self.assertIn("history-rewrite-forbidden", publish["restrictions"])
+        self.assertIn(
+            "ambiguous-check-contexts-fail-closed", publish["restrictions"]
+        )
+        self.assertIn("non-authoritative-status-ignored", publish["restrictions"])
 
     def test_normative_durability_and_receipt_origin_rules_are_published(self) -> None:
         standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
@@ -275,6 +344,11 @@ class AutonomyConformanceTests(unittest.TestCase):
             "quiesce every trigger and wait for or safely terminate",
             "MUST NOT resume an unpinned runtime",
             "requires a fresh automatic cycle bound\nto the new runtime pin",
+            "intent checkpoint MUST precede",
+            "successor pull request",
+            "Compose override",
+            "Duplicate\nsame-named contexts",
+            "bounded provider retries",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):

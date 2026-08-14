@@ -1,8 +1,8 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
-  "schema": "wellmanifest.autonomy/profile/v2",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v3",
+  "schema": "wellmanifest.autonomy/profile/v3",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
@@ -46,6 +46,9 @@
         "protected-runtime-worktree",
         "quiesced-rollout",
         "supervisor-source-isolation",
+        "intent-checkpoint",
+        "contract-consumer-inventory",
+        "provider-read-fallback",
         "watchdog-reconcile",
         "repository-isolation"
       ],
@@ -69,6 +72,10 @@
         "policy-checkout-isolated",
         "rollout-trigger-quiesced",
         "rollback-same-boundary",
+        "intent-before-implementation",
+        "exact-contract-version-allowlist",
+        "all-validation-surfaces",
+        "bounded-provider-retries",
         "manual-dispatch-not-liveness",
         "registry-digest-required"
       ]
@@ -283,6 +290,8 @@
         "explicit-app-merge",
         "merge-sha-read-back",
         "branch-cleanup",
+        "successor-pr-base-refresh",
+        "authoritative-check-provenance",
         "durable-publication-checkpoint"
       ],
       "contracts": [
@@ -295,6 +304,9 @@
         "exact-head",
         "current-base",
         "one-mutation-per-cycle",
+        "history-rewrite-forbidden",
+        "ambiguous-check-contexts-fail-closed",
+        "non-authoritative-status-ignored",
         "validator-identity-from-registry",
         "native-auto-merge-forbidden"
       ]

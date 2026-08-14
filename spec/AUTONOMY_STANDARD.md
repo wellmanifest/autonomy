@@ -1,4 +1,4 @@
-# Wellmanifest Autonomy Standard 0.4
+# Wellmanifest Autonomy Standard 0.5
 
 Status: stable
 
@@ -20,7 +20,7 @@ closed capability catalog, risk ceiling, resource budget, and protected
 publication boundary. It is not general permission for an LLM to execute tools.
 
 The canonical interchange form is JSON conforming to
-`wellmanifest.autonomy/manifest/v2`. Implementations MAY project the same
+`wellmanifest.autonomy/manifest/v3`. Implementations MAY project the same
 semantics into YAML, Protobuf, CQRS messages, AQL/EQL, or URI Process contracts,
 but a projection MUST preserve every authority restriction and immutable
 binding.
@@ -180,7 +180,7 @@ The initial standard requires these excluded effects in every grant:
 - publication through an untrusted dependency or package identity.
 
 An adopter MAY exclude more effects but MUST NOT remove these exclusions while
-claiming conformance to version 0.3. A repository MAY define a separate,
+claiming conformance to version 0.5. A repository MAY define a separate,
 externally issued high-risk profile; that profile is not the default autonomous
 code-development grant.
 
@@ -331,6 +331,40 @@ Any change to the base requires re-evaluation against that base. A failed
 read-back opens a deduplicated reaction task or rolls back through an approved
 capability; it does not claim success.
 
+### 10.1 Practice-backed change control
+
+The intent checkpoint MUST precede the first implementation commit. It binds
+the accepted base, allowed and forbidden paths, budgets, components, public
+interfaces and validation commands. An implementer MUST NOT retroactively
+expand that checkpoint with implementation bytes. A necessary scope correction
+MUST be a distinct intent-only checkpoint before the affected implementation.
+
+When the protected base moves, the controller MUST renew the exact accepted
+base and revalidate every required gate. Under the standing grant it MUST NOT
+force-update or rewrite published candidate history. The controller MUST open a
+successor pull request from the renewed base, preserve the predecessor as audit
+evidence, and close that predecessor only after the successor is verified as
+merged.
+
+A versioned contract migration MUST resolve an exact allowlisted version before
+any consumer executes. Its inventory MUST include every local CLI, container
+image command, Compose override, hosted CI checkout, and independent Validator.
+An unknown contract version or a consumer surface that has not passed the
+migration MUST fail closed. Testing one dispatcher does not prove that an
+overriding command or independently pinned consumer uses that dispatcher.
+
+Every authoritative required check MUST bind its producer, triggering event,
+repository, head SHA, and check name from the protected registry. Duplicate
+same-named contexts without one uniquely matching authoritative identity are
+ambiguous and MUST fail closed. A status explicitly classified as
+non-authoritative MUST NOT replace, approve, or veto the protected result.
+
+Provider rate limiting or partial API failure produces `degraded`, never
+success. An implementation MAY use bounded provider retries and an alternate
+read API only when the fallback preserves the same authority, exact subject,
+and fail-closed decision. API availability does not change which evidence is
+authoritative.
+
 ## 11. Publication requirements
 
 Autonomous merge without per-PR human approval is conforming only when all of the
@@ -362,12 +396,13 @@ mutation.
 ## 12. Receipts and audit
 
 Required receipt classes are `observation`, `trigger-delivery`, `queue-claim`,
-`registry-resolution`, `plan`, `grant-check`, `change`,
-`deterministic-validation`, `independent-validation`, `publication`,
-`read-back`, `liveness-canary`, and `branch-cleanup`. Receipts MUST share a
-correlation ID and contain immutable subject bindings. They MUST be secret-free,
-append-only, retained for the declared period, and distinguish attempted,
-skipped, failed, rolled-back, and completed effects.
+`registry-resolution`, `plan`, `intent-checkpoint`, `grant-check`, `change`,
+`base-refresh`, `contract-migration`, `deterministic-validation`,
+`check-provenance`, `independent-validation`, `publication`, `read-back`,
+`liveness-canary`, and `branch-cleanup`. Receipts MUST share a correlation ID
+and contain immutable subject bindings. They MUST be secret-free, append-only,
+retained for the declared period, and distinguish attempted, skipped, failed,
+rolled-back, and completed effects.
 
 An approval receipt is authoritative only when produced or verified outside the
 candidate checkout. An agent-written receipt is evidence of a claim, not proof
@@ -400,8 +435,8 @@ A manifest conforms when it:
 1. validates against `schemas/autonomy-manifest.schema.json`;
 2. passes `wellmanifest.autonomy-check` with no finding;
 3. pins a valid protected integration profile digest;
-4. contains all mandatory exclusions, roles, lifecycle states, gates,
-   bindings, receipts, and stop conditions;
+4. contains all mandatory exclusions, roles, lifecycle states, change-control
+   rules, gates, bindings, receipts, and stop conditions;
 5. demonstrates at least one valid routine-code example and invalid examples
    for self-approval and grant expiry;
 6. passes the target repository's own governance and deterministic tests; and
