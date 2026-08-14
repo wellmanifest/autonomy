@@ -27,3 +27,7 @@ GOV-PASS: passed (0 errors, 0 warnings)
 
 $ git diff --check
 PASS
+2026-08-14 cross-DSL conformance follow-up
+SESSION_EXECUTION_AUTHORIZATION=RECORDED_FROM_USER_REQUEST
+DSL_FINDING=DSL-COMPAT-001 status and lifecycle.stability must match
+REMEDIATION_SCOPE=examples/dsl-manifest.json within existing ticket-004 intent

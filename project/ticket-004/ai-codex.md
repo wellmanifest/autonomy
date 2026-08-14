@@ -19,6 +19,9 @@ portable requirements without moving runtime ownership into Wellmanifest.
 2. Add the durability/recovery rules learned from the deployed controller.
 3. Bind the selected Subactor profile to its actual protected contracts.
 4. Promote 0.2.0 only after all deterministic and governance gates pass.
+5. Repair the discovered `status=stable` versus
+   `lifecycle.stability=experimental` contradiction and re-run the shared DSL
+   checker before returning to publication.
 
 ## Actual changes
 
@@ -42,6 +45,8 @@ portable requirements without moving runtime ownership into Wellmanifest.
   durable state module, systemd timer and canonical Validator registry.
 - Updated the valid manifest and DSL artifact digests, added conformance tests,
   and promoted the standard, profile and repository version to `0.2.0`.
+- Reopened the matching ticket's edit phase after the cross-DSL audit found an
+  internal stability projection mismatch in its owned manifest.
 - Passed all local deterministic, lint and governance gates; publication is
   pending independent hosted verification and the protected App boundary.
 
