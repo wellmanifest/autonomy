@@ -22,6 +22,13 @@ must be updated through a bounded governance workstream.
 ## Actual changes
 
 - Initialized the bounded ticket and recorded SESSION_EXECUTION_AUTHORIZATION.
+- Updated root README from stable 0.4.0 to 0.5.0 and summarized the four new
+  practice-backed change-control boundaries.
+- Added the 0.5.0 changelog with exact standard head, Validator run, App review
+  and merge evidence from ticket-009.
+- Kept normative, schema, profile, example, source and test artifacts unchanged.
+- Passed governance, checker validation, self-test, 30 tests, compilation, Ruff
+  and diff checks locally.
 
 ## Blockers
 

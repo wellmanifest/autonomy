@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.5.0 - 2026-08-14
+
+- Required a committed intent checkpoint before implementation and an explicit
+  intent-only correction before any affected implementation scope expansion.
+- Standardized moved-base recovery through a successor pull request, complete
+  revalidation and preservation of published candidate history.
+- Required exact version resolution and passing evidence for local CLI,
+  container image, Compose, hosted CI and independent Validator contract
+  consumers; unknown or omitted surfaces fail closed.
+- Bound required-check authority to protected producer, triggering event,
+  repository, exact head SHA and check name; ambiguous duplicate contexts fail
+  closed and non-authoritative status cannot override the protected result.
+- Allowed bounded provider-read fallback only when authority and subject
+  bindings are preserved; rate limiting remains a degraded outcome.
+- Derived the contract from the protected Deployment migration and published
+  exact Autonomy 0.5 head `223960199d4d9564422f0d99b3321865cca376f4`
+  through Validator run `31842212753`, App review `4941309883`, explicit merge
+  `7e5988e5d07d9695eb2e610b7bd577d4beb3420b`, read-back and cleanup.
+
 ## 0.4.0 - 2026-08-14
 
 - Required exact runtime revision/artifact pins; membership in protected

@@ -17,12 +17,12 @@ artifacts.
 
 - [x] AC-01: The ticket binds this update to protected
   `main@950c7be40656b463659a2fd663af14b263da7dcb` before editing root docs.
-- [ ] AC-02: README identifies stable 0.5.0 and concisely explains intent
+- [x] AC-02: README identifies stable 0.5.0 and concisely explains intent
   checkpoints, successor PR base refresh, complete contract consumer
   migration and authoritative check provenance.
-- [ ] AC-03: CHANGELOG records the 0.5 release and exact publication evidence.
-- [ ] AC-04: No normative, schema, profile, example, source or test file changes.
-- [ ] AC-05: Governance and regression checks pass before protected publication.
+- [x] AC-03: CHANGELOG records the 0.5 release and exact publication evidence.
+- [x] AC-04: No normative, schema, profile, example, source or test file changes.
+- [x] AC-05: Governance and regression checks pass before protected publication.
 
 ## Participants
 
