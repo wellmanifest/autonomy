@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.4.0 - 2026-08-14
+
+- Required exact runtime revision/artifact pins; membership in protected
+  history alone is insufficient before loading effect-capable code.
+- Prohibited supervisor configuration and executable paths from resolving
+  through candidate or concurrently mutable development workspaces.
+- Standardized prepare, validate, trigger-quiesce, switch, resume and rollback
+  ordering with fail-stopped behavior and automatic post-rollout proof.
+- Recorded the live linked-unit preflight failure with zero controller effects,
+  protected `814e257` recovery, autonomous `subactor/autonom#17` publication
+  through Validator run `31830719505`, App review `4940318952`, merge
+  `88953aa58a48526caf1134ba40b04d0f39e3ff39` and the successful exact-pinned
+  automatic cycle at `2026-08-14T18:57:40.427Z`.
+- Published the exact 0.4 standard head through Validator run `31831392755`,
+  App review `4940380603`, explicit merge
+  `164a94e25550894e3c7ed468be316ab985219eff`, read-back and cleanup.
+
 ## 0.3.0 - 2026-08-14
 
 - Required runtime code, effect-capable dependencies and authority-policy

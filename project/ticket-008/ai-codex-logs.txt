@@ -1,0 +1,23 @@
+$ ./project/governance-check.sh --actor agent
+- GOV-PASS: passed (0 errors, 0 warnings).
+
+$ python3 -m unittest discover -s tests -v
+- 26 tests PASS.
+
+$ python3 src/autonomy_check.py self-test
+- PASS autonomy self-test.
+
+$ python3 -m compileall -q src tests
+- PASS.
+
+$ python3 -m ruff check src tests
+- All checks passed.
+
+$ git diff --check
+- PASS.
+
+Scope audit:
+- changed root release files: README.md, CHANGELOG.md;
+- changed governance evidence: TODO.md, project/TICKETS.md,
+  project/ticket-008/**;
+- normative/schema/profile/example/source/test changes: none.
