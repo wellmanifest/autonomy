@@ -53,10 +53,15 @@ Validator run `31830719505`; after deployment, the next natural timer cycle at
 published by the independent scheduled Validator target in run `31827270068`
 without a manual dispatch.
 
-Status: stable `0.4.0`. Autonomy 0.4 additionally requires the external
-supervisor to bind an exact runtime revision or artifact digest. Supervisor
-units, executable paths and pin configuration cannot resolve through candidate
-or concurrently mutable development checkouts. Rollout and rollback prepare an
-isolated replacement, quiesce triggers, reject dirty or foreign deployment
-state, switch the source and pin with effects stopped, then require a fresh
-automatic post-rollout cycle.
+Status: stable `0.5.0`. Autonomy 0.5 requires a committed intent checkpoint
+before implementation and treats a moved protected base as a new successor PR,
+not permission to rewrite published candidate history. Every contract migration
+must inventory and pass its local CLI, container image command, Compose
+override, hosted CI checkout and independent Validator against an exact
+allowlisted version before execution.
+
+Required checks are authoritative only when their protected registry binding
+uniquely matches producer, event, repository, exact head SHA and check name.
+Duplicate same-named contexts fail closed; explicitly non-authoritative status
+cannot replace the protected result. Provider API fallback is bounded and may
+continue only when it preserves that same authority and subject binding.
