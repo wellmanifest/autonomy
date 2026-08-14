@@ -14,5 +14,5 @@
 - [ ] [`ticket-004`](project/ticket-004/README.md) — bind the first automatic
   runtime canary, convert its durability gaps into normative requirements and
   promote the practice-backed Subactor/Semcod profile to 0.2.0. State:
-  `IN_PROGRESS / EDIT`; repair the manifest stability projection before
-  returning the candidate to protected publication.
+  `IN_PROGRESS / PUBLICATION`; the manifest stability projection and all
+  local conformance gates pass; candidate awaits protected publication.

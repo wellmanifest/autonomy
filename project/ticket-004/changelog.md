@@ -16,3 +16,5 @@
 - Bound the profile to deployed Subactor controller and Validator registry
   contracts and recorded the hardened follow-up publication.
 - Promoted the standard/profile artifacts to 0.2.0 after all local gates passed.
+- Corrected the DSL profile lifecycle projection so its stability matches the
+  already promoted `stable` status.

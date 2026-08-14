@@ -47,6 +47,9 @@ portable requirements without moving runtime ownership into Wellmanifest.
   and promoted the standard, profile and repository version to `0.2.0`.
 - Reopened the matching ticket's edit phase after the cross-DSL audit found an
   internal stability projection mismatch in its owned manifest.
+- Aligned `lifecycle.stability` with the promoted stable status and passed the
+  shared manifest/standards checks, 26 tests, self-test, compile, Ruff and
+  governance before returning to `PUBLICATION`.
 - Passed all local deterministic, lint and governance gates; publication is
   pending independent hosted verification and the protected App boundary.
 

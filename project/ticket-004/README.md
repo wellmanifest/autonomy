@@ -3,7 +3,7 @@
 - **ID**: ticket-004
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -30,7 +30,7 @@ Subactor/Semcod profile to the actual protected registry and runtime files.
   queue, controller, timer and protected Validator registry contracts.
 - [x] AC-05: Promote repository status to `0.2.0` and pass governance,
   conformance, self-test, compilation and lint checks.
-- [ ] AC-06: Keep the promoted manifest identity internally coherent by
+- [x] AC-06: Keep the promoted manifest identity internally coherent by
   declaring both `status` and `lifecycle.stability` as `stable`, then pass the
   current shared DSL conformance checker.
 
