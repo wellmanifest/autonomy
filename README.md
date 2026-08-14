@@ -53,15 +53,21 @@ Validator run `31830719505`; after deployment, the next natural timer cycle at
 published by the independent scheduled Validator target in run `31827270068`
 without a manual dispatch.
 
-Status: stable `0.5.0`. Autonomy 0.5 requires a committed intent checkpoint
-before implementation and treats a moved protected base as a new successor PR,
-not permission to rewrite published candidate history. Every contract migration
-must inventory and pass its local CLI, container image command, Compose
-override, hosted CI checkout and independent Validator against an exact
-allowlisted version before execution.
+Status: stable `0.6.0`. Autonomy 0.6 requires the protected Validator registry
+to equal the complete effective repository policy, including applicable
+rulesets, branch protection and required workflows. A trusted App approval
+starts a new evidence epoch because it may trigger more checks. The publisher
+must observe two stable protected reads with the same head, base, approval,
+policy and required-check set, with every check in authoritative terminal
+success, before explicit merge.
 
-Required checks are authoritative only when their protected registry binding
-uniquely matches producer, event, repository, exact head SHA and check name.
-Duplicate same-named contexts fail closed; explicitly non-authoritative status
-cannot replace the protected result. Provider API fallback is bounded and may
-continue only when it preserves that same authority and subject binding.
+A bounded retry is allowed only for an unchanged head/base after convergence;
+it cannot reuse stale evidence. Superseded work is deleted without a new human
+prompt only after a lossless receipt proves every unique implementation,
+governance and audit artifact integrated, archived or intentionally retained.
+The proven-equivalent branch is deleted while its PR remains open and the PR is
+closed in a later cycle. Unresolved work keeps both branch and open PR owner.
+
+Autonomy 0.6 retains the 0.5 boundaries: plan-first intent history, successor
+PRs instead of history rewrite, complete contract-consumer migration,
+authoritative check provenance and authority-preserving bounded provider reads.

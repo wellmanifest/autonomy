@@ -23,6 +23,13 @@ without reopening or modifying normative semantics.
 
 - Initialized the bounded ticket and recorded SESSION_EXECUTION_AUTHORIZATION
   from the request to execute this work.
+- Updated only README and CHANGELOG to stable 0.6.0, preserving the separation
+  between governance projection and already merged normative contract.
+- Documented effective-policy equality, the post-approval evidence epoch, two
+  stable reads, bounded same-head retry and lossless delete-before-close branch
+  disposition with exact practice and publication receipts.
+- Passed governance, checker, schema/profile regressions, 32 unit tests,
+  compilation, Ruff, DSL digest validation and diff checks.
 
 ## Blockers
 

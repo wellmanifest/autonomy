@@ -3,7 +3,7 @@
 - **ID**: ticket-012
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -17,12 +17,12 @@ normative, schema, profile, example, source or test artifact.
 
 - [x] AC-01: The user's continuation request authorizes this documentation-only
       update from exact protected `main@e8efa46`.
-- [ ] AC-02: README identifies stable 0.6.0 and explains effective-policy
+- [x] AC-02: README identifies stable 0.6.0 and explains effective-policy
       equality, the post-approval evidence epoch and two stable reads.
-- [ ] AC-03: README explains lossless delete-before-close disposition and open
+- [x] AC-03: README explains lossless delete-before-close disposition and open
       PR ownership for unresolved superseded work.
-- [ ] AC-04: CHANGELOG records Autonomy 0.6 and exact publication evidence.
-- [ ] AC-05: Only README, CHANGELOG and ticket governance paths change; all
+- [x] AC-04: CHANGELOG records Autonomy 0.6 and exact publication evidence.
+- [x] AC-05: Only README, CHANGELOG and ticket governance paths change; all
       deterministic regression gates pass before publication.
 
 ## Participants

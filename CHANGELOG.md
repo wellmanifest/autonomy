@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.6.0 - 2026-08-15
+
+- Required the protected Validator registry to equal the provider's complete
+  effective ruleset, branch-protection, required-workflow and merge policy;
+  stale or partial inventory fails closed.
+- Made trusted approval start a new evidence epoch and required two stable
+  exact-subject reads with authoritative terminal success before merge.
+- Allowed bounded same-head retry only after post-approval convergence; changed
+  head or base starts a new validation epoch.
+- Added lossless superseded-work receipts and standing-policy deletion only for
+  proven-equivalent branches, ordered before PR closure. Unresolved work keeps
+  an open PR as explicit branch owner.
+- Derived the contract from `wellmanifest/logs#8/#9`: premature Validator runs
+  `31843668089` and `31844252756`, converged retries `31843844487` and
+  `31844397273`, plus `GOV-BRANCH-LIFECYCLE-002` after closing a PR while
+  preserving its branch.
+- Published exact Autonomy 0.6 head
+  `2f07112d012463c7b5c9ec008f69ac8ddbe38c4a` through hosted runs
+  `31845381347` and `31845381421`, Validator run `31845403893`, App review
+  `4941554180`, explicit merge
+  `463e6996018a31b1a53f1f1b9ec056585e08ceb1`, read-back and cleanup.
+
 ## 0.5.0 - 2026-08-14
 
 - Required a committed intent checkpoint before implementation and an explicit
