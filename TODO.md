@@ -16,3 +16,6 @@
   promote the practice-backed Subactor/Semcod profile to 0.2.0. Published by
   the scheduled Validator watchdog with exact-head App approval, explicit App
   merge, protected-main read-back and branch cleanup.
+- [ ] [`ticket-005`](project/ticket-005/README.md) — standardize isolated,
+  digest-bound runtime and authority-policy deployment sources with an
+  external fail-closed preflight and zero-mutation drift recovery.

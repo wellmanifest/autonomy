@@ -2,7 +2,7 @@
   "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
   "schema": "wellmanifest.autonomy/profile/v2",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
@@ -41,6 +41,7 @@
         "checkpoint-resume",
         "fsync-checkpoint",
         "canary-recovery",
+        "protected-source-preflight",
         "watchdog-reconcile",
         "repository-isolation"
       ],
@@ -56,6 +57,8 @@
         "lease-exceeds-effect-timeout",
         "checkpoint-before-cleanup",
         "three-attempt-dead-letter",
+        "candidate-checkout-excluded",
+        "policy-checkout-isolated",
         "manual-dispatch-not-liveness",
         "registry-digest-required"
       ]

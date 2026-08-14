@@ -1,0 +1,94 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-005",
+  "summary": "Standardize protected runtime source isolation",
+  "workstream": "integration",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-005/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "spec/AUTONOMY_STANDARD.md",
+    "profiles/subactor-semcod.profile.json",
+    "docs/ARCHITECTURE.md",
+    "examples/valid/project.autonomy.json",
+    "examples/dsl-manifest.json",
+    "tests/test_autonomy.py"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": [],
+  "dependsOn": ["ticket-004"],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "89043d8c7e67466f371f6b149bc977b44735e352",
+    "targetBranch": "main",
+    "outcome": "Autonomy 0.3 prevents the execution plane and authority policy from being loaded from candidate or concurrently mutable development checkouts.",
+    "nonGoals": [
+      "Implement the Subactor runtime inside Wellmanifest",
+      "Delete, reset or rewrite a concurrent developer checkout",
+      "Treat a controller self-check as an independent trust boundary",
+      "Expand autonomous effect authority"
+    ],
+    "complexity": "M",
+    "estimatedMinutes": 25,
+    "budgets": {
+      "maxImplementationFiles": 9,
+      "maxAffectedComponents": 3,
+      "maxPublicInterfaceChanges": 2,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Derive a protected deployment-source boundary from the observed registry drift and its zero-mutation recovery.",
+      "components": [
+        {
+          "name": "normative-contract",
+          "paths": ["VERSION", "spec/AUTONOMY_STANDARD.md", "examples/dsl-manifest.json"]
+        },
+        {
+          "name": "subactor-profile",
+          "paths": ["profiles/subactor-semcod.profile.json"]
+        },
+        {
+          "name": "conformance-evidence",
+          "paths": [
+            "docs/ARCHITECTURE.md",
+            "examples/valid/project.autonomy.json",
+            "tests/test_autonomy.py",
+            "project/ticket-005/**"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "Autonomy 0.3 requires isolated digest-bound runtime and authority-policy deployments",
+        "The selected Subactor profile binds the external systemd source preflight"
+      ],
+      "dataChanges": [
+        "Record immutable zero-mutation registry-drift and protected recovery evidence"
+      ],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert through the protected Validator boundary while retaining the incident and publication receipts."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-05",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m compileall -q src tests",
+          "python3 -m ruff check src tests",
+          "./project/governance-check.sh --actor agent"
+        ],
+        "evidence": "project/ticket-005/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-# Wellmanifest Autonomy Standard 0.2
+# Wellmanifest Autonomy Standard 0.3
 
 Status: stable
 
@@ -43,6 +43,16 @@ Adoption is valid only when the target repository pins:
 The protected controller MUST resolve policy and profile data independently of
 the candidate pull-request checkout. Repository-authored copies are evidence,
 not authority.
+
+The controller executable, its effect-capable dependencies, and protected
+policy, profile, and registry inputs MUST resolve from immutable deployment
+artifacts or isolated deployment checkouts bound to protected revisions and
+digests. They MUST NOT be loaded from a workspace used for candidate or
+concurrent development. Before each cycle, a supervisor outside the loaded
+controller code MUST fail closed when the deployment checkout is dirty or its
+revision is not contained in the protected deployment ref. A policy rollout
+MUST update the isolated pin and record its digest without rewriting or
+discarding concurrent developer state.
 
 ## 3. Standing autonomy grant
 
@@ -140,7 +150,7 @@ The initial standard requires these excluded effects in every grant:
 - publication through an untrusted dependency or package identity.
 
 An adopter MAY exclude more effects but MUST NOT remove these exclusions while
-claiming conformance to version 0.2. A repository MAY define a separate,
+claiming conformance to version 0.3. A repository MAY define a separate,
 externally issued high-risk profile; that profile is not the default autonomous
 code-development grant.
 
@@ -211,6 +221,12 @@ independent protected watchdog under a different principal. The watchdog MUST
 detect silence within `maxSilenceSeconds`, mark the execution plane `degraded`,
 and autonomously enqueue or reconcile a cycle. A manual dispatch MAY diagnose a
 broken path, but MUST NOT count as liveness or canary evidence.
+
+Trigger liveness does not override source integrity. A delivered cycle whose
+runtime or authority-policy preflight fails MUST perform zero external
+mutations, record the degraded condition, and wait for a protected deployment
+rollout or watchdog reconciliation; it MUST NOT silently accept bytes from a
+shared development checkout.
 
 The queue MUST survive controller restarts and missed scheduler delivery.
 Duplicate delivery is expected under at-least-once semantics, so a claim and
