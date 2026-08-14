@@ -3,7 +3,7 @@
 - **ID**: ticket-003
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -15,9 +15,9 @@ ticket-002.
 
 ## Acceptance criteria
 
-- [ ] AC-01: `standards / autonomy conformance` runs unit tests, the checker
+- [x] AC-01: `standards / autonomy conformance` runs unit tests, the checker
   self-test and bytecode compilation for pull requests and `main`.
-- [ ] AC-02: Local governance and deterministic conformance checks pass.
+- [x] AC-02: Local governance and deterministic conformance checks pass.
 - [ ] AC-03: An active ruleset requires current-head governance, conformance
   and one approval from someone other than the last pusher.
 - [ ] AC-04: The Validator App is onboarded with the same exact required-check

@@ -26,6 +26,10 @@ check name.
 
 - Initialized the bounded ticket and recorded SESSION_EXECUTION_AUTHORIZATION
   from the request to execute this work.
+- Added a least-privilege hosted workflow with pinned GitHub Actions revisions.
+- Bound the stable check name `standards / autonomy conformance` to unit tests,
+  the checker self-test and bytecode compilation.
+- Verified 16 baseline tests, self-test, compilation and governance locally.
 
 ## Blockers
 
