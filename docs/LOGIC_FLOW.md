@@ -120,10 +120,11 @@ sequenceDiagram
 ```
 
 The next cycle may select the next task. Opening a PR, deleting a proven
-equivalent superseded branch, closing its PR, merging, rolling back, or changing
-a ticket are separate mutations and must not be bundled into the same
-controller cycle. Disposal deletes the proven-equivalent branch while its PR is
-still open; only a later cycle closes that PR. Unresolved work keeps both.
+equivalent superseded branch, explicitly closing a still-open PR, merging,
+rolling back, or changing a ticket are separate requested mutations. A provider
+may couple PR closure to the branch-delete operation; that is recorded as one
+provider effect only after complete read-back, never treated as permission to
+bundle another request. Unresolved work keeps both branch and open PR.
 
 ## Failure handling
 
@@ -141,9 +142,10 @@ still open; only a later cycle closes that PR. Unresolved work keeps both.
 | Base changes before merge | preserve the candidate; open a successor PR from a renewed accepted base and revalidate every gate |
 | Contract consumer is missing or resolves an unknown version | fail closed before that consumer executes |
 | Same-named checks have ambiguous provenance | fail closed; do not count aggregate or non-authoritative status |
-| Approval triggers a new required check | start a new evidence epoch; wait for two stable reads and terminal success before merge |
+| Approval-triggered check is absent before review | defer only that circular check; require all non-circular checks to pass before approval |
+| Approval triggers a new required check | require a fresh attempt after the approval timestamp, then two stable terminal-success reads before merge |
 | First merge attempt precedes policy convergence | bounded retry is allowed only for unchanged head/base after convergence |
-| Superseded branch has complete lossless proof | delete branch before closing the still-open predecessor PR; read back each mutation |
+| Superseded branch has complete integrated lossless proof | request deletion while PR is open; read back branch absence, closed/unmerged state and preserved archive head; explicitly close later only if still open |
 | Superseded branch has unresolved unique content | preserve branch and keep predecessor PR open as owner |
 | Provider API is rate-limited | `degraded`; bounded fallback only with identical authority and subject bindings |
 | Grant expires or is revoked | stop mutation, release lease, preserve evidence |

@@ -32,6 +32,18 @@ operator folklore.
 - Read the protected Autonomy 0.6 contract and bound this plan to the exact
   logs PR #11/#12 publication and PR #10 disposal evidence.
 - No implementation file is changed by this plan commit.
+- Promoted the schema, manifest, profile, DSL metadata and conformance checker
+  to v5 / stable 0.7.0.
+- Added a closed pre-approval policy that requires every non-circular check to
+  pass, defers only approval-triggered checks, and requires their fresh attempt
+  after the exact approval timestamp.
+- Added explicit-later and provider-coupled close modes. Both require an
+  integrated lossless receipt; coupled close additionally requires read-back of
+  branch absence, closed/unmerged PR state and the preserved archive head.
+- Updated the Subactor/Semcod profile, normative spec, architecture and logic
+  flow, plus negative regressions for incomplete or unsafe projections.
+- Passed JSON Schema Draft 2020-12 validation, conformance, self-test, 32 unit
+  tests, compile, Ruff, governance and whitespace checks.
 
 ## Blockers
 

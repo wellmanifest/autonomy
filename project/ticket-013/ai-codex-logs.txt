@@ -19,3 +19,22 @@
     Deleting the source branch at 2026-08-14T23:18:40Z immediately closed PR
     #10 as unmerged. No explicit close request was sent. refs/pull/10/head
     remained bound to the predecessor; comment 5299102421 stores read-back.
+
+[3] Deterministic validation
+    ./project/governance-check.sh --actor agent
+      GOV-PASS: passed (0 errors, 0 warnings)
+    python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json
+      PASS examples/valid/project.autonomy.json
+      PASS profiles/subactor-semcod.profile.json
+    python3 src/autonomy_check.py self-test
+      PASS autonomy self-test
+    python3 -m unittest discover -s tests -v
+      Ran 32 tests; OK
+    python3 -m compileall -q src tests
+      PASS
+    ruff check src tests
+      All checks passed
+    jsonschema.Draft202012Validator.check_schema + both valid documents
+      JSON-SCHEMA-PASS
+    git diff --check
+      PASS

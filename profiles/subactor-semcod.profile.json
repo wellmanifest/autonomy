@@ -1,8 +1,8 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
-  "schema": "wellmanifest.autonomy/profile/v4",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
+  "schema": "wellmanifest.autonomy/profile/v5",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
@@ -293,7 +293,9 @@
         "successor-pr-base-refresh",
         "authoritative-check-provenance",
         "effective-policy-discovery",
+        "pre-approval-check-partition",
         "post-approval-check-convergence",
+        "provider-coupled-pr-closure",
         "lossless-superseded-branch-disposition",
         "durable-publication-checkpoint"
       ],
@@ -311,9 +313,12 @@
         "ambiguous-check-contexts-fail-closed",
         "non-authoritative-status-ignored",
         "registry-drift-fails-closed",
+        "approval-triggered-checks-deferred-before-review",
         "approval-starts-new-evidence-epoch",
+        "post-approval-attempt-required",
         "two-stable-policy-reads-before-merge",
-        "delete-proven-equivalent-branch-before-close",
+        "delete-proven-equivalent-branch-after-integrated-proof",
+        "provider-coupled-close-read-back",
         "unresolved-superseded-pr-remains-open",
         "validator-identity-from-registry",
         "native-auto-merge-forbidden"

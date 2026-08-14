@@ -1,6 +1,6 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
-  "schema": "wellmanifest.autonomy/manifest/v4",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
+  "schema": "wellmanifest.autonomy/manifest/v5",
   "id": "subactor://autonomy/project/example-api",
   "version": "1.0.0",
   "status": "active",
@@ -11,8 +11,8 @@
     "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
-      "version": "0.6.0",
-      "digest": "sha256:9470c705748d757ab8eb47a730ff5eed686568991e1a59938e94949d425d7f05"
+      "version": "0.7.0",
+      "digest": "sha256:6a0a8930d7d15421e88524b26ddd38d7ed0e2dcb4b69a779e6943fc748c458fb"
     }
   },
   "grant": {
@@ -437,8 +437,11 @@
     "publicationConvergence": {
       "effectivePolicySourceProtected": true,
       "registryMustMatchEffectivePolicy": true,
+      "preApprovalCheckPolicy": "terminal-success-non-circular",
+      "approvalTriggeredChecksDeferred": true,
       "approvalStartsNewEpoch": true,
       "postApprovalChecksRequired": true,
+      "postApprovalAttemptRequired": true,
       "terminalSuccessRequired": true,
       "minimumStableReads": 2,
       "boundedSameHeadRetry": true,
@@ -468,7 +471,18 @@
         "receiptDigest"
       ],
       "uniqueDataPolicy": "preserve",
-      "equivalentBranchDisposition": "delete-before-close",
+      "equivalentBranchDisposition": "delete-after-lossless-proof",
+      "closureEffect": {
+        "allowedModes": ["explicit-later", "provider-coupled"],
+        "providerCoupledEffectIsSingleMutation": true,
+        "explicitCloseOnlyWhenStillOpen": true,
+        "requiredReadBack": [
+          "branchAbsent",
+          "pullRequestClosed",
+          "pullRequestUnmerged",
+          "archiveHeadPreserved"
+        ]
+      },
       "unresolvedBranchDisposition": "keep-pull-request-open",
       "standingPolicyAuthorizesProvenDeletion": true,
       "postDispositionReadBack": true

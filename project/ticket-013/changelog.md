@@ -7,3 +7,15 @@
 - Recorded the exact circular-preflight and GitHub platform-coupled closure
   evidence that requires the v5/0.7 contract revision. No implementation file
   changed.
+
+## [0.7.0] - 2026-08-15
+
+- Added a closed pre-approval check partition and mandatory fresh
+  post-approval attempt for approval-triggered checks.
+- Replaced the impossible universal delete-before-later-close sequence with
+  explicit-later and verified provider-coupled closure modes.
+- Required integrated lossless proof and complete branch/PR/archive read-back
+  for either disposal path.
+- Promoted schema, profile, examples, checker and DSL metadata to v5 / 0.7.0
+  and aligned the normative and operational documentation.
+- Added negative regressions and passed every deterministic conformance gate.

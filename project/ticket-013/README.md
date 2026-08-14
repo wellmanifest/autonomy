@@ -3,7 +3,7 @@
 - **ID**: ticket-013
 - **Owner**: agent:codex
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: VALIDATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -34,16 +34,16 @@ standard is published.
 - [x] AC-01: The user's autonomous continuation authorizes this bounded
       practice-backed revision from protected `main@2d08d74`, ten
       implementation files, three components and no runtime dependency.
-- [ ] AC-02: Manifest/profile v5 distinguish pre-approval non-circular checks
+- [x] AC-02: Manifest/profile v5 distinguish pre-approval non-circular checks
       from approval-triggered checks and require a new post-approval attempt.
-- [ ] AC-03: Manifest/profile v5 model explicit later close and immediate
+- [x] AC-03: Manifest/profile v5 model explicit later close and immediate
       platform-coupled close without weakening lossless proof or read-back.
-- [ ] AC-04: The checker rejects waiting for circular checks before approval,
+- [x] AC-04: The checker rejects waiting for circular checks before approval,
       reusing pre-approval attempts, unproved deletion and unverified coupled
       closure/archive state.
-- [ ] AC-05: Spec, schema, profile, examples and operational documentation
+- [x] AC-05: Spec, schema, profile, examples and operational documentation
       align at stable version `0.7.0`.
-- [ ] AC-06: Governance, conformance, self-tests, unit tests, compile and Ruff
+- [x] AC-06: Governance, conformance, self-tests, unit tests, compile and Ruff
       all pass before publication.
 
 ## Practice evidence

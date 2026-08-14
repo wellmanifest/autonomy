@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free conformance checker for Wellmanifest Autonomy 0.6."""
+"""Dependency-free conformance checker for Wellmanifest Autonomy 0.7."""
 
 from __future__ import annotations
 
@@ -233,6 +233,13 @@ REQUIRED_SUPERSESSION_BINDINGS = {
     "contentDisposition",
     "receiptDigest",
 }
+SUPERSESSION_CLOSURE_MODES = {"explicit-later", "provider-coupled"}
+PROVIDER_COUPLED_READ_BACKS = {
+    "branchAbsent",
+    "pullRequestClosed",
+    "pullRequestUnmerged",
+    "archiveHeadPreserved",
+}
 REQUIRED_STOP_CONDITIONS = {
     "grant-revoked",
     "grant-expired",
@@ -408,9 +415,9 @@ class Validator:
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v4":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v5":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/manifest/v4":
+        if doc["schema"] != "wellmanifest.autonomy/manifest/v5":
             self.add(SYNTAX, f"{path}.schema", "unknown manifest version")
         self.uri(doc["id"], f"{path}.id")
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -921,8 +928,11 @@ class Validator:
         convergence_fields = (
             "effectivePolicySourceProtected",
             "registryMustMatchEffectivePolicy",
+            "preApprovalCheckPolicy",
+            "approvalTriggeredChecksDeferred",
             "approvalStartsNewEpoch",
             "postApprovalChecksRequired",
+            "postApprovalAttemptRequired",
             "terminalSuccessRequired",
             "minimumStableReads",
             "boundedSameHeadRetry",
@@ -937,8 +947,10 @@ class Validator:
             for field in (
                 "effectivePolicySourceProtected",
                 "registryMustMatchEffectivePolicy",
+                "approvalTriggeredChecksDeferred",
                 "approvalStartsNewEpoch",
                 "postApprovalChecksRequired",
+                "postApprovalAttemptRequired",
                 "terminalSuccessRequired",
                 "boundedSameHeadRetry",
             ):
@@ -946,6 +958,12 @@ class Validator:
                     convergence[field],
                     f"{path}.publicationConvergence.{field}",
                     True,
+                )
+            if convergence["preApprovalCheckPolicy"] != "terminal-success-non-circular":
+                self.add(
+                    BOUNDARY,
+                    f"{path}.publicationConvergence.preApprovalCheckPolicy",
+                    "pre-approval readiness must defer only approval-triggered checks",
                 )
             self.integer(
                 convergence["minimumStableReads"],
@@ -974,6 +992,7 @@ class Validator:
             "requiredBindings",
             "uniqueDataPolicy",
             "equivalentBranchDisposition",
+            "closureEffect",
             "unresolvedBranchDisposition",
             "standingPolicyAuthorizesProvenDeletion",
             "postDispositionReadBack",
@@ -1010,7 +1029,7 @@ class Validator:
                 )
             expected_dispositions = (
                 ("uniqueDataPolicy", "preserve"),
-                ("equivalentBranchDisposition", "delete-before-close"),
+                ("equivalentBranchDisposition", "delete-after-lossless-proof"),
                 ("unresolvedBranchDisposition", "keep-pull-request-open"),
             )
             for field, expected in expected_dispositions:
@@ -1019,6 +1038,53 @@ class Validator:
                         BOUNDARY,
                         f"{path}.supersededWork.{field}",
                         f"expected {expected}",
+                    )
+            closure = superseded["closureEffect"]
+            closure_fields = (
+                "allowedModes",
+                "providerCoupledEffectIsSingleMutation",
+                "explicitCloseOnlyWhenStillOpen",
+                "requiredReadBack",
+            )
+            if self.closed(
+                closure,
+                f"{path}.supersededWork.closureEffect",
+                closure_fields,
+                closure_fields,
+            ):
+                modes = self.string_set(
+                    closure["allowedModes"],
+                    f"{path}.supersededWork.closureEffect.allowedModes",
+                    minimum=2,
+                    allowed=SUPERSESSION_CLOSURE_MODES,
+                )
+                if modes is not None and set(modes) != SUPERSESSION_CLOSURE_MODES:
+                    self.add(
+                        BOUNDARY,
+                        f"{path}.supersededWork.closureEffect.allowedModes",
+                        "both explicit-later and provider-coupled close must be modeled",
+                    )
+                for field in (
+                    "providerCoupledEffectIsSingleMutation",
+                    "explicitCloseOnlyWhenStillOpen",
+                ):
+                    self.boolean(
+                        closure[field],
+                        f"{path}.supersededWork.closureEffect.{field}",
+                        True,
+                    )
+                read_back = self.string_set(
+                    closure["requiredReadBack"],
+                    f"{path}.supersededWork.closureEffect.requiredReadBack",
+                    minimum=4,
+                    allowed=PROVIDER_COUPLED_READ_BACKS,
+                )
+                if read_back is not None and set(read_back) != PROVIDER_COUPLED_READ_BACKS:
+                    self.add(
+                        BOUNDARY,
+                        f"{path}.supersededWork.closureEffect.requiredReadBack",
+                        "provider-coupled closure must preserve branch, PR, "
+                        "merge, and archive evidence",
                     )
 
         reads = value["providerReads"]
@@ -1117,9 +1183,9 @@ class Validator:
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v4":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v5":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/profile/v4":
+        if doc["schema"] != "wellmanifest.autonomy/profile/v5":
             self.add(SYNTAX, f"{path}.schema", "unknown profile version")
         self.string(doc["id"], f"{path}.id", pattern=ID_RE)
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -1724,11 +1790,11 @@ def validate_document(
         validator.add(SYNTAX, path, "expected a JSON object")
         return validator.findings
     schema = document.get("schema")
-    if schema == "wellmanifest.autonomy/manifest/v4":
+    if schema == "wellmanifest.autonomy/manifest/v5":
         before = len(validator.findings)
         if validator.manifest_shape(document, path) and len(validator.findings) == before:
             validator.manifest_semantics(document, path)
-    elif schema == "wellmanifest.autonomy/profile/v4":
+    elif schema == "wellmanifest.autonomy/profile/v5":
         before = len(validator.findings)
         if validator.profile_shape(document, path) and len(validator.findings) == before:
             validator.profile_semantics(document, path)
