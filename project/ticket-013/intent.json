@@ -1,0 +1,120 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-013",
+  "summary": "Model platform-coupled superseded PR closure and approval-triggered preflight",
+  "workstream": "integration",
+  "classification": {
+    "kind": "BUG",
+    "priority": "P1",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-013/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "spec/AUTONOMY_STANDARD.md",
+    "schemas/autonomy-manifest.schema.json",
+    "profiles/subactor-semcod.profile.json",
+    "examples/valid/project.autonomy.json",
+    "examples/dsl-manifest.json",
+    "src/autonomy_check.py",
+    "tests/test_autonomy.py",
+    "docs/ARCHITECTURE.md",
+    "docs/LOGIC_FLOW.md"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    ".github/**",
+    "AGENTS.md",
+    "README.md",
+    "CHANGELOG.md",
+    "examples/invalid/**",
+    "pyproject.toml"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "2d08d74a562277432bb0ac748b298298297db6bb",
+    "targetBranch": "main",
+    "outcome": "Publish Autonomy 0.7 with approval-triggered preflight partitioning and provider-coupled superseded PR closure",
+    "nonGoals": [
+      "Modify the Validator runtime or target GitHub workflows in this standard ticket",
+      "Permit circular checks to be skipped after approval",
+      "Permit deletion before protected path-complete archival proof",
+      "Treat arbitrary bundled mutations as a provider-coupled effect",
+      "Update root README or CHANGELOG in the integration workstream"
+    ],
+    "complexity": "L",
+    "estimatedMinutes": 30,
+    "budgets": {
+      "maxImplementationFiles": 10,
+      "maxAffectedComponents": 3,
+      "maxPublicInterfaceChanges": 3,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Promote closed manifest/profile v5 contracts from live GitHub preflight and branch-disposal evidence without weakening post-approval convergence or lossless retention",
+      "components": [
+        {
+          "name": "normative-contract",
+          "paths": [
+            "VERSION",
+            "spec/**",
+            "schemas/**",
+            "examples/valid/**",
+            "examples/dsl-manifest.json"
+          ]
+        },
+        {
+          "name": "conformance",
+          "paths": [
+            "src/**",
+            "tests/**"
+          ]
+        },
+        {
+          "name": "integration-guidance",
+          "paths": [
+            "profiles/**",
+            "docs/**"
+          ]
+        }
+      ],
+      "responsibilityChanges": true,
+      "interfaceChanges": [
+        "manifest v5 requires a pre-approval check partition and fresh post-approval attempts",
+        "manifest v5 models verified provider-coupled pull-request closure",
+        "profile v5 advertises both closed operational capabilities"
+      ],
+      "dataChanges": [
+        "manifest and profile v4 to v5 migration"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert before adoption; 0.6/v4 remains historical but cannot claim the practice-backed 0.7 behavior."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-06",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests"
+        ],
+        "evidence": "project/ticket-013/ai-codex-logs.txt"
+      }
+    ]
+  }
+}
