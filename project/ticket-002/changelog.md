@@ -14,3 +14,10 @@
 - Required automatic end-to-end canary receipts and explicit App-owned merge.
 - Upgraded the public manifest/profile contract to v2 and expanded conformance
   tests from 16 to 23.
+
+## [0.2.1] - 2026-08-14
+
+- Published Autonomy 0.2 through exact-head hosted checks, independent
+  Validator App approval and explicit protected merge.
+- Recorded protected-main readback and branch cleanup without treating the
+  manual publication dispatch as scheduler or canary liveness evidence.

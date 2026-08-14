@@ -64,3 +64,16 @@ Workspace lifecycle audit
 - Native auto-merge: null.
 - Result: implementation is integrated, but independent publication evidence
   is absent; ticket moved to BLOCKED instead of manufacturing success.
+
+2026-08-14 successor publication closure
+- Active default-branch ruleset: `main-autonomy-protection` (`20858297`).
+- Current standard PR #2 exact head:
+  `837e9b4b0898ddd3a697aa60d59958ba4dc16e66`.
+- Required hosted checks: governance PASS; Autonomy conformance PASS.
+- Independent Validator App review: APPROVED on the exact head.
+- Validator run: `31818074059`, PASS.
+- Explicit App merge:
+  `462525b5241d8f7ebd25f848764bf3b8464c0fbf`; branch removed; protected-main
+  readback confirms Autonomy 0.2.
+- Scope of proof: protected current-head publication and cleanup. A manual
+  dispatch is not scheduler/watchdog/canary liveness proof under Autonomy 0.2.
