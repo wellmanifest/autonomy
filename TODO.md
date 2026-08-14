@@ -1,6 +1,6 @@
 # Project roadmap
 
-- [ ] [`ticket-007`](project/ticket-007/README.md) — bind effect-capable runtime
+- [x] [`ticket-007`](project/ticket-007/README.md) — bind effect-capable runtime
   and supervisor configuration to an isolated exact revision; require
   quiesced rollout/rollback and a fresh automatic post-rollout proof.
 - [x] [`ticket-001`](project/ticket-001/README.md) — initial autonomy standard

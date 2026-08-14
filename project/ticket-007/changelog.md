@@ -14,3 +14,8 @@
 - Defined fail-stopped, trigger-quiesced rollout and rollback ordering.
 - Bound the selected profile and immutable examples to the deployed Subactor
   runtime contracts and live post-rollout evidence.
+
+## [0.4.1] - 2026-08-14
+
+- Closed the ticket after exact-head hosted checks, Validator App approval,
+  explicit merge, protected-main read-back and source branch cleanup.

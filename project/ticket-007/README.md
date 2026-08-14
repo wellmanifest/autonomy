@@ -2,8 +2,8 @@
 
 - **ID**: ticket-007
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -34,8 +34,16 @@ new pin with a fresh automatic cycle.
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
 
-## Publication state
+## Publication evidence
 
-- Local semantic, DSL, unit, self-test, compile, lint and governance gates pass.
-- Exact-head Validator App approval, protected merge, read-back and branch
-  cleanup remain pending; the ticket stays `IN_PROGRESS / PUBLICATION`.
+- Local and hosted semantic, DSL, unit, self-test, compile, lint and governance
+  gates passed on exact head `b86e7566c15484a0acc8c35029df8a9660f2416c`.
+- Validator run `31831392755` completed successfully and App review
+  `4940380603` approved that exact head.
+- The Validator App explicitly merged PR #12 as
+  `164a94e25550894e3c7ed468be316ab985219eff`.
+- Protected `main` read-back returned the same merge commit and the source
+  branch was deleted.
+- This direct publication followed independent scheduled liveness and the
+  automatic Subactor post-rollout proof; it is publication evidence, not a new
+  liveness canary.
