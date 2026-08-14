@@ -3,7 +3,7 @@
 - **ID**: ticket-006
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -15,11 +15,11 @@ changing normative artifacts.
 
 ## Acceptance criteria
 
-- [ ] AC-01: README identifies stable 0.3.0 and links the normative standard,
+- [x] AC-01: README identifies stable 0.3.0 and links the normative standard,
   schema, profile, architecture and conformance CLI as current entry points.
-- [ ] AC-02: Changelog records 0.2 practice-backed durability and 0.3 protected
+- [x] AC-02: Changelog records 0.2 practice-backed durability and 0.3 protected
   deployment-source integrity with exact protected publication references.
-- [ ] AC-03: Governance, existing unit tests and diff checks pass without any
+- [x] AC-03: Governance, existing unit tests and diff checks pass without any
   normative or executable artifact change.
 
 ## Participants

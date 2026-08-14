@@ -25,6 +25,12 @@ governance slice can align the public landing page without mixing semantics.
   from the request to execute this work.
 - Declared a dependency on completed ticket-005 and excluded all normative,
   profile, schema and executable paths.
+- Updated README from the stale 0.1 development description to stable 0.3.0,
+  current entry points and the operational-proof boundary.
+- Added 0.2 and 0.3 changelog records with exact scheduled and direct protected
+  publication identifiers while preserving the original Unreleased history.
+- Passed governance, 26 tests, self-test, compilation, Ruff and diff checks;
+  protected publication remains.
 
 ## Blockers
 
