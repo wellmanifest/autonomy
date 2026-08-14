@@ -9,3 +9,8 @@
 
 - Aligned root README and CHANGELOG with stable Autonomy 0.5 and its immutable
   protected publication evidence.
+
+## [0.5.1] - 2026-08-14
+
+- Closed the root-documentation ticket after exact-head Validator App
+  approval, explicit merge, protected-main read-back and branch cleanup.

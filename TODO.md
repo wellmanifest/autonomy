@@ -1,8 +1,8 @@
 # Project roadmap
 
-- [ ] [`ticket-010`](project/ticket-010/README.md) — align root README and
+- [x] [`ticket-010`](project/ticket-010/README.md) — aligned root README and
   changelog with stable Autonomy 0.5 and its practice-backed change-control
-  publication evidence. State: `IN_PROGRESS / EDIT`.
+  publication evidence through independent exact-head App review and merge.
 - [x] [`ticket-009`](project/ticket-009/README.md) — promoted Autonomy 0.5 with
   practice-backed change control for intent checkpoints, moving bases,
   contract-consumer migrations and authoritative check provenance; published

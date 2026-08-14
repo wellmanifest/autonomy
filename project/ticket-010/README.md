@@ -2,8 +2,8 @@
 
 - **ID**: ticket-010
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -28,3 +28,14 @@ artifacts.
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Hosted governance and conformance passed on exact head
+  `221f6d462e0cefb6bf9192f63fe9ffefa3ef58ec`.
+- Validator run `31842774889` completed successfully and App review
+  `4941349920` approved that exact head.
+- The Validator App explicitly merged PR #18 as
+  `577fc3fe4bccd0c6b5ec0ab5f4bfb300e8ce8cec`.
+- Protected `main` read-back returned the same merge commit and the source
+  branch was deleted.
