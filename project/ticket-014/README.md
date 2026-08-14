@@ -3,7 +3,7 @@
 - **ID**: ticket-014
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -17,12 +17,12 @@ without changing normative, executable or integration artifacts.
 
 - [x] AC-01: The user's continuation request authorizes this documentation-only
       update from exact protected `main@310fafeb`.
-- [ ] AC-02: README identifies stable 0.7.0 and distinguishes pre-approval
+- [x] AC-02: README identifies stable 0.7.0 and distinguishes pre-approval
       readiness from fresh post-approval convergence.
-- [ ] AC-03: README models both explicit-later and provider-coupled closure
+- [x] AC-03: README models both explicit-later and provider-coupled closure
       without weakening lossless archival or exact read-back.
-- [ ] AC-04: CHANGELOG records Autonomy 0.7 and exact publication evidence.
-- [ ] AC-05: Only README, CHANGELOG and ticket governance paths change; all
+- [x] AC-04: CHANGELOG records Autonomy 0.7 and exact publication evidence.
+- [x] AC-05: Only README, CHANGELOG and ticket governance paths change; all
       deterministic regression gates pass before publication.
 
 ## Participants

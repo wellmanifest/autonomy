@@ -26,9 +26,19 @@ contract as the source of truth.
   from the request to execute this work.
 - Bound the documentation-only plan to protected `main@310fafeb` and kept all
   normative, executable, workflow and governance-package paths forbidden.
+- Updated README and CHANGELOG to stable 0.7, including the exact practice and
+  protected publication evidence behind both new rules.
+- Passed governance, schema/conformance, self-test, 32 unit tests, compile,
+  Ruff, JSON Schema validation and whitespace checks.
+- Advanced the verified candidate to `PUBLICATION`; trusted review and merge
+  remain exclusively owned by the independent Validator App.
 
 ## Blockers
 
 - None inside the recorded intent; proceed without a second confirmation.
 - New authority remains required for destructive action, secret access, new
   external coordination, material objective expansion and trusted merge.
+- The external Wellmanifest DSL checker reports stale artifact digests already
+  present on protected 0.7 main. It is outside this documentation-only scope
+  and requires a separate plan-first integration ticket; core Autonomy gates
+  remain green.

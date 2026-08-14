@@ -5,3 +5,27 @@
     Workstream: governance
     Implementation scope: README.md, CHANGELOG.md
     Normative and executable surfaces: forbidden
+
+[2] Deterministic validation
+    ./project/governance-check.sh --actor agent
+      GOV-PASS: passed (0 errors, 0 warnings)
+    python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json
+      PASS both documents
+    python3 src/autonomy_check.py self-test
+      PASS autonomy self-test
+    python3 -m unittest discover -s tests -v
+      Ran 32 tests; OK
+    python3 -m compileall -q src tests
+      PASS
+    ruff check src tests
+      All checks passed
+    jsonschema Draft 2020-12 schema check + both valid documents
+      JSON-SCHEMA-PASS
+    git diff --check
+      PASS
+
+[3] Separate-scope finding
+    The external wellmanifest/dsl checker reports DSL-HASH-001 for seven
+    artifact digests already stale on protected main. The root-doc ticket does
+    not modify examples/dsl-manifest.json or its bound artifacts. Repair is
+    reserved for a new plan-first integration ticket after this publication.
