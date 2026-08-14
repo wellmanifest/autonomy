@@ -1,9 +1,11 @@
 # Project roadmap
 
-- [ ] [`ticket-012`](project/ticket-012/README.md) — align root README and
+- [x] [`ticket-012`](project/ticket-012/README.md) — align root README and
   changelog with stable Autonomy 0.6 and its exact publication evidence.
-  State: `IN_PROGRESS / PUBLICATION`; classification: `SERVICE / P1 / regression`;
+  State: `DONE / DONE`; classification: `SERVICE / P1 / regression`;
   workstream: `governance`.
+  Validator App review `4941595392` approved exact head `0a82aef6`, merged as
+  `4d2257e98aa881ddd8eba9e14207e22d6c395d63` with branch cleanup.
 - [x] [`ticket-011`](project/ticket-011/README.md) — require effective policy
   inventory, post-approval exact-head check convergence and lossless
   disposition of superseded branches without orphan state. State:

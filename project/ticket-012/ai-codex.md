@@ -30,9 +30,14 @@ without reopening or modifying normative semantics.
   disposition with exact practice and publication receipts.
 - Passed governance, checker, schema/profile regressions, 32 unit tests,
   compilation, Ruff, DSL digest validation and diff checks.
+- Observed hosted conformance and lifecycle checks, Validator run
+  `31845983228`, exact-head App review `4941595392`, explicit merge
+  `4d2257e98aa881ddd8eba9e14207e22d6c395d63`, protected-main read-back and
+  source branch deletion.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
+- None. The stable 0.6 root projection is merged; this governance-only
+  successor records terminal state and publication receipts.
 - New authority remains required for destructive action, secret access, new
   external coordination, material objective expansion and trusted merge.
