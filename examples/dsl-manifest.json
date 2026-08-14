@@ -3,7 +3,7 @@
   "schema": "wellmanifest.dsl/manifest/v1",
   "id": "wellmanifest.autonomy",
   "name": "Wellmanifest Autonomy Standard",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "status": "stable",
   "purpose": "Durable, independently watched autonomous software-development continuation without per-pull-request human approval",
   "domain": "autonomous-development",
@@ -46,27 +46,27 @@
     {
       "path": "schemas/autonomy-manifest.schema.json",
       "role": "normative-source",
-      "digest": "sha256:534d25f06bb77ea89cfc0e7b84d190ff793489a04191d02c0ea8981619e110d1"
+      "digest": "sha256:4ee49d873b1f4c48dc2ee87f78915c82b491bdf35ebf54efdba5167883a2362c"
     },
     {
       "path": "spec/AUTONOMY_STANDARD.md",
       "role": "documentation",
-      "digest": "sha256:b367d806412ab7c53dca9f499d5629d1fc40b4e42e0d238dd31f2a9f5721efaf"
+      "digest": "sha256:21889e38f1fbb6748c295ee79d1093fd8e213bd8f6c6773967b53a69add8b5f2"
     },
     {
       "path": "profiles/subactor-semcod.profile.json",
       "role": "profile",
-      "digest": "sha256:9470c705748d757ab8eb47a730ff5eed686568991e1a59938e94949d425d7f05"
+      "digest": "sha256:55aca1af0489f8f2c081bb1e8d262d359526481b66703a813f685dbb57c496ec"
     },
     {
       "path": "src/autonomy_check.py",
       "role": "parser-contract",
-      "digest": "sha256:2fa9f9762249834cf9a29ebcaa08b75425c0a068bfb6bd4fb5679b30c65acb13"
+      "digest": "sha256:0459b0f695695abcfd7bc8fc9309eb62d2e76e4af9822dd065d0e589f95ccb67"
     },
     {
       "path": "examples/valid/project.autonomy.json",
       "role": "example",
-      "digest": "sha256:40d68a7e84e99cdd396a5ec768911e35b9dc7f56e422b4a566cd4af9e0a140c9"
+      "digest": "sha256:e4a6fb7491130d1aeaf8905c111503a41fe44c7bb3f20896a58ef126bfd065f3"
     },
     {
       "path": "examples/invalid/self-approval.autonomy.json",
@@ -81,12 +81,12 @@
     {
       "path": "docs/ARCHITECTURE.md",
       "role": "documentation",
-      "digest": "sha256:fff95066b94f931f85acb6aba6af9d6a3371e5ae6172c4c7cf34a1c0d682b1e9"
+      "digest": "sha256:bde10241e37f8116f77a5dc1910351b1b3c8412a2da6473a5751ad8f0aa854d6"
     },
     {
       "path": "docs/LOGIC_FLOW.md",
       "role": "documentation",
-      "digest": "sha256:eb6dbc51ae95edd1ff2451a97fda4888d3f1ac4bb3ad3f07f91aa0616863783c"
+      "digest": "sha256:c9388afbd70772e5fd25c88b1c5af25d01350737f58b87f2fb7e9cf173e7d973"
     },
     {
       "path": "docs/ERROR/AUTONOMY-SYNTAX-001.md",

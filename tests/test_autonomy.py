@@ -329,7 +329,7 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.7.0", self.profile["version"])
+        self.assertEqual("0.7.1", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
         dispatch = next(
             binding

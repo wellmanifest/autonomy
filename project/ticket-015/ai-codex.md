@@ -30,6 +30,13 @@ selection and tests.
 - Reproduced seven `DSL-HASH-001` errors on protected
   `main@ff11f5952738e6862be81aaaa742f2a8d2551cdb` and kept root release docs,
   semantics, workflows and governance package outside this ticket.
+- Advanced the stable release/profile binding to 0.7.1, refreshed the exact
+  selected-profile digest and replaced all seven stale DSL artifact digests.
+- Passed governance, both Autonomy documents, self-test, 32 unit tests,
+  compile, Ruff, Draft 2020-12 validation, external DSL validation and
+  whitespace checks.
+- Verified that exactly the five declared implementation files changed and
+  advanced the exact candidate to `PUBLICATION` for independent App review.
 
 ## Blockers
 

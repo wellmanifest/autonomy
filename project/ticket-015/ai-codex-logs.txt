@@ -6,3 +6,32 @@
       DSL-HASH-001: 7 stale artifact digests
       DSL-FAIL: failed (7 errors)
     Core Autonomy checker/schema/test gates remained green.
+
+[2] Repaired exact bindings
+    profile SHA-256:
+      55aca1af0489f8f2c081bb1e8d262d359526481b66703a813f685dbb57c496ec
+    selected example SHA-256:
+      e4a6fb7491130d1aeaf8905c111503a41fe44c7bb3f20896a58ef126bfd065f3
+    All twelve declared artifact digests now equal their exact candidate bytes.
+
+[3] Deterministic validation
+    ./project/governance-check.sh --actor agent
+      GOV-PASS: passed (0 errors, 0 warnings)
+    python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json
+      PASS both documents
+    python3 src/autonomy_check.py self-test
+      PASS autonomy self-test
+    python3 -m unittest discover -s tests -v
+      Ran 32 tests; OK
+    python3 -m compileall -q src tests
+      PASS
+    ruff check src tests
+      All checks passed
+    jsonschema Draft 2020-12 schema check + both valid documents
+      JSON-SCHEMA-PASS
+    python3 ../../dsl/src/dsl_check.py validate examples/dsl-manifest.json
+      DSL-PASS: passed (0 errors)
+    git diff --check
+      PASS
+    implementation file count
+      exactly 5 declared files
