@@ -62,6 +62,9 @@ implementation begins.
   Wellmanifest.
 - Added a closed JSON Schema, examples, safe mutation overlays, deterministic
   validator, 16 tests, controlled-effects DSL manifest, and architecture docs.
+- Published the governed baseline to the public `wellmanifest/autonomy`
+  repository, pushed the ticket branch, enabled branch deletion after merge,
+  and opened pull request 1.
 
 ## Risks
 

@@ -84,4 +84,5 @@ repositories and adopt this standard.
 Local implementation is complete and validated. The user's request
 authorizes public repository creation, branch push, and pull-request creation.
 The ticket remains `IN_PROGRESS` through exact-head protected checks and
-independent review.
+independent review. Publication PR:
+<https://github.com/wellmanifest/autonomy/pull/1>.

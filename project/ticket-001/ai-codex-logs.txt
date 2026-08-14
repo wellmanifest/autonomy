@@ -38,3 +38,12 @@ Budget evidence
 - Affected components: 3/5.
 - Public interface files: 3/3.
 - Runtime dependencies: 0/0.
+
+Publication evidence
+- Public repository: https://github.com/wellmanifest/autonomy
+- Remote main baseline: 1ec9553e186d98e6682201e3824b503325409385.
+- Initial implementation head: 4050e77bfe5dea7f380dac733e3e4de82861f8a7.
+- Pull request: https://github.com/wellmanifest/autonomy/pull/1
+- Remote repository policy: delete_branch_on_merge=true.
+- The ticket remains IN_PROGRESS / PUBLICATION pending protected current-head
+  checks and independent trusted approval.
