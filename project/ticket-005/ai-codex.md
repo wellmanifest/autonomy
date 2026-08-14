@@ -41,10 +41,11 @@ a self-check in candidate-controlled code with a trust boundary.
   commits, detached protected registry recovery, App merge/checkpoint and
   subsequent successful preflight cycle.
 - Passed every declared deterministic, DSL, lint and governance gate;
-  independent hosted publication remains.
+  independent hosted publication completed on the same exact head.
+- Observed Validator run `31828176479`, exact-head App review `4940097631`,
+  explicit App merge `d45d0d2aa31af45a23ea712e9a6be9e99a01b087`,
+  protected-main read-back and source branch cleanup.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
-- New authority remains required for destructive action, secret access, new
-  external coordination, material objective expansion and trusted merge.
+- None. The bounded 0.3 standard and its protected publication are complete.

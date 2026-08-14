@@ -15,3 +15,8 @@
   developer state for audit.
 - Bound the Subactor profile and immutable architecture evidence to the live
   systemd preflight and detached registry recovery.
+
+## [0.3.1] - 2026-08-14
+
+- Closed the ticket after exact-head hosted checks, Validator App approval,
+  explicit merge, protected-main read-back and source branch cleanup.
