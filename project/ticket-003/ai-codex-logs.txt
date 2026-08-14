@@ -1,0 +1,7 @@
+2026-08-14 hosted conformance validation
+
+- `python3 -m unittest discover -s tests -v`: 16 tests PASS.
+- `python3 src/autonomy_check.py self-test`: PASS.
+- `python3 -m compileall -q src tests`: PASS.
+- `./project/governance-check.sh --actor agent`: GOV-PASS, 0 errors and 0 warnings.
+- `git diff --check`: PASS.

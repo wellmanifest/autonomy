@@ -1,0 +1,81 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-003",
+  "summary": "Onboard protected autonomy conformance",
+  "workstream": "infrastructure",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P0",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-003/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    ".github/workflows/standard-conformance.yml"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    "spec/**",
+    "schemas/**",
+    "profiles/**",
+    "examples/**",
+    "src/**",
+    "tests/**",
+    ".governance/**"
+  ],
+  "stacks": ["python"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "d8a4cf459943b80911de3dc4bb2b02933467fbd8",
+    "targetBranch": "main",
+    "outcome": "A protected hosted autonomy conformance check consumable by the independent Validator App.",
+    "nonGoals": [
+      "Change autonomy semantics",
+      "Grant the implementing actor review or merge authority",
+      "Enable native GitHub auto-merge"
+    ],
+    "complexity": "XS",
+    "estimatedMinutes": 10,
+    "budgets": {
+      "maxImplementationFiles": 1,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Run the dependency-free standard suite as a protected exact-head hosted check.",
+      "components": [
+        {
+          "name": "hosted-conformance",
+          "paths": [".github/workflows/standard-conformance.yml"]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the workflow commit through the same protected publication boundary."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-01",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m compileall -q src tests"
+        ],
+        "evidence": "project/ticket-003/ai-codex-logs.txt"
+      },
+      {
+        "criterion": "AC-02",
+        "commands": ["./project/governance-check.sh --actor agent"],
+        "evidence": "project/ticket-003/ai-codex-logs.txt"
+      }
+    ]
+  }
+}
