@@ -3,7 +3,7 @@
   "schema": "wellmanifest.dsl/manifest/v1",
   "id": "wellmanifest.autonomy",
   "name": "Wellmanifest Autonomy Standard",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "stable",
   "purpose": "Durable, independently watched autonomous software-development continuation without per-pull-request human approval",
   "domain": "autonomous-development",
@@ -23,7 +23,7 @@
   "source": {
     "repository": "wellmanifest/autonomy",
     "path": "schemas/autonomy-manifest.schema.json",
-    "declaredVersion": "3",
+    "declaredVersion": "4",
     "canonical": "json-ast",
     "mediaType": "application/schema+json",
     "selectors": [
@@ -46,27 +46,27 @@
     {
       "path": "schemas/autonomy-manifest.schema.json",
       "role": "normative-source",
-      "digest": "sha256:e0ef97d4d6f1407c1f3d4bf2474db1df98c219428e0ed8b9bce6695c283d56c3"
+      "digest": "sha256:534d25f06bb77ea89cfc0e7b84d190ff793489a04191d02c0ea8981619e110d1"
     },
     {
       "path": "spec/AUTONOMY_STANDARD.md",
       "role": "documentation",
-      "digest": "sha256:2c737657db17027ec43928e03e4191992441566a21a7f38656fade0e186ce64d"
+      "digest": "sha256:b367d806412ab7c53dca9f499d5629d1fc40b4e42e0d238dd31f2a9f5721efaf"
     },
     {
       "path": "profiles/subactor-semcod.profile.json",
       "role": "profile",
-      "digest": "sha256:b5b5ab9657c742db4bcf082551bcfc365f43b13cb67a6d1acab3c0352538ff03"
+      "digest": "sha256:9470c705748d757ab8eb47a730ff5eed686568991e1a59938e94949d425d7f05"
     },
     {
       "path": "src/autonomy_check.py",
       "role": "parser-contract",
-      "digest": "sha256:ce0c8482e66348f98cfe50b04f906a63a28f0097ce1c82d8965e3d61ed33b9fa"
+      "digest": "sha256:2fa9f9762249834cf9a29ebcaa08b75425c0a068bfb6bd4fb5679b30c65acb13"
     },
     {
       "path": "examples/valid/project.autonomy.json",
       "role": "example",
-      "digest": "sha256:9207adffaa7fa2d4f5cc7da3e409c4859a1f8902eb84fc877bc26b95817ac7d6"
+      "digest": "sha256:40d68a7e84e99cdd396a5ec768911e35b9dc7f56e422b4a566cd4af9e0a140c9"
     },
     {
       "path": "examples/invalid/self-approval.autonomy.json",
@@ -81,12 +81,12 @@
     {
       "path": "docs/ARCHITECTURE.md",
       "role": "documentation",
-      "digest": "sha256:8db18bd1043cf1f5dfd38cc8c987c0c51e913d2c5426c68b943561a5d5246401"
+      "digest": "sha256:fff95066b94f931f85acb6aba6af9d6a3371e5ae6172c4c7cf34a1c0d682b1e9"
     },
     {
       "path": "docs/LOGIC_FLOW.md",
       "role": "documentation",
-      "digest": "sha256:1fc9e722fd4f404d25bc7abb58a560577dea2e2d61bd7be071b89605bb128797"
+      "digest": "sha256:eb6dbc51ae95edd1ff2451a97fda4888d3f1ac4bb3ad3f07f91aa0616863783c"
     },
     {
       "path": "docs/ERROR/AUTONOMY-SYNTAX-001.md",
@@ -144,16 +144,16 @@
   "semantics": {
     "effectModel": "controlled-effects",
     "unknownPolicy": "reject",
-    "authoritySchema": "https://wellmanifest.com/schemas/autonomy-manifest/v3#/$defs/manifest"
+    "authoritySchema": "https://wellmanifest.com/schemas/autonomy-manifest/v4#/$defs/manifest"
   },
   "llm": {
     "mode": "input",
     "requestSchemas": [
-      "https://wellmanifest.com/schemas/autonomy-manifest/v3"
+      "https://wellmanifest.com/schemas/autonomy-manifest/v4"
     ],
     "responseSchemas": [],
     "naturalLanguage": "typed-source-only",
-    "sourceSchema": "https://wellmanifest.com/schemas/autonomy-manifest/v3",
+    "sourceSchema": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
     "modelAuthority": "propose-only",
     "strict": true
   },

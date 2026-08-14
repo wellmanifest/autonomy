@@ -1,8 +1,8 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v3",
-  "schema": "wellmanifest.autonomy/profile/v3",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
+  "schema": "wellmanifest.autonomy/profile/v4",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
@@ -292,6 +292,9 @@
         "branch-cleanup",
         "successor-pr-base-refresh",
         "authoritative-check-provenance",
+        "effective-policy-discovery",
+        "post-approval-check-convergence",
+        "lossless-superseded-branch-disposition",
         "durable-publication-checkpoint"
       ],
       "contracts": [
@@ -307,6 +310,11 @@
         "history-rewrite-forbidden",
         "ambiguous-check-contexts-fail-closed",
         "non-authoritative-status-ignored",
+        "registry-drift-fails-closed",
+        "approval-starts-new-evidence-epoch",
+        "two-stable-policy-reads-before-merge",
+        "delete-proven-equivalent-branch-before-close",
+        "unresolved-superseded-pr-remains-open",
         "validator-identity-from-registry",
         "native-auto-merge-forbidden"
       ]
@@ -344,6 +352,9 @@
     "durableQueueProtected": true,
     "watchdogPrincipalIndependent": true,
     "registryDigestExternal": true,
+    "effectivePolicyExternal": true,
+    "approvalEventObservedExternally": true,
+    "supersessionDispositionProtected": true,
     "targetOutcomeIsolated": true,
     "validatorPrincipalIndependent": true,
     "publisherCredentialProtected": true,

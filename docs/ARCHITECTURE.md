@@ -72,14 +72,19 @@ Recommended adoption order:
 4. Register exact agent principals and separate candidate, validation, and
    publication credentials/workspaces.
 5. Compile all repository/base/check/validator/merge bindings from one protected
-   digest-bound registry and reject projection drift.
-6. Install protected required checks and a Validator App.
-7. Start with observation-only and dry-run cycles.
-8. Issue a short-lived grant for low-risk paths and a small change budget.
-9. Prove automatic trigger delivery, recovery, exact-head validation, explicit
+   digest-bound registry and reject projection drift against the provider's
+   complete effective ruleset and branch policy.
+6. Install protected required checks and a Validator App; treat its approval as
+   the start of a new evidence epoch, not the end of validation.
+7. Require two stable protected policy/check reads after approval before merge.
+8. Adopt a lossless superseded-work policy: proven-equivalent branches are
+   deleted before their PR closes; unresolved work keeps an open PR owner.
+9. Start with observation-only and dry-run cycles.
+10. Issue a short-lived grant for low-risk paths and a small change budget.
+11. Prove automatic trigger delivery, recovery, exact-head validation, explicit
    App merge, read-back, branch cleanup, revocation, and rollback with a live
    low-risk canary. A manual dispatch does not satisfy this step.
-10. Expand only through a new externally issued grant based on audit evidence.
+12. Expand only through a new externally issued grant based on audit evidence.
 
 ## Subactor and Semcod mapping
 
@@ -107,7 +112,9 @@ The following values must not be controlled solely by a candidate branch:
 
 - grant status, issuer, scope, expiry, and revocation;
 - selected profile digest and the single repository registry digest;
-- base branches, required-check definitions, validator identities, and merge policies;
+- base branches, effective required-check definitions, validator identities,
+  approval-event epochs, and merge policies;
+- superseded-work equivalence rules, receipt archive and branch disposition;
 - trusted validator and publisher identities;
 - branch protection/rulesets and native auto-merge disablement;
 - primary trigger, queue/checkpoint, watchdog credential, and canary freshness;
@@ -263,3 +270,31 @@ reads still returned exact-head check runs. That fallback was valid because it
 preserved the provider authority and subject bindings. Rate limiting remained
 a degraded observation; availability of a second API did not turn missing or
 ambiguous evidence into success.
+
+## Post-approval convergence reference: 2026-08-14
+
+The `wellmanifest/logs` repository exposed two publication races that a green
+pre-approval snapshot could not prevent. Its protected Validator registry
+declared only `governance / remote lifecycle`, while the effective repository
+ruleset also required `governance / governance / enforce`. That second workflow
+was triggered by the Validator App's review event.
+
+For successor PR #8, Validator run `31843668089` approved exact head
+`a52a7f3f12b379847d8fbf4d598649b601f5c708` and immediately attempted merge.
+Approval had started governance run `31843804587`, so the provider correctly
+blocked the premature merge. After that exact-head check completed, bounded
+retry `31843844487` merged as
+`4440e9e9a40423715747a57b86e3d9405be5aa4e`. Closure PR #9 reproduced the
+same sequence: run `31844252756`, review `4941462599`, approval-triggered run
+`31844363274`, then converged retry `31844397273` and merge
+`7d333663878c6203895de671bfe8812c4bfbd567`.
+
+The same closure demonstrated a lifecycle-policy contradiction. Predecessor
+PR #7 was closed only after its successor merged, and its unmerged branch was
+preserved. Hosted lifecycle run `31844139952` then emitted
+`GOV-BRANCH-LIFECYCLE-002` because the closed PR no longer owned that branch.
+Reopening #7 restored ownership and the rerun passed. Autonomy 0.6 therefore
+requires the effective policy inventory after approval and a lossless disposal
+order: prove equivalence, delete the branch while the PR is open, read back,
+then close in a later mutation. If equivalence is not proved, both branch and
+open PR remain.

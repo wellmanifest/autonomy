@@ -1,4 +1,4 @@
-# Wellmanifest Autonomy Standard 0.5
+# Wellmanifest Autonomy Standard 0.6
 
 Status: stable
 
@@ -20,7 +20,7 @@ closed capability catalog, risk ceiling, resource budget, and protected
 publication boundary. It is not general permission for an LLM to execute tools.
 
 The canonical interchange form is JSON conforming to
-`wellmanifest.autonomy/manifest/v3`. Implementations MAY project the same
+`wellmanifest.autonomy/manifest/v4`. Implementations MAY project the same
 semantics into YAML, Protobuf, CQRS messages, AQL/EQL, or URI Process contracts,
 but a projection MUST preserve every authority restriction and immutable
 binding.
@@ -180,7 +180,7 @@ The initial standard requires these excluded effects in every grant:
 - publication through an untrusted dependency or package identity.
 
 An adopter MAY exclude more effects but MUST NOT remove these exclusions while
-claiming conformance to version 0.5. A repository MAY define a separate,
+claiming conformance to version 0.6. A repository MAY define a separate,
 externally issued high-risk profile; that profile is not the default autonomous
 code-development grant.
 
@@ -317,13 +317,16 @@ Required behavior:
    correlation ID.
 11. **Exact-head gate** freezes the candidate, rechecks current base, required
    checks, grant activity, and validator evidence.
-12. **Protected merge** is explicitly performed by the protected publisher
+12. **Post-approval convergence** starts a new evidence epoch after the trusted
+    review or attestation. It discovers the effective protected policy and
+    waits for every exact-head required check to reach terminal success.
+13. **Protected merge** is explicitly performed by the protected publisher
     identity. Platform-native queued auto-merge and direct default-branch push
     are forbidden.
-13. **Post-merge verify** reads back the default branch, deployment or release
+14. **Post-merge verify** reads back the default branch, deployment or release
     result as declared by the task.
-14. **Checkpoint** durably commits the verified outcome and releases the claim.
-15. **Continue** closes the task only from verified receipts and selects the
+15. **Checkpoint** durably commits the verified outcome and releases the claim.
+16. **Continue** closes the task only from verified receipts and selects the
     next runnable task while the grant remains active.
 
 Any change to the candidate head invalidates prior validation and approval.
@@ -365,6 +368,54 @@ read API only when the fallback preserves the same authority, exact subject,
 and fail-closed decision. API availability does not change which evidence is
 authoritative.
 
+### 10.2 Post-approval policy convergence
+
+The protected registry is an expected policy, not proof of the effective
+repository policy. Before approval and again after approval, the publisher
+MUST discover the complete effective required-check set from the protected
+provider rulesets, branch protection, required workflows, and other applicable
+merge policy. The registry and effective policy MUST match. A subset, stale
+projection, unavailable source, or ambiguous union is drift and MUST fail
+closed before merge.
+
+A trusted App review or attestation is a state-changing publication event. It
+starts a new evidence epoch because review-triggered workflows may create
+additional required checks. No check inventory or terminal result observed
+before that approval may by itself satisfy the post-approval gate. The
+publisher MUST wait until every effective required check for the exact head is
+authoritative and terminal-success, and until two consecutive protected reads
+return the same head, base, approval ID, policy digest, registry digest, and
+required-check set with no queued or in-progress member. A newly appearing
+check resets convergence.
+
+Immediately before merge, the publisher MUST rebind repository, pull request,
+head SHA, base SHA, approval ID, effective required-check set, policy digest,
+and registry digest. A premature attempt caused solely by provider convergence
+MAY be retried within the existing bounded retry budget only for the unchanged
+head and base after the complete gate passes. A changed subject requires a new
+validation epoch; retry is not permission to reuse stale evidence.
+
+### 10.3 Lossless superseded-work disposition
+
+A successor merge alone does not prove that deleting its predecessor branch is
+lossless. Before disposal, a protected receipt MUST bind predecessor repository,
+pull request and head; successor pull request, head and verified merge SHA; the
+content disposition; and the receipt digest. Content disposition covers every
+unique implementation byte, governance record and audit artifact reachable
+only from the predecessor, classifying each as integrated, durably archived,
+or intentionally retained.
+
+When that proof is complete, the standing lifecycle policy authorizes deletion
+of the proven-equivalent predecessor branch without a new per-PR human prompt.
+The controller MUST delete the branch while its pull request is still open,
+read back the branch absence, and close the predecessor in a later mutation
+cycle. This ordering prevents a closed pull request from leaving an orphan
+branch. If any unique content is unresolved or the proof is unavailable, the
+branch MUST be preserved and its pull request MUST remain open as its explicit
+owner. Closing an unmerged pull request while preserving an otherwise orphaned
+branch is non-conforming unless the repository has another protected ownership
+mechanism recognized by its lifecycle policy.
+
 ## 11. Publication requirements
 
 Autonomous merge without per-PR human approval is conforming only when all of the
@@ -375,8 +426,11 @@ following are true:
 - exactly one active task and correlation ID are present;
 - the candidate is within grant scope and at or below the risk ceiling;
 - all required deterministic checks pass for the exact head;
+- the protected registry equals the complete effective repository policy;
 - an independent trusted Validator App or signature-verified validator
   attestation approves that same head under the protected profile digest;
+- approval-triggered checks have converged in the new evidence epoch and all
+  effective required checks are authoritative terminal successes;
 - the base is current and mergeable immediately before merge;
 - no unresolved critical or security finding exists;
 - the standing grant is active and the kill switch allows mutation;
@@ -389,20 +443,20 @@ stale. This restriction does not reduce autonomy: the App-owned publisher
 performs the merge without asking a human once all gates pass.
 
 The publisher MUST perform a read-after-write check. A superseded pull request
-MAY be closed without merge only after proving that its declared successor from
-the same repository was merged. Each controller cycle performs at most one
-mutation.
+MAY be closed without merge only through the lossless disposition in section
+10.3. Each controller cycle performs at most one mutation.
 
 ## 12. Receipts and audit
 
 Required receipt classes are `observation`, `trigger-delivery`, `queue-claim`,
 `registry-resolution`, `plan`, `intent-checkpoint`, `grant-check`, `change`,
 `base-refresh`, `contract-migration`, `deterministic-validation`,
-`check-provenance`, `independent-validation`, `publication`, `read-back`,
-`liveness-canary`, and `branch-cleanup`. Receipts MUST share a correlation ID
-and contain immutable subject bindings. They MUST be secret-free, append-only,
-retained for the declared period, and distinguish attempted, skipped, failed,
-rolled-back, and completed effects.
+`check-provenance`, `policy-convergence`, `supersession-disposition`,
+`independent-validation`, `publication`, `read-back`, `liveness-canary`, and
+`branch-cleanup`. Receipts MUST share a correlation ID and contain immutable
+subject bindings. They MUST be secret-free, append-only, retained for the
+declared period, and distinguish attempted, skipped, failed, rolled-back, and
+completed effects.
 
 An approval receipt is authoritative only when produced or verified outside the
 candidate checkout. An agent-written receipt is evidence of a claim, not proof
@@ -421,8 +475,9 @@ The deployment MUST expose a protected kill switch whose disabled value causes
 all mutation paths to fail closed while observation remains available. A
 revoked or expired grant stops new mutation and merge, releases leases, and
 preserves evidence. Unknown dirty workspaces, unique commits, or unmerged
-branches MUST be preserved for audit; cleanup may remove only verified
-disposable worktrees and branches according to repository lifecycle policy.
+branches MUST be preserved for audit. Cleanup may remove only worktrees and
+branches proven disposable under the lossless disposition policy; unresolved
+superseded work retains an open pull request as branch owner.
 
 Rollback is a separate allowlisted capability with its own preconditions,
 verification, and receipt. It MUST NOT use force push or history rewrite under

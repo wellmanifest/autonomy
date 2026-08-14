@@ -3,7 +3,7 @@
 - **ID**: ticket-011
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -25,18 +25,18 @@ otherwise its PR remains open as the branch owner.
 - [x] AC-01: The user's continuation request authorizes this bounded standard
       revision from exact protected `main@f756839`, ten implementation files,
       three components and no runtime dependency.
-- [ ] AC-02: Manifest v4 requires protected discovery of the effective required
+- [x] AC-02: Manifest v4 requires protected discovery of the effective required
       check set and rejects registry drift before review or merge.
-- [ ] AC-03: App approval starts a new evidence epoch; every approval-triggered
+- [x] AC-03: App approval starts a new evidence epoch; every approval-triggered
       exact-head check must reach authoritative terminal success before merge,
       followed by a final head/base/approval/policy rebind.
-- [ ] AC-04: Superseded work has a closed lossless disposition: prove the
+- [x] AC-04: Superseded work has a closed lossless disposition: prove the
       successor merged, archive all required evidence, delete only a proven
       equivalent branch before closing its PR, and keep unresolved work open.
-- [ ] AC-05: Checker and tests reject premature merge, stale policy inventory,
+- [x] AC-05: Checker and tests reject premature merge, stale policy inventory,
       closed-PR orphan creation, unproved branch deletion and incomplete
       supersession bindings.
-- [ ] AC-06: Spec, schema, profile, example, architecture and logic flow align
+- [x] AC-06: Spec, schema, profile, example, architecture and logic flow align
       at stable version 0.6.0 and pass every deterministic conformance gate.
 
 ## Practice evidence

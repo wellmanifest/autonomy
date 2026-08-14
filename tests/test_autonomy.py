@@ -227,6 +227,53 @@ class AutonomyConformanceTests(unittest.TestCase):
         ] = False
         self.assertIn(autonomy_check.SYNTAX, self.codes(mutation))
 
+    def test_post_approval_policy_convergence_is_mandatory(self) -> None:
+        for field in (
+            "effectivePolicySourceProtected",
+            "registryMustMatchEffectivePolicy",
+            "approvalStartsNewEpoch",
+            "postApprovalChecksRequired",
+            "terminalSuccessRequired",
+            "boundedSameHeadRetry",
+        ):
+            with self.subTest(field=field):
+                mutation = copy.deepcopy(self.valid)
+                mutation["changeControl"]["publicationConvergence"][field] = False
+                self.assertIn(autonomy_check.SYNTAX, self.codes(mutation))
+
+        unstable = copy.deepcopy(self.valid)
+        unstable["changeControl"]["publicationConvergence"]["minimumStableReads"] = 1
+        self.assertIn(autonomy_check.SYNTAX, self.codes(unstable))
+
+        incomplete = copy.deepcopy(self.valid)
+        incomplete["changeControl"]["publicationConvergence"][
+            "requiredRebindings"
+        ].remove("approvalId")
+        self.assertIn(autonomy_check.SYNTAX, self.codes(incomplete))
+
+    def test_superseded_work_is_lossless_and_never_orphaned(self) -> None:
+        unproved = copy.deepcopy(self.valid)
+        unproved["changeControl"]["supersededWork"]["losslessProofRequired"] = False
+        self.assertIn(autonomy_check.SYNTAX, self.codes(unproved))
+
+        incomplete = copy.deepcopy(self.valid)
+        incomplete["changeControl"]["supersededWork"]["requiredBindings"].remove(
+            "receiptDigest"
+        )
+        self.assertIn(autonomy_check.SYNTAX, self.codes(incomplete))
+
+        orphan = copy.deepcopy(self.valid)
+        orphan["changeControl"]["supersededWork"][
+            "equivalentBranchDisposition"
+        ] = "close-and-preserve"
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(orphan))
+
+        unresolved = copy.deepcopy(self.valid)
+        unresolved["changeControl"]["supersededWork"][
+            "unresolvedBranchDisposition"
+        ] = "close-pull-request"
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(unresolved))
+
     def test_native_auto_merge_cannot_replace_explicit_app_merge(self) -> None:
         mutation = copy.deepcopy(self.valid)
         mutation["publication"]["nativeAutoMerge"] = True
@@ -256,7 +303,7 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.5.0", self.profile["version"])
+        self.assertEqual("0.6.0", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
         dispatch = next(
             binding
@@ -317,6 +364,9 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "branch-cleanup",
                 "successor-pr-base-refresh",
                 "authoritative-check-provenance",
+                "effective-policy-discovery",
+                "post-approval-check-convergence",
+                "lossless-superseded-branch-disposition",
                 "durable-publication-checkpoint",
             },
             set(publish["capabilities"]),
@@ -327,6 +377,17 @@ class AutonomyConformanceTests(unittest.TestCase):
             "ambiguous-check-contexts-fail-closed", publish["restrictions"]
         )
         self.assertIn("non-authoritative-status-ignored", publish["restrictions"])
+        self.assertIn("registry-drift-fails-closed", publish["restrictions"])
+        self.assertIn(
+            "approval-starts-new-evidence-epoch", publish["restrictions"]
+        )
+        self.assertIn(
+            "delete-proven-equivalent-branch-before-close",
+            publish["restrictions"],
+        )
+        self.assertIn(
+            "unresolved-superseded-pr-remains-open", publish["restrictions"]
+        )
 
     def test_normative_durability_and_receipt_origin_rules_are_published(self) -> None:
         standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
@@ -349,6 +410,11 @@ class AutonomyConformanceTests(unittest.TestCase):
             "Compose override",
             "Duplicate\nsame-named contexts",
             "bounded provider retries",
+            "complete effective required-check set",
+            "starts a new evidence epoch",
+            "two consecutive protected reads",
+            "delete the branch while its pull request is still open",
+            "pull request MUST remain open as its explicit\nowner",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):
@@ -373,6 +439,9 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn("4940318952", architecture)
         self.assertIn("88953aa58a48526caf1134ba40b04d0f39e3ff39", architecture)
         self.assertIn("`ok=true`, `dry_run=false`, zero mutations", architecture)
+        self.assertIn("31843668089", architecture)
+        self.assertIn("31844397273", architecture)
+        self.assertIn("GOV-BRANCH-LIFECYCLE-002", architecture)
 
     def test_public_schema_is_draft_2020_12_and_closed(self) -> None:
         schema = json.loads(

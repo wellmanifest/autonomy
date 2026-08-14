@@ -27,7 +27,9 @@ stateDiagram-v2
     ExactHeadGate --> SuccessorPR: protected base changed
     SuccessorPR --> IntentCheckpoint: renew base; preserve predecessor
     ExactHeadGate --> IndependentValidate: candidate head changed
-    ExactHeadGate --> ProtectedMerge: current + trusted approval
+    ExactHeadGate --> PostApprovalConvergence: trusted approval
+    PostApprovalConvergence --> PostApprovalConvergence: new/pending check; reset stability
+    PostApprovalConvergence --> ProtectedMerge: two stable reads + terminal success
     ProtectedMerge --> PostMergeVerify
     PostMergeVerify --> Checkpoint: read-back pass
     Checkpoint --> Continue: durable outcome
@@ -65,6 +67,10 @@ AUTONOMOUS_MERGE_ALLOWED =
   AND deterministic_checks = pass
   AND required_check_provenance uniquely matches protected registry
   AND independent_validator = pass
+  AND approval_epoch > every merge-authorizing check inventory snapshot
+  AND protected_registry = effective_repository_policy
+  AND two stable protected reads bind the same complete required check set
+  AND every post-approval required check = authoritative_terminal_success
   AND unresolved_critical_findings = 0
   AND implementer != validator != publisher
   AND native_platform_auto_merge = disabled
@@ -103,16 +109,21 @@ sequenceDiagram
     I-->>C: candidate head + tests + receipt
     C->>V: validate exact head under protected profile
     V-->>G: bound trusted review/attestation
-    C->>G: re-read base, head and authoritative check provenance
+    C->>G: discover effective policy after approval
+    G-->>C: approval-triggered checks + protected policy digest
+    C->>G: wait for two stable terminal-success reads
+    C->>G: rebind base, head, approval, policy, registry and checks
     C->>G: one mutation: merge
     G-->>C: merged SHA
     C->>A: append publication + read-back receipts
     C->>Q: checkpoint and close only after verified read-back
 ```
 
-The next cycle may select the next task. Opening a PR, closing a superseded PR,
-merging, rolling back, or changing a ticket are separate mutations and must not
-be bundled into the same controller cycle.
+The next cycle may select the next task. Opening a PR, deleting a proven
+equivalent superseded branch, closing its PR, merging, rolling back, or changing
+a ticket are separate mutations and must not be bundled into the same
+controller cycle. Disposal deletes the proven-equivalent branch while its PR is
+still open; only a later cycle closes that PR. Unresolved work keeps both.
 
 ## Failure handling
 
@@ -123,12 +134,17 @@ be bundled into the same controller cycle.
 | Manual dispatch succeeds | diagnostic path evidence only; liveness remains unproven |
 | Duplicate delivery | reuse the idempotency tuple and resume from checkpoint; no duplicate effect |
 | Registry projection drifts | stop the affected repository before claim or publication |
+| Effective ruleset/branch policy differs from registry | fail closed; repair the protected registry or repository policy before approval/merge |
 | Unrelated matrix target fails | preserve aggregate failure visibility; do not block a passing target's own gates |
 | Canary is stale or incomplete | operational conformance is false until a fresh automatic canary completes |
 | Head changes after validation | invalidate approval and validate new head |
 | Base changes before merge | preserve the candidate; open a successor PR from a renewed accepted base and revalidate every gate |
 | Contract consumer is missing or resolves an unknown version | fail closed before that consumer executes |
 | Same-named checks have ambiguous provenance | fail closed; do not count aggregate or non-authoritative status |
+| Approval triggers a new required check | start a new evidence epoch; wait for two stable reads and terminal success before merge |
+| First merge attempt precedes policy convergence | bounded retry is allowed only for unchanged head/base after convergence |
+| Superseded branch has complete lossless proof | delete branch before closing the still-open predecessor PR; read back each mutation |
+| Superseded branch has unresolved unique content | preserve branch and keep predecessor PR open as owner |
 | Provider API is rate-limited | `degraded`; bounded fallback only with identical authority and subject bindings |
 | Grant expires or is revoked | stop mutation, release lease, preserve evidence |
 | Budget or retries exhausted | one deduplicated escalation receipt |

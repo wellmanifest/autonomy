@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v3",
+  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
   "title": "Wellmanifest Autonomy manifest and runtime profile",
   "oneOf": [
     { "$ref": "#/$defs/manifest" },
@@ -190,8 +190,8 @@
         "continuation"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v3" },
-        "schema": { "const": "wellmanifest.autonomy/manifest/v3" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v4" },
+        "schema": { "const": "wellmanifest.autonomy/manifest/v4" },
         "id": { "$ref": "#/$defs/uri" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["draft", "active", "suspended", "revoked", "expired"] },
@@ -512,6 +512,7 @@
                       "queue-claim",
                       "registry-resolution",
                       "check-provenance",
+                      "policy-convergence",
                       "deterministic-validation",
                       "independent-validation",
                       "publication",
@@ -519,8 +520,8 @@
                       "branch-cleanup"
                     ]
                   },
-                  "minItems": 9,
-                  "maxItems": 9,
+                  "minItems": 10,
+                  "maxItems": 10,
                   "uniqueItems": true
                 }
               }
@@ -546,18 +547,19 @@
                 { "const": "independent-validate" },
                 { "const": "publish-pr" },
                 { "const": "exact-head-gate" },
+                { "const": "post-approval-convergence" },
                 { "const": "protected-merge" },
                 { "const": "post-merge-verify" },
                 { "const": "checkpoint" },
                 { "const": "continue" }
               ],
-              "minItems": 15,
-              "maxItems": 15
+              "minItems": 16,
+              "maxItems": 16
             },
             "requiredGates": {
               "type": "array",
               "items": { "$ref": "#/$defs/gate" },
-              "minItems": 12,
+              "minItems": 13,
               "uniqueItems": true
             },
             "onFailure": { "const": "fail-closed" },
@@ -572,6 +574,8 @@
             "baseRefresh",
             "contractMigration",
             "checkProvenance",
+            "publicationConvergence",
+            "supersededWork",
             "providerReads"
           ],
           "properties": {
@@ -647,6 +651,90 @@
                 "authoritativeProducerRequired": { "const": true },
                 "duplicateContextPolicy": { "const": "reject-ambiguous" },
                 "nonAuthoritativeStatusBlocksMerge": { "const": false }
+              }
+            },
+            "publicationConvergence": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "effectivePolicySourceProtected",
+                "registryMustMatchEffectivePolicy",
+                "approvalStartsNewEpoch",
+                "postApprovalChecksRequired",
+                "terminalSuccessRequired",
+                "minimumStableReads",
+                "boundedSameHeadRetry",
+                "requiredRebindings"
+              ],
+              "properties": {
+                "effectivePolicySourceProtected": { "const": true },
+                "registryMustMatchEffectivePolicy": { "const": true },
+                "approvalStartsNewEpoch": { "const": true },
+                "postApprovalChecksRequired": { "const": true },
+                "terminalSuccessRequired": { "const": true },
+                "minimumStableReads": { "const": 2 },
+                "boundedSameHeadRetry": { "const": true },
+                "requiredRebindings": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "repository",
+                      "pullRequest",
+                      "headSha",
+                      "baseSha",
+                      "approvalId",
+                      "requiredCheckSet",
+                      "policyDigest",
+                      "registryDigest"
+                    ]
+                  },
+                  "minItems": 8,
+                  "maxItems": 8,
+                  "uniqueItems": true
+                }
+              }
+            },
+            "supersededWork": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "sameRepositorySuccessor",
+                "successorMergeRequired",
+                "losslessProofRequired",
+                "requiredBindings",
+                "uniqueDataPolicy",
+                "equivalentBranchDisposition",
+                "unresolvedBranchDisposition",
+                "standingPolicyAuthorizesProvenDeletion",
+                "postDispositionReadBack"
+              ],
+              "properties": {
+                "sameRepositorySuccessor": { "const": true },
+                "successorMergeRequired": { "const": true },
+                "losslessProofRequired": { "const": true },
+                "requiredBindings": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "predecessorRepository",
+                      "predecessorPullRequest",
+                      "predecessorHeadSha",
+                      "successorPullRequest",
+                      "successorHeadSha",
+                      "successorMergeSha",
+                      "contentDisposition",
+                      "receiptDigest"
+                    ]
+                  },
+                  "minItems": 8,
+                  "maxItems": 8,
+                  "uniqueItems": true
+                },
+                "uniqueDataPolicy": { "const": "preserve" },
+                "equivalentBranchDisposition": { "const": "delete-before-close" },
+                "unresolvedBranchDisposition": { "const": "keep-pull-request-open" },
+                "standingPolicyAuthorizesProvenDeletion": { "const": true },
+                "postDispositionReadBack": { "const": true }
               }
             },
             "providerReads": {
@@ -733,6 +821,8 @@
                   "base-refresh",
                   "contract-migration",
                   "check-provenance",
+                  "policy-convergence",
+                  "supersession-disposition",
                   "plan",
                   "grant-check",
                   "change",
@@ -744,8 +834,8 @@
                   "branch-cleanup"
                 ]
               },
-              "minItems": 17,
-              "maxItems": 17,
+              "minItems": 19,
+              "maxItems": 19,
               "uniqueItems": true
             },
             "redaction": { "const": "secret-free" },
@@ -817,8 +907,8 @@
         "protectedBoundaries"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v3" },
-        "schema": { "const": "wellmanifest.autonomy/profile/v3" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v4" },
+        "schema": { "const": "wellmanifest.autonomy/profile/v4" },
         "id": { "$ref": "#/$defs/id" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["experimental", "stable", "deprecated"] },
@@ -850,6 +940,9 @@
             "durableQueueProtected",
             "watchdogPrincipalIndependent",
             "registryDigestExternal",
+            "effectivePolicyExternal",
+            "approvalEventObservedExternally",
+            "supersessionDispositionProtected",
             "targetOutcomeIsolated",
             "validatorPrincipalIndependent",
             "publisherCredentialProtected",
@@ -860,6 +953,9 @@
             "durableQueueProtected": { "const": true },
             "watchdogPrincipalIndependent": { "const": true },
             "registryDigestExternal": { "const": true },
+            "effectivePolicyExternal": { "const": true },
+            "approvalEventObservedExternally": { "const": true },
+            "supersessionDispositionProtected": { "const": true },
             "targetOutcomeIsolated": { "const": true },
             "validatorPrincipalIndependent": { "const": true },
             "publisherCredentialProtected": { "const": true },

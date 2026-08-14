@@ -1,6 +1,6 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v3",
-  "schema": "wellmanifest.autonomy/manifest/v3",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
+  "schema": "wellmanifest.autonomy/manifest/v4",
   "id": "subactor://autonomy/project/example-api",
   "version": "1.0.0",
   "status": "active",
@@ -11,8 +11,8 @@
     "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
-      "version": "0.5.0",
-      "digest": "sha256:b5b5ab9657c742db4bcf082551bcfc365f43b13cb67a6d1acab3c0352538ff03"
+      "version": "0.6.0",
+      "digest": "sha256:9470c705748d757ab8eb47a730ff5eed686568991e1a59938e94949d425d7f05"
     }
   },
   "grant": {
@@ -265,6 +265,7 @@
         "queue-claim",
         "registry-resolution",
         "check-provenance",
+        "policy-convergence",
         "deterministic-validation",
         "independent-validation",
         "publication",
@@ -286,6 +287,7 @@
       "independent-validate",
       "publish-pr",
       "exact-head-gate",
+      "post-approval-convergence",
       "protected-merge",
       "post-merge-verify",
       "checkpoint",
@@ -381,6 +383,14 @@
         "failClosed": true
       },
       {
+        "id": "post-approval-convergence",
+        "stage": "pre-merge",
+        "kind": "deterministic",
+        "producer": "controller.publisher",
+        "protected": true,
+        "failClosed": true
+      },
+      {
         "id": "post-merge-read-back",
         "stage": "post-merge",
         "kind": "read-back",
@@ -424,6 +434,45 @@
       "duplicateContextPolicy": "reject-ambiguous",
       "nonAuthoritativeStatusBlocksMerge": false
     },
+    "publicationConvergence": {
+      "effectivePolicySourceProtected": true,
+      "registryMustMatchEffectivePolicy": true,
+      "approvalStartsNewEpoch": true,
+      "postApprovalChecksRequired": true,
+      "terminalSuccessRequired": true,
+      "minimumStableReads": 2,
+      "boundedSameHeadRetry": true,
+      "requiredRebindings": [
+        "repository",
+        "pullRequest",
+        "headSha",
+        "baseSha",
+        "approvalId",
+        "requiredCheckSet",
+        "policyDigest",
+        "registryDigest"
+      ]
+    },
+    "supersededWork": {
+      "sameRepositorySuccessor": true,
+      "successorMergeRequired": true,
+      "losslessProofRequired": true,
+      "requiredBindings": [
+        "predecessorRepository",
+        "predecessorPullRequest",
+        "predecessorHeadSha",
+        "successorPullRequest",
+        "successorHeadSha",
+        "successorMergeSha",
+        "contentDisposition",
+        "receiptDigest"
+      ],
+      "uniqueDataPolicy": "preserve",
+      "equivalentBranchDisposition": "delete-before-close",
+      "unresolvedBranchDisposition": "keep-pull-request-open",
+      "standingPolicyAuthorizesProvenDeletion": true,
+      "postDispositionReadBack": true
+    },
     "providerReads": {
       "boundedRetries": true,
       "rateLimitStatus": "degraded",
@@ -464,6 +513,8 @@
       "base-refresh",
       "contract-migration",
       "check-provenance",
+      "policy-convergence",
+      "supersession-disposition",
       "plan",
       "grant-check",
       "change",

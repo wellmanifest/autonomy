@@ -36,6 +36,18 @@ closing, otherwise keep the PR open as owner.
   from the request to execute this work.
 - Bound the practice record to two exact `logs` publication races and the
   remote branch-lifecycle contradiction before implementation.
+- Promoted the closed manifest and profile contracts to v4 / stable 0.6.0.
+- Added a protected post-approval gate that discovers the effective repository
+  policy, rejects registry drift, starts a new evidence epoch, requires two
+  stable reads and rebinds the complete merge subject.
+- Added lossless superseded-work disposition: exact predecessor/successor and
+  content receipts, standing-policy deletion only for proven-equivalent work,
+  delete-before-close ordering, and open-PR ownership for unresolved work.
+- Added deterministic schema/checker enforcement and mutation tests for every
+  newly observed failure mode; all 32 unit tests and every local conformance
+  gate pass.
+- Updated the architecture, state flow, Subactor/Semcod publication binding,
+  example manifest, DSL schema version and exact artifact digests.
 
 ## Blockers
 
