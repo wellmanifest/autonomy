@@ -28,6 +28,20 @@ a self-check in candidate-controlled code with a trust boundary.
 - Declared an explicit dependency on completed practice-backed ticket-004
   after governance required the new outcome to be split from its exhausted
   complexity budget.
+- Promoted the standard, Subactor/Semcod profile, valid adoption example and
+  DSL manifest to 0.3.0 with exact byte digests.
+- Required runtime code, effect-capable dependencies and authority inputs to
+  use isolated revision/digest-bound deployment sources.
+- Required an external supervisor to reject dirty or unprotected runtime
+  revisions before loading controller code and to make zero mutations on
+  source-integrity failure.
+- Bound the profile to `protected-source-preflight`, candidate-checkout
+  exclusion and isolated-policy-checkout restrictions.
+- Recorded the live zero-mutation registry mismatch, preserved concurrent
+  commits, detached protected registry recovery, App merge/checkpoint and
+  subsequent successful preflight cycle.
+- Passed every declared deterministic, DSL, lint and governance gate;
+  independent hosted publication remains.
 
 ## Blockers
 

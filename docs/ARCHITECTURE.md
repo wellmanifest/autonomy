@@ -48,8 +48,8 @@ The system has five relevant trust zones:
 4. **Publication zone** — GitHub App or equivalent protected controller with
    narrowly scoped review and merge authority; no general coding role.
 5. **Authority zone** — standing grant, revocation, policy/profile digest,
-   repository registry, kill switch, and allowlists, all outside the candidate
-   checkout.
+   repository registry, kill switch, and allowlists, all outside candidate and
+   concurrently mutable development checkouts.
 
 An LLM may participate in observation, planning, implementation, or advisory
 review, but it does not move an operation between trust zones.
@@ -162,3 +162,32 @@ No live missed-trigger watchdog recovery had been observed at this evidence
 cut. Therefore this record alone MUST NOT be presented as full operational
 conformance: that claim additionally requires a fresh canary under the hardened
 lease and an observed independent watchdog recovery, as required by section 14.
+
+## Protected-source isolation reference: 2026-08-14
+
+A later controller cycle found that the shared `validator-agent` development
+checkout had advanced two unmerged commits beyond protected `origin/main`,
+changing the registry bytes from the pinned digest. The cycle at
+`2026-08-14T17:48:20Z` rejected those bytes with
+`protected_registry_digest_mismatch` and made zero mutations. The concurrent
+commits were preserved rather than reset or copied into authority state.
+
+Recovery created a detached authority-policy worktree at protected
+`validator-agent@e1a128d79b97f812947e6f5cfc177e1b50762e14`, verified registry
+digest `sha256:b2da44c7da86c13b57eb378b6f105eb4e876778245e11b7002eece5eb52fad5e`,
+and changed the systemd policy input to that isolated path. The next automatic
+timer successfully merged `subactor/autonom#16` through Validator run
+`31826124333`, exact-head App review `4939909053`, merge
+`814e2572e1e9889df847674bd2cb9c44d5f54858`, branch cleanup and checkpoint
+`4c2519ef8d4c4a632907d570ddb4b7aba81aa7b8dc5e24e77cc9f611bc9c19ea`.
+
+That deployment added systemd preflights, outside the Python controller, which
+reject a dirty controller tree or a controller revision not contained in
+protected `origin/main`. A subsequent automatic zero-mutation cycle at
+`2026-08-14T17:59:10Z` passed both preflights before loading the controller.
+
+Candidate worktree isolation alone is therefore insufficient. The running
+execution plane and its authority inputs require separate deployment workspaces
+that concurrent development cannot mutate implicitly. A controller self-check
+cannot establish this boundary because the bytes being checked would also own
+the decision.

@@ -201,7 +201,7 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.2.0", self.profile["version"])
+        self.assertEqual("0.3.0", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
         dispatch = next(
             binding
@@ -220,6 +220,7 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "write-ahead-operation",
                 "fsync-checkpoint",
                 "canary-recovery",
+                "protected-source-preflight",
                 "watchdog-reconcile",
             },
             set(dispatch["capabilities"]),
@@ -234,6 +235,8 @@ class AutonomyConformanceTests(unittest.TestCase):
             set(dispatch["contracts"]),
         )
         self.assertIn("lease-exceeds-effect-timeout", dispatch["restrictions"])
+        self.assertIn("candidate-checkout-excluded", dispatch["restrictions"])
+        self.assertIn("policy-checkout-isolated", dispatch["restrictions"])
         self.assertLessEqual(
             {
                 "exact-head-app-review",
@@ -255,6 +258,8 @@ class AutonomyConformanceTests(unittest.TestCase):
             "MUST clean an obsolete\nqueue or claim remnant",
             "checkpoint is the authority for completed local continuation state",
             "transport named\n`workflow_dispatch` is not by itself evidence of manual execution",
+            "MUST NOT be loaded from a workspace used for candidate or\nconcurrent development",
+            "supervisor outside the loaded\ncontroller code MUST fail closed",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):
@@ -268,6 +273,9 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn("giving a 50-minute lease for a service bounded to\n45 minutes", architecture)
         self.assertIn("No live missed-trigger watchdog recovery had been observed", architecture)
         self.assertIn("MUST NOT be presented as full operational\nconformance", architecture)
+        self.assertIn("protected_registry_digest_mismatch", architecture)
+        protected_checkpoint = "4c2519ef8d4c4a632907d570ddb4b7aba81aa7b8dc5e24e77cc9f611bc9c19ea"
+        self.assertIn(protected_checkpoint, architecture)
 
     def test_public_schema_is_draft_2020_12_and_closed(self) -> None:
         schema = json.loads(
