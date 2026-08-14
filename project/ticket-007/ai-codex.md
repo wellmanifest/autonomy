@@ -40,10 +40,13 @@ exact-SHA worktree. The standard must make that distinction explicit.
   `814e257` recovery, autonomous PR #17 publication and the automatic
   `88953aa` post-rollout cycle at `18:57:40Z`.
 - Passed all declared deterministic, DSL, lint and governance gates; protected
-  publication remains pending.
+  publication completed on the same exact head.
+- Observed Validator run `31831392755`, exact-head App review `4940380603`,
+  explicit App merge `164a94e25550894e3c7ed468be316ab985219eff`,
+  protected-main read-back and source branch cleanup.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
+- None. The bounded 0.4 standard and protected publication are complete.
 - New authority remains required for destructive action, secret access, new
   external coordination, material objective expansion and trusted merge.

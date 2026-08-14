@@ -29,3 +29,12 @@ Live practice evidence:
   88953aa58a48526caf1134ba40b04d0f39e3ff39;
 - automatic post-rollout cycle at 2026-08-14T18:57:40.427Z returned ok=true,
   dry_run=false and mutations=0 from exact deployed runtime 88953aa.
+
+Hosted publication evidence:
+- governance / remote lifecycle: PASS on b86e7566c15484a0acc8c35029df8a9660f2416c;
+- standards / autonomy conformance: PASS on the same head;
+- Validator run: 31831392755, success;
+- App review: 4940380603, APPROVED, exact head;
+- explicit App merge: 164a94e25550894e3c7ed468be316ab985219eff;
+- protected-main read-back: same merge commit;
+- source branch: deleted.
