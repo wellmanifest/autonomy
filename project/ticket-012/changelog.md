@@ -11,3 +11,8 @@
 
 - Aligned root README and CHANGELOG to stable Autonomy 0.6 without changing the
   normative contract or executable conformance artifacts.
+
+## [0.6.1] - 2026-08-15
+
+- Closed ticket-012 after exact-head hosted checks, independent Validator App
+  approval, explicit merge, protected-main read-back and branch cleanup.
