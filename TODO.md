@@ -1,5 +1,10 @@
 # Project roadmap
 
+- [ ] [`ticket-011`](project/ticket-011/README.md) — require effective policy
+  inventory, post-approval exact-head check convergence and lossless
+  disposition of superseded branches without orphan state. State:
+  `IN_PROGRESS / EDIT`; classification: `FEATURE / P1 / requested`;
+  workstream: `integration`.
 - [x] [`ticket-010`](project/ticket-010/README.md) — aligned root README and
   changelog with stable Autonomy 0.5 and its practice-backed change-control
   publication evidence through independent exact-head App review and merge.
