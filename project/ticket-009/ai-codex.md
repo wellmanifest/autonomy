@@ -25,6 +25,17 @@ head ambiguous. These are repeatable autonomy boundaries, not project trivia.
 
 - Initialized the bounded ticket and recorded SESSION_EXECUTION_AUTHORIZATION
   from the request to execute this work.
+- Committed the initial intent and two intent-only scope corrections before the
+  implementation commit; protected `main` remained at the accepted exact SHA.
+- Promoted the closed manifest and profile contract to v3 / stable 0.5.0 with
+  mandatory intent history, successor-PR base refresh, exact contract consumer
+  migration, authoritative check provenance and bounded provider reads.
+- Added deterministic checker and schema enforcement plus four regression
+  groups covering the observed Deployment failure modes.
+- Recorded the immutable Deployment merge evidence in the architecture and
+  updated the lifecycle flow and DSL artifact digests.
+- Passed governance, schema validation, checker validation and self-test, 30
+  unit tests, compilation, Ruff and diff checks locally.
 
 ## Blockers
 

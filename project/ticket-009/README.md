@@ -18,18 +18,18 @@ contract consumer and bind required checks to protected producer provenance.
 - [x] AC-01: The ticket binds continuation authorization to exact protected
   `main@9960c12`, ten implementation files, three components and no runtime
   dependency.
-- [ ] AC-02: Manifest v3 requires an intent checkpoint before implementation,
+- [x] AC-02: Manifest v3 requires an intent checkpoint before implementation,
   exact accepted-base refresh, full revalidation and successor PRs instead of
   autonomous history rewrite.
-- [ ] AC-03: Contract migration requires an exact version allowlist, complete
+- [x] AC-03: Contract migration requires an exact version allowlist, complete
   consumer-surface inventory, pre-execution resolution and fail-closed unknown
   versions across local, image, Compose, hosted CI and validator surfaces.
-- [ ] AC-04: Required-check authority binds producer, event, repository, head
+- [x] AC-04: Required-check authority binds producer, event, repository, head
   and check name; ambiguous duplicate contexts fail closed while explicitly
   non-authoritative statuses cannot override a passing authoritative check.
-- [ ] AC-05: Checker and tests reject missing intent history, unsafe base
+- [x] AC-05: Checker and tests reject missing intent history, unsafe base
   refresh, partial consumer migration and ambiguous check provenance.
-- [ ] AC-06: Spec, schema, profile, example, architecture and logic flow align
+- [x] AC-06: Spec, schema, profile, example, architecture and logic flow align
   at stable version 0.5.0 and pass all deterministic conformance gates.
 
 ## Risks

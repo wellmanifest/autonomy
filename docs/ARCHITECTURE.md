@@ -231,3 +231,35 @@ This incident distinguishes three properties that ancestry alone cannot
 provide: exact byte selection, supervisor-source independence and a transition
 boundary with effects stopped. Operational proof belongs to the first fresh
 automatic cycle after that transition, not to the rollout command itself.
+
+## Multi-surface contract migration reference: 2026-08-14
+
+The Deployment standard migration supplied the practice evidence for Autonomy
+0.5. Its first container image correctly selected the checker from an exact
+schema allowlist, but the Compose service overrode that image command and still
+invoked the legacy checker. The hosted workflow independently pinned the legacy
+checker as well. A passing local dispatcher therefore did not prove that every
+contract consumer had migrated.
+
+The repair inventoried five separate surfaces: local CLI, container image
+command, Compose override, hosted CI checkout, and independent Validator. Each
+now resolves the manifest's exact `$schema` URI to one immutable supported
+revision before executing it; an unknown version fails closed. The Compose
+repair merged as `15ea7b123e4d09c424b70d74064b1a7910ef4715`, the hosted-CI
+resolver as `4f211e82bcbe3c1435b067c396cb7fe4d1c2d749`, and the manifest
+migration as `a13b6442545f5db3a6b1790a831641a1b888c7b2`. The final ticket
+closure reached protected main at `6aab422b5e662815dcb911ffd81a412340864d76`.
+
+During publication, protected `main` moved after an intent had accepted the
+old base. Refreshing that binding required full validation. Reusing a published
+branch through history replacement also created push and pull-request check
+runs with the same displayed name. Autonomy 0.5 consequently chooses a new
+successor PR, forbids standing-grant history rewrite, and identifies a required
+check by protected producer, event, repository, exact head, and check name
+rather than its displayed context alone.
+
+The same session exhausted the provider's GraphQL budget while bounded REST
+reads still returned exact-head check runs. That fallback was valid because it
+preserved the provider authority and subject bindings. Rate limiting remained
+a degraded observation; availability of a second API did not turn missing or
+ambiguous evidence into success.

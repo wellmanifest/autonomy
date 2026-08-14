@@ -1,6 +1,6 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
-  "schema": "wellmanifest.autonomy/manifest/v2",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v3",
+  "schema": "wellmanifest.autonomy/manifest/v3",
   "id": "subactor://autonomy/project/example-api",
   "version": "1.0.0",
   "status": "active",
@@ -11,8 +11,8 @@
     "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
-      "version": "0.4.0",
-      "digest": "sha256:22d33b178cb737823b23e1db3ec11cea42c2f39181b5f822fb6e70575f6e0c19"
+      "version": "0.5.0",
+      "digest": "sha256:b5b5ab9657c742db4bcf082551bcfc365f43b13cb67a6d1acab3c0352538ff03"
     }
   },
   "grant": {
@@ -250,6 +250,7 @@
         "repository",
         "baseBranch",
         "requiredChecks",
+        "checkProvenance",
         "validatorIdentity",
         "mergePolicy"
       ],
@@ -263,6 +264,7 @@
         "trigger-delivery",
         "queue-claim",
         "registry-resolution",
+        "check-provenance",
         "deterministic-validation",
         "independent-validation",
         "publication",
@@ -331,10 +333,34 @@
         "failClosed": true
       },
       {
+        "id": "intent-history",
+        "stage": "pre-edit",
+        "kind": "deterministic",
+        "producer": "controller.intent",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "contract-consumers",
+        "stage": "pre-push",
+        "kind": "deterministic",
+        "producer": "controller.contracts",
+        "protected": true,
+        "failClosed": true
+      },
+      {
         "id": "deterministic-checks",
         "stage": "pre-approval",
         "kind": "deterministic",
         "producer": "ci.required-checks",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "check-provenance",
+        "stage": "pre-merge",
+        "kind": "deterministic",
+        "producer": "controller.registry",
         "protected": true,
         "failClosed": true
       },
@@ -366,6 +392,44 @@
     "onFailure": "fail-closed",
     "onOutOfScope": "escalate"
   },
+  "changeControl": {
+    "intentHistory": {
+      "checkpointBeforeImplementation": true,
+      "immutableScope": true
+    },
+    "baseRefresh": {
+      "acceptedBaseRequired": true,
+      "revalidateAll": true,
+      "historyRewrite": false,
+      "mode": "successor-pull-request"
+    },
+    "contractMigration": {
+      "exactVersionAllowlist": true,
+      "resolveBeforeConsumerExecution": true,
+      "unknownVersion": "fail-closed",
+      "consumerInventoryRequired": true,
+      "allConsumersMustPass": true,
+      "requiredSurfaces": [
+        "local",
+        "container-image",
+        "compose",
+        "hosted-ci",
+        "validator"
+      ]
+    },
+    "checkProvenance": {
+      "protectedRegistry": true,
+      "requiredBindings": ["producer", "event", "repository", "headSha", "checkName"],
+      "authoritativeProducerRequired": true,
+      "duplicateContextPolicy": "reject-ambiguous",
+      "nonAuthoritativeStatusBlocksMerge": false
+    },
+    "providerReads": {
+      "boundedRetries": true,
+      "rateLimitStatus": "degraded",
+      "fallbackMustPreserveAuthority": true
+    }
+  },
   "publication": {
     "mode": "pull-request",
     "approval": "trusted-validator-app",
@@ -396,6 +460,10 @@
       "trigger-delivery",
       "queue-claim",
       "registry-resolution",
+      "intent-checkpoint",
+      "base-refresh",
+      "contract-migration",
+      "check-provenance",
       "plan",
       "grant-check",
       "change",
