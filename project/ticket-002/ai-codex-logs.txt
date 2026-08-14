@@ -10,3 +10,19 @@
   run after 31810639328 despite `*/5`; manual direct-scan proved execution only.
 - Intent conclusion: require autonomous watchdog recovery, durable claims,
   per-target authority and a fresh non-manual canary receipt.
+
+2026-08-14 Autonomy 0.2 validation
+
+- `./project/governance-check.sh --actor agent`: GOV-PASS, 0 errors and 0 warnings.
+- Draft 2020-12 `jsonschema` validation: v2 manifest and profile PASS.
+- `python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json`:
+  DSL-PASS, 0 errors.
+- `python3 src/autonomy_check.py validate examples/valid
+  profiles/subactor-semcod.profile.json`: both documents PASS.
+- `python3 src/autonomy_check.py self-test`: PASS.
+- `python3 -m unittest discover -s tests -v`: 23 tests PASS.
+- `python3 -m compileall -q src tests`, `ruff check src tests`, and
+  `git diff --check`: PASS.
+- External concurrent `.governance/**` URI migration was preserved separately
+  and excluded because ticket-002 explicitly forbids governance implementation
+  changes.

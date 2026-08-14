@@ -4,7 +4,7 @@
   "mutations": [
     {
       "op": "replace",
-      "path": "/fleet/roles/3/principal",
+      "path": "/fleet/roles/4/principal",
       "value": "principal:repair-app"
     }
   ],

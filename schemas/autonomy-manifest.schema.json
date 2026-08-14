@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wellmanifest.dev/schemas/autonomy-manifest/v1",
+  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v2",
   "title": "Wellmanifest Autonomy manifest and runtime profile",
   "oneOf": [
     { "$ref": "#/$defs/manifest" },
@@ -51,6 +51,7 @@
     "roleName": {
       "enum": [
         "observer",
+        "dispatcher",
         "planner",
         "implementer",
         "validator",
@@ -61,6 +62,9 @@
     "authority": {
       "enum": [
         "observe",
+        "trigger-cycle",
+        "claim-cycle",
+        "reconcile-cycle",
         "select-task",
         "propose-plan",
         "create-ticket",
@@ -72,7 +76,6 @@
         "open-pull-request",
         "issue-validator-attestation",
         "approve-via-validator-app",
-        "enable-auto-merge",
         "merge-pull-request",
         "post-merge-read-back",
         "append-audit-receipt"
@@ -138,6 +141,7 @@
         "id": { "$ref": "#/$defs/id" },
         "stage": {
           "enum": [
+            "pre-cycle",
             "pre-edit",
             "pre-push",
             "pre-approval",
@@ -145,7 +149,9 @@
             "post-merge"
           ]
         },
-        "kind": { "enum": ["deterministic", "independent-attestation", "read-back"] },
+        "kind": {
+          "enum": ["liveness", "deterministic", "independent-attestation", "read-back"]
+        },
         "producer": { "$ref": "#/$defs/id" },
         "protected": { "type": "boolean" },
         "failClosed": { "const": true }
@@ -176,14 +182,15 @@
         "riskPolicy",
         "budgets",
         "queue",
+        "executionLiveness",
         "pipeline",
         "publication",
         "receipts",
         "continuation"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.dev/schemas/autonomy-manifest/v1" },
-        "schema": { "const": "wellmanifest.autonomy/manifest/v1" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v2" },
+        "schema": { "const": "wellmanifest.autonomy/manifest/v2" },
         "id": { "$ref": "#/$defs/uri" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["draft", "active", "suspended", "revoked", "expired"] },
@@ -308,7 +315,7 @@
             "roles": {
               "type": "array",
               "items": { "$ref": "#/$defs/role" },
-              "minItems": 6,
+              "minItems": 7,
               "uniqueItems": true
             },
             "separation": {
@@ -378,7 +385,13 @@
             "freshnessSeconds",
             "deduplication",
             "humanBoundaryLabels",
-            "oneMutationPerCycle"
+            "oneMutationPerCycle",
+            "durable",
+            "delivery",
+            "checkpointStore",
+            "idempotencyBindings",
+            "deadLetterAfterAttempts",
+            "resumeFromCheckpoint"
           ],
           "properties": {
             "source": { "enum": ["planfile", "todo2code", "composite"] },
@@ -391,7 +404,125 @@
               "minItems": 2,
               "uniqueItems": true
             },
-            "oneMutationPerCycle": { "const": true }
+            "oneMutationPerCycle": { "const": true },
+            "durable": { "const": true },
+            "delivery": { "const": "at-least-once" },
+            "checkpointStore": { "$ref": "#/$defs/uri" },
+            "idempotencyBindings": {
+              "type": "array",
+              "items": {
+                "enum": ["repository", "ticket", "correlationId", "headSha", "operation"]
+              },
+              "minItems": 5,
+              "maxItems": 5,
+              "uniqueItems": true
+            },
+            "deadLetterAfterAttempts": { "type": "integer", "minimum": 1, "maximum": 10 },
+            "resumeFromCheckpoint": { "const": true }
+          }
+        },
+        "executionLiveness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "primaryTrigger",
+            "watchdog",
+            "independentPrincipals",
+            "manualDispatchProvesLiveness",
+            "missedTriggerStatus",
+            "perRepositoryIsolation",
+            "unrelatedFailureBlocksMerge",
+            "aggregateStatusAuthoritative",
+            "registry",
+            "canary"
+          ],
+          "properties": {
+            "primaryTrigger": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "kind", "principal", "protected"],
+              "properties": {
+                "id": { "$ref": "#/$defs/id" },
+                "kind": { "enum": ["event", "scheduler", "durable-queue"] },
+                "principal": { "$ref": "#/$defs/id" },
+                "protected": { "const": true }
+              }
+            },
+            "watchdog": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "kind",
+                "principal",
+                "protected",
+                "maxSilenceSeconds",
+                "triggerOnSilence"
+              ],
+              "properties": {
+                "id": { "$ref": "#/$defs/id" },
+                "kind": { "const": "independent-scheduler" },
+                "principal": { "$ref": "#/$defs/id" },
+                "protected": { "const": true },
+                "maxSilenceSeconds": { "type": "integer", "minimum": 60, "maximum": 86400 },
+                "triggerOnSilence": { "const": true }
+              }
+            },
+            "independentPrincipals": { "const": true },
+            "manualDispatchProvesLiveness": { "const": false },
+            "missedTriggerStatus": { "const": "degraded" },
+            "perRepositoryIsolation": { "const": true },
+            "unrelatedFailureBlocksMerge": { "const": false },
+            "aggregateStatusAuthoritative": { "const": false },
+            "registry": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source", "digest", "protected", "singleSource", "requiredBindings", "driftCheck"],
+              "properties": {
+                "source": { "$ref": "#/$defs/uri" },
+                "digest": { "$ref": "#/$defs/digest" },
+                "protected": { "const": true },
+                "singleSource": { "const": true },
+                "requiredBindings": {
+                  "type": "array",
+                  "items": {
+                    "enum": ["repository", "baseBranch", "requiredChecks", "validatorIdentity", "mergePolicy"]
+                  },
+                  "minItems": 5,
+                  "maxItems": 5,
+                  "uniqueItems": true
+                },
+                "driftCheck": { "const": true }
+              }
+            },
+            "canary": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["mode", "maximumAgeSeconds", "manualDispatchCounts", "requiredReceipts"],
+              "properties": {
+                "mode": { "const": "protected-low-risk-pr" },
+                "maximumAgeSeconds": { "type": "integer", "minimum": 60, "maximum": 604800 },
+                "manualDispatchCounts": { "const": false },
+                "requiredReceipts": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "trigger-delivery",
+                      "queue-claim",
+                      "registry-resolution",
+                      "deterministic-validation",
+                      "independent-validation",
+                      "publication",
+                      "read-back",
+                      "branch-cleanup"
+                    ]
+                  },
+                  "minItems": 8,
+                  "maxItems": 8,
+                  "uniqueItems": true
+                }
+              }
+            }
           }
         },
         "pipeline": {
@@ -402,6 +533,8 @@
             "states": {
               "type": "array",
               "prefixItems": [
+                { "const": "dispatch" },
+                { "const": "claim" },
                 { "const": "observe" },
                 { "const": "evidence" },
                 { "const": "plan" },
@@ -411,17 +544,18 @@
                 { "const": "independent-validate" },
                 { "const": "publish-pr" },
                 { "const": "exact-head-gate" },
-                { "const": "auto-merge" },
+                { "const": "protected-merge" },
                 { "const": "post-merge-verify" },
+                { "const": "checkpoint" },
                 { "const": "continue" }
               ],
-              "minItems": 12,
-              "maxItems": 12
+              "minItems": 15,
+              "maxItems": 15
             },
             "requiredGates": {
               "type": "array",
               "items": { "$ref": "#/$defs/gate" },
-              "minItems": 5,
+              "minItems": 9,
               "uniqueItems": true
             },
             "onFailure": { "const": "fail-closed" },
@@ -438,7 +572,9 @@
             "bindings",
             "sameRepositoryOnly",
             "recheckBaseBeforeMerge",
-            "autoMerge",
+            "autonomousMerge",
+            "mergeMode",
+            "nativeAutoMerge",
             "directDefaultBranchPush",
             "deleteBranchAfterMerge",
             "postMergeReadBack"
@@ -472,7 +608,9 @@
             },
             "sameRepositoryOnly": { "const": true },
             "recheckBaseBeforeMerge": { "const": true },
-            "autoMerge": { "const": true },
+            "autonomousMerge": { "const": true },
+            "mergeMode": { "const": "protected-explicit" },
+            "nativeAutoMerge": { "const": false },
             "directDefaultBranchPush": { "const": false },
             "deleteBranchAfterMerge": { "const": true },
             "postMergeReadBack": { "const": true }
@@ -489,17 +627,22 @@
               "items": {
                 "enum": [
                   "observation",
+                  "trigger-delivery",
+                  "queue-claim",
+                  "registry-resolution",
                   "plan",
                   "grant-check",
                   "change",
                   "deterministic-validation",
                   "independent-validation",
                   "publication",
-                  "read-back"
+                  "read-back",
+                  "liveness-canary",
+                  "branch-cleanup"
                 ]
               },
-              "minItems": 8,
-              "maxItems": 8,
+              "minItems": 13,
+              "maxItems": 13,
               "uniqueItems": true
             },
             "redaction": { "const": "secret-free" },
@@ -530,7 +673,7 @@
       "required": ["stage", "product", "role", "mode", "capabilities", "contracts", "restrictions"],
       "properties": {
         "stage": {
-          "enum": ["observe", "evidence", "plan", "implement", "validate", "publish", "audit"]
+          "enum": ["dispatch", "observe", "evidence", "plan", "implement", "validate", "publish", "audit"]
         },
         "product": {
           "type": "string",
@@ -540,6 +683,7 @@
         "mode": {
           "enum": [
             "read-only",
+            "protected-dispatch",
             "propose-only",
             "candidate-write",
             "validate-only",
@@ -570,8 +714,8 @@
         "protectedBoundaries"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.dev/schemas/autonomy-manifest/v1" },
-        "schema": { "const": "wellmanifest.autonomy/profile/v1" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v2" },
+        "schema": { "const": "wellmanifest.autonomy/profile/v2" },
         "id": { "$ref": "#/$defs/id" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["experimental", "stable", "deprecated"] },
@@ -600,12 +744,20 @@
           "additionalProperties": false,
           "required": [
             "profileDigestExternal",
+            "durableQueueProtected",
+            "watchdogPrincipalIndependent",
+            "registryDigestExternal",
+            "targetOutcomeIsolated",
             "validatorPrincipalIndependent",
             "publisherCredentialProtected",
             "llmVerdictAdvisory"
           ],
           "properties": {
             "profileDigestExternal": { "const": true },
+            "durableQueueProtected": { "const": true },
+            "watchdogPrincipalIndependent": { "const": true },
+            "registryDigestExternal": { "const": true },
+            "targetOutcomeIsolated": { "const": true },
             "validatorPrincipalIndependent": { "const": true },
             "publisherCredentialProtected": { "const": true },
             "llmVerdictAdvisory": { "const": true }

@@ -38,9 +38,23 @@ evidence rather than treating configuration or unit tests as operational proof.
   instead of treating a user merge as independent publication.
 - Bound the new slice to operational reliability requirements observed in
   Validator runs `31813268528` and `31813915334`.
+- Introduced manifest/profile v2 and canonical `wellmanifest.com` schema URIs.
+- Added the dispatcher role, durable at-least-once claim/checkpoint policy,
+  exact idempotency tuple and bounded dead-letter behavior.
+- Added protected trigger, independently credentialed watchdog, visible
+  degraded state, target-repository isolation and digest-bound registry rules.
+- Defined automatic low-risk canary receipts and made manual dispatch
+  diagnostic-only evidence.
+- Replaced ambiguous auto-merge with explicit protected App merge while
+  requiring platform-native auto-merge to remain disabled.
+- Updated the Subactor/Semcod profile, architecture, lifecycle, diagnostics,
+  examples and dependency-free checker.
+- Expanded regression coverage from 16 to 23 tests; schema, semantic, DSL,
+  unit, compile and lint validation pass.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
+- Independent current-head App review and protected publication remain for
+  AC-12; local validation cannot substitute for that boundary.
 - New authority remains required for destructive action, secret access, new
   external coordination, material objective expansion and trusted merge.

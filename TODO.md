@@ -4,8 +4,8 @@
   is merged, but historical publication lacks independent Validator App
   review and a protected repository ruleset; closure is blocked pending a
   current-head operational proof.
-- [ ] Publish the current standard through independent exact-head review after
-  adding scheduler-liveness and per-repository isolation conformance.
+- [ ] Publish Autonomy 0.2 through independent exact-head App review; local v2
+  schema, semantic, DSL, unit, compile and lint validation are complete.
 - [ ] [`ticket-002`](project/ticket-002/README.md) — derive Autonomy 0.2 from
   production evidence: durable dispatch, independent watchdog, registry
   consistency, target isolation, explicit protected merge and live canaries.
