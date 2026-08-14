@@ -136,7 +136,7 @@
   ],
   "lifecycle": {
     "compatibility": "semver",
-    "stability": "experimental",
+    "stability": "stable",
     "breaking": "major",
     "additive": "minor",
     "fix": "patch"
