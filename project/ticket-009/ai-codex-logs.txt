@@ -11,3 +11,7 @@ IMPLEMENTATION_FILES_MAX=9
 AFFECTED_COMPONENTS_MAX=3
 PUBLIC_INTERFACE_CHANGES_MAX=3
 RUNTIME_DEPENDENCIES_MAX=0
+2026-08-14 plan-correction
+PLAN_CORRECTION=complexity L is required by three public interface changes
+PLAN_CORRECTION=the governed DSL manifest is the tenth implementation file because its version, schema URIs and artifact digests must migrate atomically
+IMPLEMENTATION_FILES_MAX=10

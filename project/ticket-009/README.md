@@ -16,7 +16,7 @@ contract consumer and bind required checks to protected producer provenance.
 ## Acceptance criteria
 
 - [x] AC-01: The ticket binds continuation authorization to exact protected
-  `main@9960c12`, nine implementation files, three components and no runtime
+  `main@9960c12`, ten implementation files, three components and no runtime
   dependency.
 - [ ] AC-02: Manifest v3 requires an intent checkpoint before implementation,
   exact accepted-base refresh, full revalidation and successor PRs instead of

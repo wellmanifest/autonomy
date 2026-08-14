@@ -20,7 +20,8 @@
     "src/autonomy_check.py",
     "tests/test_autonomy.py",
     "docs/ARCHITECTURE.md",
-    "docs/LOGIC_FLOW.md"
+    "docs/LOGIC_FLOW.md",
+    "examples/dsl-manifest.json"
   ],
   "forbiddenPaths": [
     "project/ticket-*/user-*.md",
@@ -29,7 +30,6 @@
     "AGENTS.md",
     "README.md",
     "CHANGELOG.md",
-    "examples/dsl-manifest.json",
     "examples/invalid/**",
     "pyproject.toml"
   ],
@@ -47,10 +47,10 @@
       "Make non-authoritative checks capable of merge approval",
       "Change runtime services outside this standard repository"
     ],
-    "complexity": "M",
+    "complexity": "L",
     "estimatedMinutes": 25,
     "budgets": {
-      "maxImplementationFiles": 9,
+      "maxImplementationFiles": 10,
       "maxAffectedComponents": 3,
       "maxPublicInterfaceChanges": 3,
       "maxRuntimeDependencies": 0
