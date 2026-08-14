@@ -20,3 +20,5 @@
   digest-bound runtime and authority-policy deployment sources with an
   external fail-closed preflight and zero-mutation drift recovery; published
   through exact-head Validator App review, merge and protected-main read-back.
+- [ ] [`ticket-006`](project/ticket-006/README.md) — align root README and
+  changelog with the published stable Autonomy 0.3 standard.
