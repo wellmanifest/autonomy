@@ -9,3 +9,5 @@
 - Updated the root release description and changelog without modifying the
   normative or executable contract.
 - Passed every declared deterministic gate and advanced to publication.
+- Published through independent exact-head Validator App review and merge,
+  verified protected-main read-back and source-branch cleanup.

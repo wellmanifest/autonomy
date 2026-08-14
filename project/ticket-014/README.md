@@ -2,8 +2,8 @@
 
 - **ID**: ticket-014
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -29,3 +29,14 @@ without changing normative, executable or integration artifacts.
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Hosted autonomy conformance run `31851056165` and remote lifecycle run
+  `31851056226` passed on exact head
+  `9a9dd714c80b11747daf8721bdb96a01ec699392`.
+- Validator run `31851081469` completed successfully and App review
+  `4941939096` approved that exact head after two stable protected reads.
+- The Validator App explicitly merged PR #26 as
+  `e7ebaafde55832ef09df2ee196b154cd06fd5eed`; protected `main` read-back
+  returned the same SHA and the source branch was absent.
