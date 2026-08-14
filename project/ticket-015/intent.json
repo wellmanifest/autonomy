@@ -1,0 +1,93 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-015",
+  "summary": "Repair Autonomy DSL artifact digest closure",
+  "workstream": "integration",
+  "classification": {
+    "kind": "BUG",
+    "priority": "P1",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-015/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "examples/dsl-manifest.json",
+    "profiles/subactor-semcod.profile.json",
+    "examples/valid/project.autonomy.json",
+    "tests/test_autonomy.py"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    ".github/**",
+    "AGENTS.md",
+    "README.md",
+    "CHANGELOG.md",
+    "schemas/**",
+    "spec/**",
+    "src/**",
+    "docs/**",
+    "examples/invalid/**",
+    "pyproject.toml"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "ff11f5952738e6862be81aaaa742f2a8d2551cdb",
+    "targetBranch": "main",
+    "outcome": "Publish a semver patch whose DSL artifact bindings exactly match every Autonomy 0.7.1 candidate byte",
+    "nonGoals": [
+      "Change Autonomy v5 semantics or schema generation",
+      "Change runtime, workflows or the governance package",
+      "Update root README or CHANGELOG in the integration workstream",
+      "Mask stale digests by disabling cross-standard validation"
+    ],
+    "complexity": "M",
+    "estimatedMinutes": 15,
+    "budgets": {
+      "maxImplementationFiles": 5,
+      "maxAffectedComponents": 2,
+      "maxPublicInterfaceChanges": 1,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Treat digest closure as a patch release and preserve the existing v5 semantic surface.",
+      "components": [
+        {
+          "name": "release-binding",
+          "paths": ["VERSION", "examples/dsl-manifest.json"]
+        },
+        {
+          "name": "profile-conformance",
+          "paths": ["profiles/**", "examples/valid/**", "tests/test_autonomy.py"]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": ["Stable patch version advances from 0.7.0 to 0.7.1"],
+      "dataChanges": ["Exact artifact and profile SHA-256 bindings are refreshed"],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert before adoption; do not republish the known-stale 0.7.0 DSL manifest."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-04",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests",
+          "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json"
+        ],
+        "evidence": "project/ticket-015/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

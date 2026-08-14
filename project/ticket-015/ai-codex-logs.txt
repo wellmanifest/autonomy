@@ -1,0 +1,8 @@
+2026-08-15 ticket-015 (agent:codex)
+
+[1] Protected-main reproduction
+    Base: ff11f5952738e6862be81aaaa742f2a8d2551cdb
+    python3 ../../dsl/src/dsl_check.py validate examples/dsl-manifest.json
+      DSL-HASH-001: 7 stale artifact digests
+      DSL-FAIL: failed (7 errors)
+    Core Autonomy checker/schema/test gates remained green.
