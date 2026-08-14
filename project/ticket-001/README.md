@@ -2,8 +2,8 @@
 
 - **ID**: ticket-001
 - **Owner**: unresolved:human
-- **Status**: BLOCKED
-- **Workflow state**: BLOCKED
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -81,10 +81,16 @@ repositories and adopt this standard.
 
 ## Publication state
 
-Local implementation is complete and validated. Publication PR
-<https://github.com/wellmanifest/autonomy/pull/1> was merged, but remote
+The initial implementation was integrated by publication PR
+<https://github.com/wellmanifest/autonomy/pull/1>, but remote
 readback shows that the merge actor was the repository user, no Validator App
-review exists, and no protected ruleset was active. The ticket is therefore
-`BLOCKED / BLOCKED`; it cannot claim the independent publication required by
-AC-05. A new bounded integration ticket owns the current-head operational
-proof and reliability requirements learned from the live autonomy pilot.
+review exists, and no protected ruleset was active at that time. Ticket 002
+superseded the current standard with Autonomy 0.2, and PR #2 closed that gap:
+the exact current head passed both protected checks, received independent
+Validator App approval, was explicitly App-merged, was read back from `main`,
+and its source branch was removed. The historical PR itself is unchanged; the
+current standard now satisfies AC-05 through the successor publication chain.
+
+This closure does not claim automatic scheduler or watchdog liveness. Autonomy
+0.2 intentionally requires fresh non-manual canary receipts before an adopting
+runtime can claim that stronger form of operational conformance.

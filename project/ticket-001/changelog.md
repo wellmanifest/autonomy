@@ -12,3 +12,10 @@
   verification, and next-task selection without per-PR human consent.
 - Added the Subactor/Semcod profile, dependency-free validator, negative
   mutation fixtures, 16 tests, and controlled-effects DSL metadata.
+
+## [0.1.1] - 2026-08-14
+
+- Closed the historical independent-publication gap through the protected
+  Autonomy 0.2 successor chain owned by ticket-002.
+- Preserved the original PR #1 audit record and explicitly avoided claiming
+  scheduler liveness from a manual Validator dispatch.

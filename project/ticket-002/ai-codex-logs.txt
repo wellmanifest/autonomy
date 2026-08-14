@@ -26,3 +26,22 @@
 - External concurrent `.governance/**` URI migration was preserved separately
   and excluded because ticket-002 explicitly forbids governance implementation
   changes.
+
+2026-08-14 protected publication evidence
+
+- Autonomy infrastructure and its closure were first published through PRs #3
+  and #4, leaving `main` protected by active ruleset `20858297` and requiring
+  `governance / remote lifecycle`, `standards / autonomy conformance` and an
+  independent last-push approval.
+- PR #2 exact head `837e9b4b0898ddd3a697aa60d59958ba4dc16e66`:
+  both required hosted checks PASS.
+- Validator run `31818074059`: PASS; Validator App approval is bound to that
+  exact head; explicit App merge commit
+  `462525b5241d8f7ebd25f848764bf3b8464c0fbf`; source branch removed.
+- Protected-main readback at the merge commit confirms the v2 normative text,
+  including durable at-least-once dispatch, independent watchdog recovery,
+  per-repository isolation, protected registry consistency, explicit App merge
+  and freshness-bound automatic canary requirements.
+- The workflow was manually dispatched to publish the exact tested change.
+  Per Autonomy 0.2, this is delivery-path evidence only and is not recorded as
+  scheduler, watchdog or runtime-canary liveness proof.

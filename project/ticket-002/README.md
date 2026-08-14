@@ -2,8 +2,8 @@
 
 - **ID**: ticket-002
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -37,7 +37,7 @@ Validator App publication.
 - [x] AC-10: Schema, examples, checker and regression tests reject single-cron,
   global-fail-fast, stale-canary and native-auto-merge configurations.
 - [x] AC-11: Governance, unit, semantic, DSL, compilation and lint checks pass.
-- [ ] AC-12: The current standard is published through protected exact-head
+- [x] AC-12: The current standard is published through protected exact-head
   review and App-owned merge, closing the historical publication gap.
 
 ## Participants
@@ -54,5 +54,11 @@ Validator App publication.
   canary policy and explicit protected merge.
 - Wellmanifest DSL manifest and all exact artifact digests pass.
 - Ruff, Python compilation and diff whitespace checks pass.
-- Protected publication remains open under AC-12; local validation is not
-  represented as independent App approval.
+- Hosted governance and Autonomy conformance checks passed on exact head
+  `837e9b4b0898ddd3a697aa60d59958ba4dc16e66`.
+- Validator App independently approved that exact head and explicitly merged
+  PR #2 as `462525b5241d8f7ebd25f848764bf3b8464c0fbf`; the source branch was
+  removed and the v2 contract was read back from protected `main`.
+- This publication evidence proves the protected delivery path. It does not
+  claim automatic scheduler/watchdog liveness; adopters still need a fresh,
+  non-manual canary receipt set to claim runtime conformance.
