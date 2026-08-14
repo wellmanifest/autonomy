@@ -1,6 +1,6 @@
 # Project roadmap
 
-- [ ] [`ticket-008`](project/ticket-008/README.md) — align root README and
+- [x] [`ticket-008`](project/ticket-008/README.md) — align root README and
   changelog with stable Autonomy 0.4 and its exact-runtime rollout evidence.
 - [x] [`ticket-007`](project/ticket-007/README.md) — bind effect-capable runtime
   and supervisor configuration to an isolated exact revision; require

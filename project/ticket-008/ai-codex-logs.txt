@@ -21,3 +21,12 @@ Scope audit:
 - changed governance evidence: TODO.md, project/TICKETS.md,
   project/ticket-008/**;
 - normative/schema/profile/example/source/test changes: none.
+
+Hosted publication evidence:
+- governance / remote lifecycle: PASS on 14a86cd699677a29194404cae8c910e4182c3834;
+- standards / autonomy conformance: PASS on the same head;
+- Validator run: 31831972095, success;
+- App review: 4940427343, APPROVED, exact head;
+- explicit App merge: eab9c7b8cb99560d022e35acf12ea04b5ec708e6;
+- protected-main read-back: same merge commit;
+- source branch: deleted.

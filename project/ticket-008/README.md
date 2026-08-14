@@ -2,8 +2,8 @@
 
 - **ID**: ticket-008
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -27,9 +27,13 @@ normative, schema, profile or executable artifact.
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
 
-## Publication state
+## Publication evidence
 
-- Local governance, 26 tests, self-test, compilation, Ruff and diff checks pass.
-- Exact-head hosted checks, Validator App approval, protected merge, read-back
-  and branch cleanup remain pending; the ticket stays
-  `IN_PROGRESS / PUBLICATION`.
+- Local and hosted governance, 26 tests, self-test, compilation, Ruff and diff
+  checks passed on exact head `14a86cd699677a29194404cae8c910e4182c3834`.
+- Validator run `31831972095` completed successfully and App review
+  `4940427343` approved that exact head.
+- The Validator App explicitly merged PR #14 as
+  `eab9c7b8cb99560d022e35acf12ea04b5ec708e6`.
+- Protected `main` read-back returned the same merge commit and the source
+  branch was deleted.
