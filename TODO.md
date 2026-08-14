@@ -9,3 +9,5 @@
 - [ ] [`ticket-002`](project/ticket-002/README.md) — derive Autonomy 0.2 from
   production evidence: durable dispatch, independent watchdog, registry
   consistency, target isolation, explicit protected merge and live canaries.
+- [x] [`ticket-003`](project/ticket-003/README.md) — add hosted autonomy
+  conformance, protected branch rules and Validator App onboarding.
