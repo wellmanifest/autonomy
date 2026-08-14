@@ -1,9 +1,11 @@
 # Project roadmap
 
-- [ ] [`ticket-014`](project/ticket-014/README.md) — align root README and
+- [x] [`ticket-014`](project/ticket-014/README.md) — align root README and
   changelog with stable Autonomy 0.7 and its exact publication evidence.
-  State: `IN_PROGRESS / PUBLICATION`; classification: `SERVICE / P1 / regression`;
-  workstream: `governance`.
+  State: `DONE / DONE`; classification: `SERVICE / P1 / regression`;
+  workstream: `governance`. Validator App review `4941939096` approved exact
+  head `9a9dd714`, merged as `e7ebaafde55832ef09df2ee196b154cd06fd5eed`
+  after two stable reads, with source branch cleanup.
 - [x] [`ticket-013`](project/ticket-013/README.md) — promote Autonomy 0.7 from
   live GitHub evidence: partition approval-triggered checks from pre-review
   readiness and model source-branch deletion that platform-couples PR closure.

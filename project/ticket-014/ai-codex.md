@@ -32,6 +32,9 @@ contract as the source of truth.
   Ruff, JSON Schema validation and whitespace checks.
 - Advanced the verified candidate to `PUBLICATION`; trusted review and merge
   remain exclusively owned by the independent Validator App.
+- Verified hosted checks, exact-head App review `4941939096`, Validator run
+  `31851081469`, two stable reads, protected merge `e7ebaafd` and source branch
+  cleanup; closed the ticket only from integrated protected main.
 
 ## Blockers
 

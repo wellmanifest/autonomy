@@ -29,3 +29,14 @@
     artifact digests already stale on protected main. The root-doc ticket does
     not modify examples/dsl-manifest.json or its bound artifacts. Repair is
     reserved for a new plan-first integration ticket after this publication.
+
+[4] Protected publication
+    Hosted autonomy conformance: 31851056165 success.
+    Hosted remote lifecycle: 31851056226 success.
+    Exact head: 9a9dd714c80b11747daf8721bdb96a01ec699392.
+    Validator run: 31851081469 success.
+    Validator App review: 4941939096 APPROVED on exact head.
+    Protected convergence: 2 stable reads.
+    Merge: e7ebaafde55832ef09df2ee196b154cd06fd5eed.
+    Protected main read-back: exact merge SHA.
+    Source branch read-back: absent.
