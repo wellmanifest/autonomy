@@ -3,7 +3,7 @@
   "schema": "wellmanifest.dsl/manifest/v1",
   "id": "wellmanifest.autonomy",
   "name": "Wellmanifest Autonomy Standard",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "status": "stable",
   "purpose": "Durable, independently watched autonomous software-development continuation without per-pull-request human approval",
   "domain": "autonomous-development",
@@ -23,7 +23,7 @@
   "source": {
     "repository": "wellmanifest/autonomy",
     "path": "schemas/autonomy-manifest.schema.json",
-    "declaredVersion": "4",
+    "declaredVersion": "5",
     "canonical": "json-ast",
     "mediaType": "application/schema+json",
     "selectors": [
@@ -144,16 +144,16 @@
   "semantics": {
     "effectModel": "controlled-effects",
     "unknownPolicy": "reject",
-    "authoritySchema": "https://wellmanifest.com/schemas/autonomy-manifest/v4#/$defs/manifest"
+    "authoritySchema": "https://wellmanifest.com/schemas/autonomy-manifest/v5#/$defs/manifest"
   },
   "llm": {
     "mode": "input",
     "requestSchemas": [
-      "https://wellmanifest.com/schemas/autonomy-manifest/v4"
+      "https://wellmanifest.com/schemas/autonomy-manifest/v5"
     ],
     "responseSchemas": [],
     "naturalLanguage": "typed-source-only",
-    "sourceSchema": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
+    "sourceSchema": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
     "modelAuthority": "propose-only",
     "strict": true
   },

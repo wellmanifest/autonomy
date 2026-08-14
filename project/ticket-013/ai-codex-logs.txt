@@ -1,0 +1,40 @@
+2026-08-15 ticket-013 (agent:codex)
+
+[1] Approval-triggered preflight evidence
+    wellmanifest/logs#11 exact head:
+      f8ec0d898b722652ae903d33005bfb1aefedca24
+    Canonical --wait-checks reported missing:
+      governance / governance / enforce
+    The wait was interrupted before dispatch because approval creates that
+    check. Validator run 31849335166 without that stale helper wait approved,
+    required post-approval run 31849434851, converged twice and merged.
+
+[2] Provider-coupled closure evidence
+    Protected archival merge:
+      ab268f932dbc09e5091fb8b7b4f4570790fa6254
+    Content manifest digest:
+      738a66ea9ce5d636d4b0502211fb4b2ce0ea2b0d2f619ffc0ce214bad3caa089
+    Predecessor head:
+      4c235afecdf2c6f4da41fce98293e71228ae93b3
+    Deleting the source branch at 2026-08-14T23:18:40Z immediately closed PR
+    #10 as unmerged. No explicit close request was sent. refs/pull/10/head
+    remained bound to the predecessor; comment 5299102421 stores read-back.
+
+[3] Deterministic validation
+    ./project/governance-check.sh --actor agent
+      GOV-PASS: passed (0 errors, 0 warnings)
+    python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json
+      PASS examples/valid/project.autonomy.json
+      PASS profiles/subactor-semcod.profile.json
+    python3 src/autonomy_check.py self-test
+      PASS autonomy self-test
+    python3 -m unittest discover -s tests -v
+      Ran 32 tests; OK
+    python3 -m compileall -q src tests
+      PASS
+    ruff check src tests
+      All checks passed
+    jsonschema.Draft202012Validator.check_schema + both valid documents
+      JSON-SCHEMA-PASS
+    git diff --check
+      PASS

@@ -1,4 +1,4 @@
-# Wellmanifest Autonomy Standard 0.6
+# Wellmanifest Autonomy Standard 0.7
 
 Status: stable
 
@@ -20,7 +20,7 @@ closed capability catalog, risk ceiling, resource budget, and protected
 publication boundary. It is not general permission for an LLM to execute tools.
 
 The canonical interchange form is JSON conforming to
-`wellmanifest.autonomy/manifest/v4`. Implementations MAY project the same
+`wellmanifest.autonomy/manifest/v5`. Implementations MAY project the same
 semantics into YAML, Protobuf, CQRS messages, AQL/EQL, or URI Process contracts,
 but a projection MUST preserve every authority restriction and immutable
 binding.
@@ -180,7 +180,7 @@ The initial standard requires these excluded effects in every grant:
 - publication through an untrusted dependency or package identity.
 
 An adopter MAY exclude more effects but MUST NOT remove these exclusions while
-claiming conformance to version 0.6. A repository MAY define a separate,
+claiming conformance to version 0.7. A repository MAY define a separate,
 externally issued high-risk profile; that profile is not the default autonomous
 code-development grant.
 
@@ -315,8 +315,8 @@ Required behavior:
    and issues a verdict bound to the exact head and protected profile digest.
 10. **Publish PR** creates a same-repository pull request with one ticket and
    correlation ID.
-11. **Exact-head gate** freezes the candidate, rechecks current base, required
-   checks, grant activity, and validator evidence.
+11. **Exact-head gate** freezes the candidate, rechecks current base, every
+   non-circular pre-approval check, grant activity, and validator evidence.
 12. **Post-approval convergence** starts a new evidence epoch after the trusted
     review or attestation. It discovers the effective protected policy and
     waits for every exact-head required check to reach terminal success.
@@ -388,6 +388,15 @@ return the same head, base, approval ID, policy digest, registry digest, and
 required-check set with no queued or in-progress member. A newly appearing
 check resets convergence.
 
+Before approval, the publisher MUST partition the protected required-check set
+by trigger semantics. Every non-circular check MUST already be authoritative
+terminal-success. A check whose authoritative attempt is created only by the
+trusted approval MUST be deferred at this boundary: waiting for its absence,
+skipped placeholder or pre-approval attempt would deadlock or accept stale
+evidence. After approval, every such check MUST have a fresh attempt submitted
+after the exact approval timestamp and that attempt MUST reach authoritative
+terminal-success. Deferral before approval never means optional after approval.
+
 Immediately before merge, the publisher MUST rebind repository, pull request,
 head SHA, base SHA, approval ID, effective required-check set, policy digest,
 and registry digest. A premature attempt caused solely by provider convergence
@@ -405,16 +414,22 @@ unique implementation byte, governance record and audit artifact reachable
 only from the predecessor, classifying each as integrated, durably archived,
 or intentionally retained.
 
-When that proof is complete, the standing lifecycle policy authorizes deletion
-of the proven-equivalent predecessor branch without a new per-PR human prompt.
-The controller MUST delete the branch while its pull request is still open,
-read back the branch absence, and close the predecessor in a later mutation
-cycle. This ordering prevents a closed pull request from leaving an orphan
-branch. If any unique content is unresolved or the proof is unavailable, the
-branch MUST be preserved and its pull request MUST remain open as its explicit
-owner. Closing an unmerged pull request while preserving an otherwise orphaned
-branch is non-conforming unless the repository has another protected ownership
-mechanism recognized by its lifecycle policy.
+When that proof is complete and durably integrated, the standing lifecycle
+policy authorizes deletion of the proven-equivalent predecessor branch without
+a new per-PR human prompt. The controller MUST request branch deletion while
+the pull request is still open. A provider MAY either leave the pull request
+open for an explicit close in a later cycle or close it as an immediate,
+platform-coupled effect of that single branch-delete mutation.
+
+The controller MUST read back branch absence, pull-request state, unmerged
+status, and an archive ref bound to the exact predecessor head. If the provider
+already coupled closure, the controller MUST NOT send a redundant close
+mutation; it records the coupled effect in the disposition receipt. If the pull
+request remains open, explicit close occurs in a later cycle. This provider
+capability does not authorize bundling unrelated mutations. If any unique
+content is unresolved, the proof is unavailable, the archive head moved, or
+read-back is incomplete, the branch MUST be preserved and its pull request MUST
+remain open as its explicit owner.
 
 ## 11. Publication requirements
 
@@ -429,8 +444,8 @@ following are true:
 - the protected registry equals the complete effective repository policy;
 - an independent trusted Validator App or signature-verified validator
   attestation approves that same head under the protected profile digest;
-- approval-triggered checks have converged in the new evidence epoch and all
-  effective required checks are authoritative terminal successes;
+- pre-approval non-circular checks passed, and approval-triggered checks have
+  fresh post-approval attempts that converged in the new evidence epoch;
 - the base is current and mergeable immediately before merge;
 - no unresolved critical or security finding exists;
 - the standing grant is active and the kill switch allows mutation;
@@ -444,7 +459,9 @@ performs the merge without asking a human once all gates pass.
 
 The publisher MUST perform a read-after-write check. A superseded pull request
 MAY be closed without merge only through the lossless disposition in section
-10.3. Each controller cycle performs at most one mutation.
+10.3. Each controller cycle requests at most one mutation; multiple state
+changes inseparable from that provider operation are recorded as one
+provider-coupled effect and completely read back.
 
 ## 12. Receipts and audit
 

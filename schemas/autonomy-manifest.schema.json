@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v4",
+  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
   "title": "Wellmanifest Autonomy manifest and runtime profile",
   "oneOf": [
     { "$ref": "#/$defs/manifest" },
@@ -190,8 +190,8 @@
         "continuation"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v4" },
-        "schema": { "const": "wellmanifest.autonomy/manifest/v4" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v5" },
+        "schema": { "const": "wellmanifest.autonomy/manifest/v5" },
         "id": { "$ref": "#/$defs/uri" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["draft", "active", "suspended", "revoked", "expired"] },
@@ -659,8 +659,11 @@
               "required": [
                 "effectivePolicySourceProtected",
                 "registryMustMatchEffectivePolicy",
+                "preApprovalCheckPolicy",
+                "approvalTriggeredChecksDeferred",
                 "approvalStartsNewEpoch",
                 "postApprovalChecksRequired",
+                "postApprovalAttemptRequired",
                 "terminalSuccessRequired",
                 "minimumStableReads",
                 "boundedSameHeadRetry",
@@ -669,8 +672,11 @@
               "properties": {
                 "effectivePolicySourceProtected": { "const": true },
                 "registryMustMatchEffectivePolicy": { "const": true },
+                "preApprovalCheckPolicy": { "const": "terminal-success-non-circular" },
+                "approvalTriggeredChecksDeferred": { "const": true },
                 "approvalStartsNewEpoch": { "const": true },
                 "postApprovalChecksRequired": { "const": true },
+                "postApprovalAttemptRequired": { "const": true },
                 "terminalSuccessRequired": { "const": true },
                 "minimumStableReads": { "const": 2 },
                 "boundedSameHeadRetry": { "const": true },
@@ -704,6 +710,7 @@
                 "requiredBindings",
                 "uniqueDataPolicy",
                 "equivalentBranchDisposition",
+                "closureEffect",
                 "unresolvedBranchDisposition",
                 "standingPolicyAuthorizesProvenDeletion",
                 "postDispositionReadBack"
@@ -731,7 +738,42 @@
                   "uniqueItems": true
                 },
                 "uniqueDataPolicy": { "const": "preserve" },
-                "equivalentBranchDisposition": { "const": "delete-before-close" },
+                "equivalentBranchDisposition": { "const": "delete-after-lossless-proof" },
+                "closureEffect": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "allowedModes",
+                    "providerCoupledEffectIsSingleMutation",
+                    "explicitCloseOnlyWhenStillOpen",
+                    "requiredReadBack"
+                  ],
+                  "properties": {
+                    "allowedModes": {
+                      "type": "array",
+                      "items": { "enum": ["explicit-later", "provider-coupled"] },
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "uniqueItems": true
+                    },
+                    "providerCoupledEffectIsSingleMutation": { "const": true },
+                    "explicitCloseOnlyWhenStillOpen": { "const": true },
+                    "requiredReadBack": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "branchAbsent",
+                          "pullRequestClosed",
+                          "pullRequestUnmerged",
+                          "archiveHeadPreserved"
+                        ]
+                      },
+                      "minItems": 4,
+                      "maxItems": 4,
+                      "uniqueItems": true
+                    }
+                  }
+                },
                 "unresolvedBranchDisposition": { "const": "keep-pull-request-open" },
                 "standingPolicyAuthorizesProvenDeletion": { "const": true },
                 "postDispositionReadBack": { "const": true }
@@ -907,8 +949,8 @@
         "protectedBoundaries"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v4" },
-        "schema": { "const": "wellmanifest.autonomy/profile/v4" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v5" },
+        "schema": { "const": "wellmanifest.autonomy/profile/v5" },
         "id": { "$ref": "#/$defs/id" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["experimental", "stable", "deprecated"] },

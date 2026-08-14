@@ -74,11 +74,13 @@ Recommended adoption order:
 5. Compile all repository/base/check/validator/merge bindings from one protected
    digest-bound registry and reject projection drift against the provider's
    complete effective ruleset and branch policy.
-6. Install protected required checks and a Validator App; treat its approval as
-   the start of a new evidence epoch, not the end of validation.
-7. Require two stable protected policy/check reads after approval before merge.
-8. Adopt a lossless superseded-work policy: proven-equivalent branches are
-   deleted before their PR closes; unresolved work keeps an open PR owner.
+6. Install protected required checks and a Validator App; partition
+   approval-triggered checks from non-circular pre-review readiness.
+7. Treat approval as a new evidence epoch, require a fresh post-approval
+   attempt for every approval-triggered check, then require two stable reads.
+8. Adopt a lossless superseded-work policy: archive a path-complete receipt
+   before branch deletion and model either later explicit PR close or the
+   provider's immediate coupled close; unresolved work keeps an open PR owner.
 9. Start with observation-only and dry-run cycles.
 10. Issue a short-lived grant for low-risk paths and a small change budget.
 11. Prove automatic trigger delivery, recovery, exact-head validation, explicit
@@ -294,7 +296,20 @@ PR #7 was closed only after its successor merged, and its unmerged branch was
 preserved. Hosted lifecycle run `31844139952` then emitted
 `GOV-BRANCH-LIFECYCLE-002` because the closed PR no longer owned that branch.
 Reopening #7 restored ownership and the rerun passed. Autonomy 0.6 therefore
-requires the effective policy inventory after approval and a lossless disposal
-order: prove equivalence, delete the branch while the PR is open, read back,
-then close in a later mutation. If equivalence is not proved, both branch and
-open PR remain.
+required effective policy inventory after approval and deletion only after a
+lossless receipt. Its prescribed later close was then tested against GitHub.
+
+On PR #11, the canonical dispatcher's preflight waited for
+`governance / governance / enforce` before review even though approval creates
+that check. Validator run `31849335166` correctly avoided the deadlock,
+submitted review `4941823861`, required fresh run `31849434851`, converged
+twice and merged as `3e1bf6e43800a6191700e1a06f5d52a3f31d44bd`.
+
+PR #12 then integrated a path-complete predecessor receipt as protected merge
+`ab268f932dbc09e5091fb8b7b4f4570790fa6254`. Deleting the proven-equivalent
+branch of open PR #10 caused GitHub to close that PR immediately; no explicit
+close request was sent. Read-back proved branch absence, closed/unmerged PR
+state and `refs/pull/10/head` still bound to exact predecessor
+`4c235afecdf2c6f4da41fce98293e71228ae93b3`. Autonomy 0.7 therefore treats
+this as one provider-coupled effect, not as an agent-authorized bundle, while
+retaining the same archival and fail-closed requirements.

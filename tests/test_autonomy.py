@@ -231,8 +231,10 @@ class AutonomyConformanceTests(unittest.TestCase):
         for field in (
             "effectivePolicySourceProtected",
             "registryMustMatchEffectivePolicy",
+            "approvalTriggeredChecksDeferred",
             "approvalStartsNewEpoch",
             "postApprovalChecksRequired",
+            "postApprovalAttemptRequired",
             "terminalSuccessRequired",
             "boundedSameHeadRetry",
         ):
@@ -244,6 +246,12 @@ class AutonomyConformanceTests(unittest.TestCase):
         unstable = copy.deepcopy(self.valid)
         unstable["changeControl"]["publicationConvergence"]["minimumStableReads"] = 1
         self.assertIn(autonomy_check.SYNTAX, self.codes(unstable))
+
+        circular = copy.deepcopy(self.valid)
+        circular["changeControl"]["publicationConvergence"][
+            "preApprovalCheckPolicy"
+        ] = "all-checks-terminal"
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(circular))
 
         incomplete = copy.deepcopy(self.valid)
         incomplete["changeControl"]["publicationConvergence"][
@@ -267,6 +275,24 @@ class AutonomyConformanceTests(unittest.TestCase):
             "equivalentBranchDisposition"
         ] = "close-and-preserve"
         self.assertIn(autonomy_check.BOUNDARY, self.codes(orphan))
+
+        coupled = copy.deepcopy(self.valid)
+        coupled["changeControl"]["supersededWork"]["closureEffect"][
+            "providerCoupledEffectIsSingleMutation"
+        ] = False
+        self.assertIn(autonomy_check.SYNTAX, self.codes(coupled))
+
+        stale_archive = copy.deepcopy(self.valid)
+        stale_archive["changeControl"]["supersededWork"]["closureEffect"][
+            "requiredReadBack"
+        ].remove("archiveHeadPreserved")
+        self.assertIn(autonomy_check.SYNTAX, self.codes(stale_archive))
+
+        explicit_only = copy.deepcopy(self.valid)
+        explicit_only["changeControl"]["supersededWork"]["closureEffect"][
+            "allowedModes"
+        ].remove("provider-coupled")
+        self.assertIn(autonomy_check.SYNTAX, self.codes(explicit_only))
 
         unresolved = copy.deepcopy(self.valid)
         unresolved["changeControl"]["supersededWork"][
@@ -303,7 +329,7 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.6.0", self.profile["version"])
+        self.assertEqual("0.7.0", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
         dispatch = next(
             binding
@@ -365,7 +391,9 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "successor-pr-base-refresh",
                 "authoritative-check-provenance",
                 "effective-policy-discovery",
+                "pre-approval-check-partition",
                 "post-approval-check-convergence",
+                "provider-coupled-pr-closure",
                 "lossless-superseded-branch-disposition",
                 "durable-publication-checkpoint",
             },
@@ -382,7 +410,16 @@ class AutonomyConformanceTests(unittest.TestCase):
             "approval-starts-new-evidence-epoch", publish["restrictions"]
         )
         self.assertIn(
-            "delete-proven-equivalent-branch-before-close",
+            "approval-triggered-checks-deferred-before-review",
+            publish["restrictions"],
+        )
+        self.assertIn("post-approval-attempt-required", publish["restrictions"])
+        self.assertIn(
+            "delete-proven-equivalent-branch-after-integrated-proof",
+            publish["restrictions"],
+        )
+        self.assertIn(
+            "provider-coupled-close-read-back",
             publish["restrictions"],
         )
         self.assertIn(
@@ -413,8 +450,11 @@ class AutonomyConformanceTests(unittest.TestCase):
             "complete effective required-check set",
             "starts a new evidence epoch",
             "two consecutive protected reads",
-            "delete the branch while its pull request is still open",
-            "pull request MUST remain open as its explicit\nowner",
+            "partition the protected required-check set",
+            "fresh attempt submitted\nafter the exact approval timestamp",
+            "request branch deletion while\nthe pull request is still open",
+            "platform-coupled effect",
+            "pull request MUST\nremain open as its explicit owner",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):
