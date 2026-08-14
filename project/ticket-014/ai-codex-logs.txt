@@ -1,0 +1,7 @@
+2026-08-15 ticket-014 (agent:codex)
+
+[1] Plan checkpoint
+    Accepted base: 310fafeb60581c81e3aa8824fcc2fd61690bf88f
+    Workstream: governance
+    Implementation scope: README.md, CHANGELOG.md
+    Normative and executable surfaces: forbidden

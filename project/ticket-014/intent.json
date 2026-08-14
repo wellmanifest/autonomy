@@ -1,0 +1,87 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-014",
+  "summary": "Align root docs with stable Autonomy 0.7",
+  "workstream": "governance",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P1",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-014/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    ".github/**",
+    "AGENTS.md",
+    "VERSION",
+    "spec/**",
+    "schemas/**",
+    "profiles/**",
+    "examples/**",
+    "src/**",
+    "tests/**",
+    "docs/**",
+    "pyproject.toml"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "310fafeb60581c81e3aa8824fcc2fd61690bf88f",
+    "targetBranch": "main",
+    "outcome": "Root documentation accurately presents stable Autonomy 0.7 and its protected publication evidence.",
+    "nonGoals": [
+      "Change normative semantics, schemas, profiles, examples or executable validation",
+      "Modify Validator runtime or repository workflows",
+      "Permit circular checks to be skipped after approval",
+      "Permit superseded-branch deletion without integrated path-complete archival proof",
+      "Expand autonomous authority"
+    ],
+    "complexity": "S",
+    "estimatedMinutes": 10,
+    "budgets": {
+      "maxImplementationFiles": 2,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 1,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Update only governance-owned root release documentation after protected 0.7 publication.",
+      "components": [
+        {
+          "name": "root-documentation",
+          "paths": ["README.md", "CHANGELOG.md"]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": ["Root release status advances from 0.6.0 to 0.7.0"],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the documentation-only change through the protected Validator boundary."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-05",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests"
+        ],
+        "evidence": "project/ticket-014/ai-codex-logs.txt"
+      }
+    ]
+  }
+}
