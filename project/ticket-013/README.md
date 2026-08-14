@@ -2,8 +2,8 @@
 
 - **ID**: ticket-013
 - **Owner**: agent:codex
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -72,3 +72,15 @@ standard is published.
 - Human participant: the session owner authorized autonomous continuation; no
   `user-*` file was created or modified.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Exact implementation head:
+  `f0f07c9d2852f63f99755d6c8ba182423f304d03`.
+- Hosted autonomy conformance run `31850464893` and remote lifecycle run
+  `31850464947` passed for that exact head.
+- Validator run `31850486923` submitted App review `4941897120`, rebound the
+  complete protected state twice, and explicitly merged PR #24 as
+  `39386e759968bea4ca80514e83249a9b5aadd4d1`.
+- Protected `main` read-back returned that merge SHA and GitHub deleted the
+  source branch.
