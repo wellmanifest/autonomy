@@ -1,0 +1,26 @@
+2026-08-14 planning
+SESSION_EXECUTION_AUTHORIZATION=RECORDED_FROM_USER_CONTINUATION
+ACCEPTED_BASE_SHA=f7568395fd97b6866faa5542fe6fdea78448f7d1
+PRACTICE_SOURCE=wellmanifest/logs ticket-004 successor and closure publication
+OBSERVED_FAILURE_1=validator registry omitted effective ruleset check governance / governance / enforce
+OBSERVED_FAILURE_2=App approval triggered a required check after pre-approval inventory
+OBSERVED_FAILURE_3=merge was attempted before approval-triggered check convergence
+OBSERVED_FAILURE_4=closed unmerged PR plus preserved branch violated remote no-orphan policy
+OBSERVED_RECOVERY_1=bounded exact-head retry after terminal checks merged logs#8 and logs#9
+OBSERVED_RECOVERY_2=reopening logs#7 restored explicit branch ownership
+IMPLEMENTATION_FILES_MAX=10
+AFFECTED_COMPONENTS_MAX=3
+PUBLIC_INTERFACE_CHANGES_MAX=3
+RUNTIME_DEPENDENCIES_MAX=0
+2026-08-15 local-validation
+REMOTE_BASE_SHA=f7568395fd97b6866faa5542fe6fdea78448f7d1
+ACCEPTED_BASE_MATCH=true
+JSON_SCHEMA_DRAFT_2020_12=PASS manifest profile
+AUTONOMY_VALIDATE=PASS manifest profile
+AUTONOMY_SELF_TEST=PASS
+UNIT_TESTS=PASS 32
+COMPILEALL=PASS
+RUFF=PASS
+DSL_MANIFEST=PASS 0 errors
+DIFF_CHECK=PASS
+GOVERNANCE=PASS 0 errors 0 warnings

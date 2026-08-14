@@ -1,0 +1,119 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-011",
+  "summary": "Require post-approval convergence and lossless superseded-branch disposal",
+  "workstream": "integration",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "requested"
+  },
+  "allowedPaths": [
+    "project/ticket-011/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "spec/AUTONOMY_STANDARD.md",
+    "schemas/autonomy-manifest.schema.json",
+    "profiles/subactor-semcod.profile.json",
+    "examples/valid/project.autonomy.json",
+    "src/autonomy_check.py",
+    "tests/test_autonomy.py",
+    "docs/ARCHITECTURE.md",
+    "docs/LOGIC_FLOW.md",
+    "examples/dsl-manifest.json"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    ".github/**",
+    "AGENTS.md",
+    "README.md",
+    "CHANGELOG.md",
+    "examples/invalid/**",
+    "pyproject.toml"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "f7568395fd97b6866faa5542fe6fdea78448f7d1",
+    "targetBranch": "main",
+    "outcome": "Publish Autonomy 0.6 with post-approval policy convergence and lossless superseded-branch disposition",
+    "nonGoals": [
+      "Implement the GitHub-specific Validator retry loop in this standard repository",
+      "Delete the preserved wellmanifest/logs predecessor branch without its adopted lifecycle policy",
+      "Permit candidate-controlled required-check or branch-disposal policy",
+      "Permit loss of unique unmerged implementation or governance evidence"
+    ],
+    "complexity": "L",
+    "estimatedMinutes": 25,
+    "budgets": {
+      "maxImplementationFiles": 10,
+      "maxAffectedComponents": 3,
+      "maxPublicInterfaceChanges": 3,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Add closed manifest v4 contracts for effective policy discovery, post-approval convergence and lossless superseded-work disposition",
+      "components": [
+        {
+          "name": "normative-contract",
+          "paths": [
+            "VERSION",
+            "spec/**",
+            "schemas/**",
+            "examples/valid/**",
+            "examples/dsl-manifest.json"
+          ]
+        },
+        {
+          "name": "conformance",
+          "paths": [
+            "src/**",
+            "tests/**"
+          ]
+        },
+        {
+          "name": "integration-guidance",
+          "paths": [
+            "profiles/**",
+            "docs/**"
+          ]
+        }
+      ],
+      "responsibilityChanges": true,
+      "interfaceChanges": [
+        "manifest v4 requires publicationConvergence",
+        "manifest v4 requires supersededWork disposition",
+        "profile v4 advertises policy convergence and lossless cleanup"
+      ],
+      "dataChanges": [
+        "manifest and profile v3 to v4 migration"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert before adoption; 0.5/v3 manifests remain historical but cannot claim 0.6 conformance."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-06",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests"
+        ],
+        "evidence": "project/ticket-011/ai-codex-logs.txt"
+      }
+    ]
+  }
+}
