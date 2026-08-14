@@ -39,5 +39,86 @@
   "stacks": ["python"],
   "dependsOn": [],
   "conflictsWith": [],
-  "integrationTicket": null
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "1ec9553e186d98e6682201e3824b503325409385",
+    "targetBranch": "main",
+    "outcome": "A reusable Wellmanifest Autonomy standard that lets adopted projects continue routine development through governed Subactor agents and Semcod tools without per-PR human approval.",
+    "nonGoals": [
+      "Host or implement an agent runtime, queue, GitHub App, LLM, or repository mirror",
+      "Allow implementers to validate or approve their own changes",
+      "Grant autonomous authority over secrets, destructive infrastructure, billing, legal, identity, or security-critical effects",
+      "Permit a standing grant to renew, widen, or disable itself",
+      "Merge this standard without independent current-head approval"
+    ],
+    "complexity": "L",
+    "estimatedMinutes": 30,
+    "budgets": {
+      "maxImplementationFiles": 15,
+      "maxAffectedComponents": 5,
+      "maxPublicInterfaceChanges": 3,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Standardize a repository-bound standing autonomy grant, strict separation of agent duties, bounded continuation lifecycle, and protected exact-head publication boundary; keep execution in adopting Subactor and Semcod runtimes.",
+      "components": [
+        {
+          "name": "normative-contracts",
+          "paths": ["spec/**", "schemas/**", "profiles/**"]
+        },
+        {
+          "name": "conformance",
+          "paths": ["examples/**", "src/**", "tests/**", "pyproject.toml"]
+        },
+        {
+          "name": "guidance",
+          "paths": ["docs/**"]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "Introduce wellmanifest.autonomy/manifest/v1 as a pre-stable public policy contract",
+        "Introduce wellmanifest.autonomy/profile/v1 for versioned runtime capability mappings",
+        "Define standing-grant and exact-head automated publication semantics"
+      ],
+      "dataChanges": [
+        "Define immutable repository, grant, profile, task, pull-request, and receipt bindings",
+        "Define risk, change, time, retry, cost, concurrency, and continuation budgets"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Remove ticket-owned implementation paths; preserve the governed baseline and ticket evidence."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-02",
+        "commands": ["python3 -m unittest discover -s tests -v"],
+        "evidence": "project/ticket-001/ai-codex-logs.txt"
+      },
+      {
+        "criterion": "AC-08",
+        "commands": [
+          "python3 src/autonomy_check.py validate examples/valid",
+          "python3 src/autonomy_check.py self-test"
+        ],
+        "evidence": "project/ticket-001/ai-codex-logs.txt"
+      },
+      {
+        "criterion": "AC-10",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests",
+          "docker run --rm --network none --mount type=bind,src=$PWD,dst=/workspace,readonly --workdir /workspace python@sha256:efcdfa6a6b2fd2afb9c7dfa9a5b288a6f68338b5cfdebe6b637d986067d85757 python3 src/autonomy_check.py self-test"
+        ],
+        "evidence": "project/ticket-001/ai-codex-logs.txt"
+      }
+    ]
+  }
 }

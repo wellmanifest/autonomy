@@ -1,0 +1,12 @@
+{
+  "schema": "wellmanifest.autonomy/invalid-case/v1",
+  "base": "../valid/project.autonomy.json",
+  "mutations": [
+    {
+      "op": "replace",
+      "path": "/status",
+      "value": "expired"
+    }
+  ],
+  "expectedCodes": ["AUTONOMY-POLICY-001"]
+}

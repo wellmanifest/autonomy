@@ -1,0 +1,321 @@
+{
+  "$schema": "https://wellmanifest.dev/schemas/autonomy-manifest/v1",
+  "schema": "wellmanifest.autonomy/manifest/v1",
+  "id": "subactor://autonomy/project/example-api",
+  "version": "1.0.0",
+  "status": "active",
+  "subject": {
+    "repository": "example/example-api",
+    "defaultBranch": "main",
+    "adoptedRevision": "1111111111111111111111111111111111111111",
+    "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "profile": {
+      "id": "wellmanifest.autonomy.profile/subactor-semcod",
+      "version": "0.1.0-dev",
+      "digest": "sha256:255ecc1804784d4d2ca4785adb671a1246445cd56c03241cec26a47637a31e1d"
+    }
+  },
+  "grant": {
+    "id": "subactor://grant/autonomy/example-api/2026-08",
+    "issuer": {
+      "id": "authority:founder",
+      "kind": "human"
+    },
+    "issuedAt": "2026-08-14T08:00:00Z",
+    "notBefore": "2026-08-14T08:00:00Z",
+    "reviewAt": "2026-08-28T08:00:00Z",
+    "expiresAt": "2026-09-14T08:00:00Z",
+    "scope": {
+      "repositories": ["example/example-api"],
+      "branches": ["main"],
+      "pathAllow": ["src/**", "tests/**", "docs/**"],
+      "pathDeny": [
+        ".github/**",
+        ".governance/**",
+        ".wellmanifest/**",
+        "infra/**",
+        "secrets/**"
+      ],
+      "actions": [
+        "observe",
+        "select-task",
+        "propose-plan",
+        "create-ticket",
+        "create-branch",
+        "edit-candidate",
+        "test-candidate",
+        "commit-candidate",
+        "push-candidate",
+        "open-pull-request",
+        "issue-validator-attestation",
+        "approve-via-validator-app",
+        "enable-auto-merge",
+        "merge-pull-request",
+        "post-merge-read-back",
+        "append-audit-receipt"
+      ],
+      "riskCeiling": "moderate"
+    },
+    "constraints": {
+      "noPerPullRequestHumanApproval": true,
+      "allowAutomatedMerge": true,
+      "selfExtension": false,
+      "selfRenewal": false,
+      "killSwitch": "AUTONOMY_MUTATIONS_ENABLED",
+      "killSwitchExpected": "1"
+    }
+  },
+  "fleet": {
+    "roles": [
+      {
+        "id": "agent:doctor",
+        "role": "observer",
+        "principal": "principal:doctor-app",
+        "provider": "subactor/autonom",
+        "model": null,
+        "authorities": ["observe"],
+        "forbiddenAuthorities": ["edit-candidate", "merge-pull-request"],
+        "workspaceIsolation": "read-only"
+      },
+      {
+        "id": "agent:planner",
+        "role": "planner",
+        "principal": "principal:planner-app",
+        "provider": "subactor/orchestrator",
+        "model": "openrouter/planner",
+        "authorities": ["select-task", "propose-plan"],
+        "forbiddenAuthorities": ["edit-candidate", "approve-via-validator-app", "merge-pull-request"],
+        "workspaceIsolation": "read-only"
+      },
+      {
+        "id": "agent:repair",
+        "role": "implementer",
+        "principal": "principal:repair-app",
+        "provider": "subactor/repair-agent",
+        "model": "openai/codex",
+        "authorities": [
+          "create-ticket",
+          "create-branch",
+          "edit-candidate",
+          "test-candidate",
+          "commit-candidate",
+          "push-candidate"
+        ],
+        "forbiddenAuthorities": ["issue-validator-attestation", "approve-via-validator-app", "merge-pull-request"],
+        "workspaceIsolation": "dedicated-worktree"
+      },
+      {
+        "id": "agent:validator",
+        "role": "validator",
+        "principal": "principal:validator-app",
+        "provider": "subactor/validator-agent",
+        "model": "openrouter/validator",
+        "authorities": ["issue-validator-attestation", "approve-via-validator-app"],
+        "forbiddenAuthorities": ["edit-candidate", "commit-candidate", "push-candidate", "merge-pull-request"],
+        "workspaceIsolation": "fresh-checkout"
+      },
+      {
+        "id": "agent:publisher",
+        "role": "publisher",
+        "principal": "principal:publisher-app",
+        "provider": "subactor/onedev-agent",
+        "model": null,
+        "authorities": [
+          "open-pull-request",
+          "enable-auto-merge",
+          "merge-pull-request",
+          "post-merge-read-back"
+        ],
+        "forbiddenAuthorities": ["edit-candidate", "issue-validator-attestation"],
+        "workspaceIsolation": "protected-service"
+      },
+      {
+        "id": "agent:auditor",
+        "role": "auditor",
+        "principal": "principal:audit-app",
+        "provider": "subactor/skills-agent",
+        "model": null,
+        "authorities": ["observe", "append-audit-receipt"],
+        "forbiddenAuthorities": ["edit-candidate", "approve-via-validator-app", "merge-pull-request"],
+        "workspaceIsolation": "protected-service"
+      }
+    ],
+    "separation": [
+      {
+        "left": "agent:repair",
+        "right": "agent:validator",
+        "dimensions": ["principal", "credential", "workspace", "approval-identity"]
+      },
+      {
+        "left": "agent:repair",
+        "right": "agent:publisher",
+        "dimensions": ["principal", "credential", "workspace", "approval-identity"]
+      },
+      {
+        "left": "agent:validator",
+        "right": "agent:publisher",
+        "dimensions": ["principal", "credential", "workspace", "approval-identity"]
+      }
+    ]
+  },
+  "riskPolicy": {
+    "autonomousTiers": ["low", "moderate"],
+    "escalatedTiers": ["high", "critical"],
+    "excludedEffects": [
+      "secrets",
+      "destructive-infrastructure",
+      "billing",
+      "legal",
+      "identity-and-access",
+      "security-boundary",
+      "authority-policy",
+      "grant-mutation",
+      "force-push",
+      "history-rewrite",
+      "direct-default-branch-push",
+      "untrusted-dependency-publish"
+    ]
+  },
+  "budgets": {
+    "maxFilesPerChange": 15,
+    "maxComponentsPerChange": 5,
+    "maxPublicInterfacesPerChange": 3,
+    "maxRuntimeDependenciesPerChange": 3,
+    "maxMinutesPerCycle": 30,
+    "maxCostUsdPerCycle": 5.0,
+    "maxRetriesPerTask": 2,
+    "maxConsecutiveCycles": 20,
+    "maxConcurrentTasks": 1,
+    "cooldownSeconds": 60,
+    "leaseSeconds": 1800
+  },
+  "queue": {
+    "source": "composite",
+    "selection": "runnable-priority-dag",
+    "freshnessSeconds": 86400,
+    "deduplication": "fingerprint",
+    "humanBoundaryLabels": ["human", "autonomy-frontier"],
+    "oneMutationPerCycle": true
+  },
+  "pipeline": {
+    "states": [
+      "observe",
+      "evidence",
+      "plan",
+      "grant-check",
+      "isolated-edit",
+      "deterministic-validate",
+      "independent-validate",
+      "publish-pr",
+      "exact-head-gate",
+      "auto-merge",
+      "post-merge-verify",
+      "continue"
+    ],
+    "requiredGates": [
+      {
+        "id": "grant-active",
+        "stage": "pre-edit",
+        "kind": "deterministic",
+        "producer": "controller.grant",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "candidate-scope",
+        "stage": "pre-push",
+        "kind": "deterministic",
+        "producer": "controller.scope",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "deterministic-checks",
+        "stage": "pre-approval",
+        "kind": "deterministic",
+        "producer": "ci.required-checks",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "independent-validator",
+        "stage": "pre-merge",
+        "kind": "independent-attestation",
+        "producer": "app.validator",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "exact-head-current-base",
+        "stage": "pre-merge",
+        "kind": "deterministic",
+        "producer": "controller.publisher",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "post-merge-read-back",
+        "stage": "post-merge",
+        "kind": "read-back",
+        "producer": "controller.publisher",
+        "protected": true,
+        "failClosed": true
+      }
+    ],
+    "onFailure": "fail-closed",
+    "onOutOfScope": "escalate"
+  },
+  "publication": {
+    "mode": "pull-request",
+    "approval": "trusted-validator-app",
+    "requiredChecks": ["governance", "tests", "security", "validator"],
+    "bindings": [
+      "repository",
+      "pullRequest",
+      "headSha",
+      "baseSha",
+      "ticket",
+      "grant",
+      "profileDigest",
+      "actor"
+    ],
+    "sameRepositoryOnly": true,
+    "recheckBaseBeforeMerge": true,
+    "autoMerge": true,
+    "directDefaultBranchPush": false,
+    "deleteBranchAfterMerge": true,
+    "postMergeReadBack": true
+  },
+  "receipts": {
+    "store": "artifact://example/example-api/autonomy-receipts",
+    "required": [
+      "observation",
+      "plan",
+      "grant-check",
+      "change",
+      "deterministic-validation",
+      "independent-validation",
+      "publication",
+      "read-back"
+    ],
+    "redaction": "secret-free",
+    "retentionDays": 365
+  },
+  "continuation": {
+    "enabled": true,
+    "nextTaskWithoutHumanApproval": true,
+    "closeOnlyAfterReadBack": true,
+    "stopConditions": [
+      "grant-revoked",
+      "grant-expired",
+      "kill-switch-disabled",
+      "no-runnable-task",
+      "out-of-scope",
+      "independent-validation-failed",
+      "budget-exhausted",
+      "retry-exhausted",
+      "ambiguous-evidence",
+      "protected-authority-unavailable"
+    ]
+  }
+}
