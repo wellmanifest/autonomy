@@ -47,3 +47,11 @@ Publication evidence
 - Remote repository policy: delete_branch_on_merge=true.
 - The ticket remains IN_PROGRESS / PUBLICATION pending protected current-head
   checks and independent trusted approval.
+
+Workspace lifecycle audit
+- The adopted read-only workspace checker was run for the Wellmanifest parent
+  with this active checkout explicitly allowlisted.
+- It reported no finding for `wellmanifest/autonomy` and reported 21 existing
+  lifecycle findings in other repositories/worktrees under the shared parent.
+- Those unrelated branches and worktrees were not changed or removed because
+  their ownership, reachability, and disposition are outside ticket-001.
