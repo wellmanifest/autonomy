@@ -18,3 +18,9 @@
 - Promoted the standard/profile artifacts to 0.2.0 after all local gates passed.
 - Corrected the DSL profile lifecycle projection so its stability matches the
   already promoted `stable` status.
+
+## [0.2.1] - 2026-08-14
+
+- Closed the ticket after the independent scheduled Validator target approved
+  the exact head, explicitly App-merged PR #6, read protected main back and
+  deleted the source branch without manual dispatch.

@@ -40,3 +40,18 @@ COMPILEALL=PASS
 RUFF=PASS
 GOVERNANCE=GOV-PASS 0 errors 0 warnings
 DOCKER=NOT_REQUIRED_BY_MANIFEST
+
+2026-08-14 scheduled protected publication
+- scheduled run: 31827270068 (event=schedule)
+- target job: scan-direct (wellmanifest, autonomy) PASS
+- aggregate run: FAILURE from an unrelated matrix target; target outcome
+  remained authoritative and did not block this repository
+- exact head: 08d872a2e43680a5c64222eddd244a741d45366a
+- hosted checks: governance / remote lifecycle PASS; standards / autonomy
+  conformance PASS
+- Validator App review: 4940020686 by ifuri-validator-agent[bot]
+- merge: 94c73bf273da3bea71d7502e73ba200b82d216d1
+- merged at: 2026-08-14T18:10:22Z
+- protected-main read-back: 94c73bf273da3bea71d7502e73ba200b82d216d1
+- source branch: deleted
+- manual dispatch: false

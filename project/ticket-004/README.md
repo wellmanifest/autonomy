@@ -2,8 +2,8 @@
 
 - **ID**: ticket-004
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -38,3 +38,17 @@ Subactor/Semcod profile to the actual protected registry and runtime files.
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Scheduled Validator run `31827270068` was created with event `schedule`; no
+  human or agent dispatched the workflow for this publication.
+- The independent target job `scan-direct (wellmanifest, autonomy)` succeeded
+  even though an unrelated matrix target made the aggregate run fail.
+- Hosted governance and Autonomy conformance checks passed on exact head
+  `08d872a2e43680a5c64222eddd244a741d45366a`.
+- Validator App review `4940020686` approved that exact head and the App
+  explicitly merged PR #6 as
+  `94c73bf273da3bea71d7502e73ba200b82d216d1`.
+- Protected `main` read-back returned the same merge commit and the source
+  branch was deleted.

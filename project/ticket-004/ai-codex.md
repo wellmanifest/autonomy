@@ -51,10 +51,13 @@ portable requirements without moving runtime ownership into Wellmanifest.
   shared manifest/standards checks, 26 tests, self-test, compile, Ruff and
   governance before returning to `PUBLICATION`.
 - Passed all local deterministic, lint and governance gates; publication is
-  pending independent hosted verification and the protected App boundary.
+  complete through independent hosted verification and the protected App
+  boundary.
+- Observed the hourly Validator watchdog autonomously select this repository,
+  validate exact head `08d872a2e43680a5c64222eddd244a741d45366a`,
+  approve it as the Validator App, explicitly merge it, read protected main
+  back and delete the source branch without a manual dispatch.
 
 ## Blockers
 
-- None inside the recorded intent; proceed without a second confirmation.
-- New authority remains required for destructive action, secret access, new
-  external coordination, material objective expansion and trusted merge.
+- None. The bounded ticket and its protected publication are complete.
