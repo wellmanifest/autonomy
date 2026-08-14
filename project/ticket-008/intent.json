@@ -1,0 +1,68 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-008",
+  "summary": "Align root documentation with Autonomy 0.4",
+  "workstream": "governance",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P2",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-008/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": [],
+  "dependsOn": ["ticket-007"],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "5532e7bc28e2c0e66249460f6692556e68a743d1",
+    "targetBranch": "main",
+    "outcome": "Root documentation accurately presents stable Autonomy 0.4 and its protected runtime evidence.",
+    "nonGoals": [
+      "Change normative semantics, schemas, profiles, examples or executable validation",
+      "Claim that a manual publication dispatch proves scheduler liveness",
+      "Expand autonomous authority"
+    ],
+    "complexity": "S",
+    "estimatedMinutes": 12,
+    "budgets": {
+      "maxImplementationFiles": 5,
+      "maxAffectedComponents": 2,
+      "maxPublicInterfaceChanges": 1,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Update only governance-owned root release documentation after protected 0.4 publication.",
+      "components": [
+        {"name": "root-documentation", "paths": ["README.md", "CHANGELOG.md"]},
+        {"name": "ticket-evidence", "paths": ["TODO.md", "project/TICKETS.md", "project/ticket-008/**"]}
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": ["Root release status advances from 0.3.0 to 0.4.0"],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the documentation-only change through the protected Validator boundary."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-04",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 -m unittest discover -s tests -v",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m compileall -q src tests",
+          "python3 -m ruff check src tests"
+        ],
+        "evidence": "project/ticket-008/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

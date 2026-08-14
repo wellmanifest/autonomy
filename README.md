@@ -44,11 +44,19 @@ watchdog recovery receipts. Manual or agent-initiated workflow dispatch remains
 publication/diagnostic evidence and does not substitute for scheduler liveness.
 
 The Subactor reference runtime has exercised the durable timer/controller path,
-exact-head Validator App merge and checkpoint recovery. The Wellmanifest
-repository was also published by the independent scheduled Validator target in
-run `31827270068` without a manual dispatch.
+exact-head Validator App merge, checkpoint recovery and an exact-pinned runtime
+rollout. Its protected old runtime autonomously merged the rollout PR through
+Validator run `31830719505`; after deployment, the next natural timer cycle at
+`2026-08-14T18:57:40.427Z` ran from exact merge
+`88953aa58a48526caf1134ba40b04d0f39e3ff39` with `ok=true`,
+`dry_run=false` and zero mutations. The Wellmanifest repository was also
+published by the independent scheduled Validator target in run `31827270068`
+without a manual dispatch.
 
-Status: stable `0.3.0`. Autonomy 0.3 adds a protected deployment-source
-boundary: runtime code, effect-capable dependencies and authority-policy inputs
-must come from isolated revision/digest-bound deployments, not candidate or
-concurrently mutable development checkouts.
+Status: stable `0.4.0`. Autonomy 0.4 additionally requires the external
+supervisor to bind an exact runtime revision or artifact digest. Supervisor
+units, executable paths and pin configuration cannot resolve through candidate
+or concurrently mutable development checkouts. Rollout and rollback prepare an
+isolated replacement, quiesce triggers, reject dirty or foreign deployment
+state, switch the source and pin with effects stopped, then require a fresh
+automatic post-rollout cycle.
