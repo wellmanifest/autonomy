@@ -1,0 +1,8 @@
+# Ticket Changelog (ticket-001)
+
+## [0.1.0] - 2026-08-14
+
+- Initial governance scaffold created.
+- No human participant identity or content was generated.
+- Bounded the first release to normative contracts, one integration profile,
+  fixtures, deterministic conformance, and architecture guidance.
