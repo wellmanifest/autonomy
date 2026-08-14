@@ -1,0 +1,57 @@
+2026-08-14 ticket-001 validation evidence
+
+Governance baseline
+- Adopted wellmanifest/new-project 0.17.0 at
+  4d0a61837245b2906ce19c75c050fea1bc12adf2.
+- Managed adoption hashes: 34/34 match.
+- Seed baseline: 1ec9553e186d98e6682201e3824b503325409385.
+
+Research evidence
+- Subactor autonomy knowledge and runtime repositories were read before design.
+- Profile inventory: 19/19 declared runtime-owner repositories present.
+- Profile contract inventory: 26/26 repo:// references present.
+
+Validation commands and results
+- python3 -m json.tool on schema, profile, valid example and DSL manifest: PASS.
+- Draft202012Validator + FormatChecker on manifest and profile: PASS.
+- python3 src/autonomy_check.py validate examples/valid
+  profiles/subactor-semcod.profile.json: PASS.
+- python3 src/autonomy_check.py validate examples/valid
+  --at 2026-08-14T12:00:00Z: PASS.
+- python3 src/autonomy_check.py self-test: PASS.
+- python3 -m unittest discover -s tests -v: 16 passed, 0 failed.
+- python3 -m compileall -q src tests: PASS.
+- ruff format --check src tests: 2 files already formatted.
+- ruff check src tests: PASS.
+- python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json:
+  DSL-PASS, 0 errors.
+- ./project/governance-check.sh --actor agent: GOV-PASS, 0 errors,
+  0 warnings.
+- Networkless read-only pinned Python container self-test: PASS.
+- git diff --cached --check: PASS.
+- Secret-like assignment scan: PASS.
+- Local absolute-path scan: PASS.
+- Markdown local-link scan: PASS, 0 errors.
+
+Budget evidence
+- Implementation files: 15/15.
+- Affected components: 3/5.
+- Public interface files: 3/3.
+- Runtime dependencies: 0/0.
+
+Publication evidence
+- Public repository: https://github.com/wellmanifest/autonomy
+- Remote main baseline: 1ec9553e186d98e6682201e3824b503325409385.
+- Initial implementation head: 4050e77bfe5dea7f380dac733e3e4de82861f8a7.
+- Pull request: https://github.com/wellmanifest/autonomy/pull/1
+- Remote repository policy: delete_branch_on_merge=true.
+- The ticket remains IN_PROGRESS / PUBLICATION pending protected current-head
+  checks and independent trusted approval.
+
+Workspace lifecycle audit
+- The adopted read-only workspace checker was run for the Wellmanifest parent
+  with this active checkout explicitly allowlisted.
+- It reported no finding for `wellmanifest/autonomy` and reported 21 existing
+  lifecycle findings in other repositories/worktrees under the shared parent.
+- Those unrelated branches and worktrees were not changed or removed because
+  their ownership, reachability, and disposition are outside ticket-001.

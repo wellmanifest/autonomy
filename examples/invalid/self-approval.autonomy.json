@@ -1,0 +1,12 @@
+{
+  "schema": "wellmanifest.autonomy/invalid-case/v1",
+  "base": "../valid/project.autonomy.json",
+  "mutations": [
+    {
+      "op": "replace",
+      "path": "/fleet/roles/3/principal",
+      "value": "principal:repair-app"
+    }
+  ],
+  "expectedCodes": ["AUTONOMY-BOUNDARY-001"]
+}

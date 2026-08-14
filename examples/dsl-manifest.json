@@ -1,0 +1,252 @@
+{
+  "$schema": "https://wellmanifest.dev/schemas/dsl-manifest/v1",
+  "schema": "wellmanifest.dsl/manifest/v1",
+  "id": "wellmanifest.autonomy",
+  "name": "Wellmanifest Autonomy Standard",
+  "version": "0.1.0-dev",
+  "status": "experimental",
+  "purpose": "Governed autonomous software-development continuation without per-pull-request human approval",
+  "domain": "autonomous-development",
+  "owners": [
+    {
+      "kind": "repository",
+      "id": "wellmanifest/autonomy",
+      "responsibilities": [
+        "semantics",
+        "validation",
+        "compatibility",
+        "runtime",
+        "security"
+      ]
+    }
+  ],
+  "source": {
+    "repository": "wellmanifest/autonomy",
+    "path": "schemas/autonomy-manifest.schema.json",
+    "declaredVersion": "1",
+    "canonical": "json-ast",
+    "mediaType": "application/schema+json",
+    "selectors": [
+      "#/$defs/manifest",
+      "#/$defs/profile"
+    ]
+  },
+  "ownedPaths": [
+    "examples/dsl-manifest.json",
+    "spec/**",
+    "schemas/**",
+    "profiles/**",
+    "examples/**",
+    "src/**",
+    "tests/**",
+    "docs/**",
+    "pyproject.toml"
+  ],
+  "artifacts": [
+    {
+      "path": "schemas/autonomy-manifest.schema.json",
+      "role": "normative-source",
+      "digest": "sha256:1ae77e658150e266065f732e9c17c9a4a85a94974698dec50a4d44cf78a1621f"
+    },
+    {
+      "path": "spec/AUTONOMY_STANDARD.md",
+      "role": "documentation",
+      "digest": "sha256:6431c813485f947b61efa110cb0a03cdea15c9850a9f8d102c90859a13fe7d39"
+    },
+    {
+      "path": "profiles/subactor-semcod.profile.json",
+      "role": "profile",
+      "digest": "sha256:255ecc1804784d4d2ca4785adb671a1246445cd56c03241cec26a47637a31e1d"
+    },
+    {
+      "path": "src/autonomy_check.py",
+      "role": "parser-contract",
+      "digest": "sha256:88d4dbe6022366711a22b401d1803723ef31ed3e2a7340c0ae0a590fa1391c37"
+    },
+    {
+      "path": "examples/valid/project.autonomy.json",
+      "role": "example",
+      "digest": "sha256:52825b441c48b708248fc3709caa457d42f6a1d2b0cdb8e5164baa3558a26744"
+    },
+    {
+      "path": "examples/invalid/self-approval.autonomy.json",
+      "role": "example",
+      "digest": "sha256:e09169f66b8f2841cc3e3bca5e8050b923051b35ee2f57d9cd4b7b9fac764527"
+    },
+    {
+      "path": "examples/invalid/expired-grant.autonomy.json",
+      "role": "example",
+      "digest": "sha256:7f4116a9ad10d2ea6e609b65cda9f73c89183e0a02863cc835f0b2dde1fdad88"
+    },
+    {
+      "path": "docs/ARCHITECTURE.md",
+      "role": "documentation",
+      "digest": "sha256:f8c3836f54ef14a7163d2591e16ca5c8d1d3c7537b2fd0855b4cd5daed9bd4f8"
+    },
+    {
+      "path": "docs/LOGIC_FLOW.md",
+      "role": "documentation",
+      "digest": "sha256:91a91fb8f2ec1a40e36872656186e2001052865c9282f2c225baabde153e9a45"
+    },
+    {
+      "path": "docs/ERROR/AUTONOMY-SYNTAX-001.md",
+      "role": "documentation",
+      "digest": "sha256:283fd9c0f82f53cca844658b6fc197f3a213d7e23734cb5b8a5db44f97130303"
+    },
+    {
+      "path": "docs/CRITICAL/AUTONOMY-POLICY-001.md",
+      "role": "documentation",
+      "digest": "sha256:0dd01585e3e06aeb3881d000bff5dad23e306f28e421d9bbb41c061b00a7b3c0"
+    },
+    {
+      "path": "docs/CRITICAL/AUTONOMY-BOUNDARY-001.md",
+      "role": "documentation",
+      "digest": "sha256:5a06e476d478d0dc353e68b53efd2c7960ce0ea5b396f3195bab91f9f0dadd83"
+    }
+  ],
+  "namespaces": [
+    {
+      "prefix": "autonomy",
+      "uri": "https://wellmanifest.dev/autonomy/"
+    },
+    {
+      "prefix": "subactor",
+      "uri": "https://subactor.com/"
+    }
+  ],
+  "projections": [
+    {
+      "name": "protected-cqrs-envelope",
+      "mediaType": "application/json",
+      "direction": "from-canonical",
+      "lossless": false
+    },
+    {
+      "name": "aql-eql-policy",
+      "mediaType": "application/json",
+      "direction": "from-canonical",
+      "lossless": false
+    },
+    {
+      "name": "repository-policy-yaml",
+      "mediaType": "application/yaml",
+      "direction": "bidirectional",
+      "lossless": true
+    }
+  ],
+  "lifecycle": {
+    "compatibility": "semver",
+    "stability": "experimental",
+    "breaking": "major",
+    "additive": "minor",
+    "fix": "patch"
+  },
+  "semantics": {
+    "effectModel": "controlled-effects",
+    "unknownPolicy": "reject",
+    "authoritySchema": "https://wellmanifest.dev/schemas/autonomy-manifest/v1#/$defs/manifest"
+  },
+  "llm": {
+    "mode": "input",
+    "requestSchemas": [
+      "https://wellmanifest.dev/schemas/autonomy-manifest/v1"
+    ],
+    "responseSchemas": [],
+    "naturalLanguage": "typed-source-only",
+    "sourceSchema": "https://wellmanifest.dev/schemas/autonomy-manifest/v1",
+    "modelAuthority": "propose-only",
+    "strict": true
+  },
+  "documentation": {
+    "vocabularyKind": "documents",
+    "commandRoot": "docs",
+    "errorRoot": "docs/ERROR",
+    "criticalRoot": "docs/CRITICAL",
+    "commands": [],
+    "errorCodes": ["AUTONOMY-SYNTAX-001"],
+    "criticalCodes": [
+      "AUTONOMY-BOUNDARY-001",
+      "AUTONOMY-POLICY-001"
+    ]
+  },
+  "findingPolicy": {
+    "schema": "wellmanifest.dsl/findings/v1",
+    "requiredProducers": ["wellmanifest.autonomy-check"],
+    "securityProducers": ["wellmanifest.autonomy-check"],
+    "blockingSeverities": ["error", "critical"],
+    "requireEvaluable": true,
+    "blockUnresolvedSecurity": true
+  },
+  "publicationPolicy": {
+    "declaredTier": "controlled",
+    "deterministic": true,
+    "independentReview": true,
+    "externalAuthority": true,
+    "runtimeIsolation": true
+  },
+  "conformance": {
+    "levels": ["manifest", "contract", "runtime", "llm-boundary"],
+    "commands": [
+      "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+      "python3 src/autonomy_check.py self-test",
+      "python3 -m unittest discover -s tests -v"
+    ],
+    "validExamples": [
+      "examples/valid/project.autonomy.json",
+      "profiles/subactor-semcod.profile.json"
+    ],
+    "invalidExamples": [
+      "examples/invalid/self-approval.autonomy.json",
+      "examples/invalid/expired-grant.autonomy.json"
+    ]
+  },
+  "mappings": [
+    {
+      "standard": "wellmanifest/dsl",
+      "version": "0.1.0-dev",
+      "relation": "extends",
+      "uri": "https://github.com/wellmanifest/dsl"
+    },
+    {
+      "standard": "wellmanifest/new-project",
+      "version": "0.17.0",
+      "relation": "compatible-with",
+      "uri": "https://github.com/wellmanifest/new-project"
+    },
+    {
+      "standard": "wellmanifest/code-dsl",
+      "version": "0.1.0-dev",
+      "relation": "compatible-with",
+      "uri": "https://github.com/wellmanifest/code-dsl"
+    }
+  ],
+  "standardsLock": {
+    "schema": "wellmanifest.standards-lock/v1",
+    "entries": [
+      {
+        "standard": "wellmanifest.dsl",
+        "version": "0.1.0-dev",
+        "repository": "https://github.com/wellmanifest/dsl",
+        "revision": "b7d0595c95e5abbb48ebfdbdae0bc6d43c6f82f4",
+        "contracts": [
+          {
+            "ref": "https://wellmanifest.dev/schemas/dsl-manifest/v1",
+            "digest": "sha256:34d356b76bbd483372df84bb986e15bb84e9c1f8b11b7dc9e3a6c7276c85ed13"
+          }
+        ]
+      },
+      {
+        "standard": "wellmanifest.new-project",
+        "version": "0.17.0",
+        "repository": "https://github.com/wellmanifest/new-project",
+        "revision": "4d0a61837245b2906ce19c75c050fea1bc12adf2",
+        "contracts": [
+          {
+            "ref": "https://github.com/wellmanifest/new-project/governance/manifest.schema.json",
+            "digest": "sha256:40b63b86b4503fe0c3801c93b315ec4c400795ea59b49834a4797787f01857c2"
+          }
+        ]
+      }
+    ]
+  }
+}

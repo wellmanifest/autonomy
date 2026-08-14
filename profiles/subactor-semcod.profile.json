@@ -1,0 +1,273 @@
+{
+  "$schema": "https://wellmanifest.dev/schemas/autonomy-manifest/v1",
+  "schema": "wellmanifest.autonomy/profile/v1",
+  "id": "wellmanifest.autonomy.profile/subactor-semcod",
+  "version": "0.1.0-dev",
+  "status": "experimental",
+  "ownership": {
+    "standardOwner": "wellmanifest/autonomy",
+    "runtimeOwners": [
+      "subactor/autonom",
+      "subactor/autonomy-lab",
+      "subactor/onedev-agent",
+      "subactor/orchestrator",
+      "subactor/repair-agent",
+      "subactor/skills-agent",
+      "subactor/twin-probes",
+      "subactor/validator-agent",
+      "semcod/docval",
+      "semcod/goal",
+      "semcod/koru",
+      "semcod/planfile",
+      "semcod/prefact",
+      "semcod/redup",
+      "semcod/regres",
+      "semcod/repatch",
+      "semcod/testless",
+      "semcod/todo2code",
+      "semcod/vallm"
+    ]
+  },
+  "bindings": [
+    {
+      "stage": "observe",
+      "product": "subactor/autonom",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["cycle", "named-probe", "runtime-evidence"],
+      "contracts": ["repo://subactor/autonom/organism.yaml"],
+      "restrictions": ["acts-false", "closed-command-registry", "no-shell", "one-cycle"]
+    },
+    {
+      "stage": "observe",
+      "product": "subactor/twin-probes",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["quality-probes", "runtime-intent-evidence"],
+      "contracts": ["repo://subactor/twin-probes/README.md"],
+      "restrictions": ["capped-findings", "producer-classification-preserved"]
+    },
+    {
+      "stage": "evidence",
+      "product": "semcod/todo2code",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["extract", "link", "diagnose", "reality", "intent-graph"],
+      "contracts": ["repo://semcod/todo2code/docs/DSL.md"],
+      "restrictions": ["claims-remain-claims", "provenance-required", "no-source-auto-apply"]
+    },
+    {
+      "stage": "evidence",
+      "product": "wellmanifest/code-dsl",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["diagnostics", "hover", "definition", "references", "document-symbols", "workspace-symbols"],
+      "contracts": ["repo://wellmanifest/code-dsl/spec/CODE_DSL_STANDARD.md"],
+      "restrictions": ["lsp-evidence-only", "no-effect-authority", "freshness-required"]
+    },
+    {
+      "stage": "plan",
+      "product": "semcod/planfile",
+      "role": "planner",
+      "mode": "propose-only",
+      "capabilities": ["runnable-queue", "dependency-dag", "priority-selection", "ticket-lifecycle"],
+      "contracts": ["repo://semcod/planfile/README.md"],
+      "restrictions": ["human-boundary-filter", "autonomy-frontier-filter", "no-emergency-bypass"]
+    },
+    {
+      "stage": "plan",
+      "product": "subactor/orchestrator",
+      "role": "planner",
+      "mode": "propose-only",
+      "capabilities": ["resolution", "authority-check", "budget-check", "continuity", "dry-run"],
+      "contracts": ["repo://subactor/orchestrator/README.md"],
+      "restrictions": ["known-uri-only", "fail-closed", "no-secrets"]
+    },
+    {
+      "stage": "plan",
+      "product": "subactor/skills-agent",
+      "role": "planner",
+      "mode": "propose-only",
+      "capabilities": ["doctor-repair-validator-flow", "task-schema", "repository-scope-policy"],
+      "contracts": ["repo://subactor/skills-agent/schemas/task.schema.json"],
+      "restrictions": ["one-explicit-product-repository", "wildcards-rejected", "default-no-write"]
+    },
+    {
+      "stage": "plan",
+      "product": "semcod/todo2code",
+      "role": "planner",
+      "mode": "propose-only",
+      "capabilities": ["code-change-plan", "source-patch-proposal", "todo-patch"],
+      "contracts": ["repo://semcod/todo2code/schemas/code-change-plan.schema.json"],
+      "restrictions": ["hash-bound", "grounded-records", "acceptance-separated"]
+    },
+    {
+      "stage": "implement",
+      "product": "subactor/repair-agent",
+      "role": "implementer",
+      "mode": "candidate-write",
+      "capabilities": ["bounded-repair", "process-envelope", "repair-receipt"],
+      "contracts": ["repo://subactor/repair-agent/contracts/README.md"],
+      "restrictions": ["ticket-branch-only", "no-approval", "no-merge"]
+    },
+    {
+      "stage": "implement",
+      "product": "subactor/autonom",
+      "role": "implementer",
+      "mode": "candidate-write",
+      "capabilities": ["coding-agent", "isolated-worktree", "repository-test", "candidate-push"],
+      "contracts": ["repo://subactor/autonom/autonom/coding_agent.py"],
+      "restrictions": ["explicit-process-envelope", "separate-commit-push-authority", "no-live-secrets"]
+    },
+    {
+      "stage": "implement",
+      "product": "subactor/onedev-agent",
+      "role": "implementer",
+      "mode": "candidate-write",
+      "capabilities": ["exact-sha-workspace", "changed-file-policy", "trusted-tests"],
+      "contracts": ["repo://subactor/onedev-agent/README.md"],
+      "restrictions": ["feature-switch-required", "no-validator-credential", "no-network-by-default"]
+    },
+    {
+      "stage": "implement",
+      "product": "semcod/koru",
+      "role": "implementer",
+      "mode": "candidate-write",
+      "capabilities": ["queue-loop", "execute", "post-run-verify", "bounded-heal"],
+      "contracts": ["repo://semcod/koru/README.md"],
+      "restrictions": ["runnable-ticket-only", "cycle-budget", "approval-separate"]
+    },
+    {
+      "stage": "implement",
+      "product": "semcod/repatch",
+      "role": "implementer",
+      "mode": "candidate-write",
+      "capabilities": ["ui-patch", "spatial-delete", "css-safety"],
+      "contracts": ["repo://semcod/repatch/README.md"],
+      "restrictions": ["ui-path-scope", "validated-options-only", "no-general-shell"]
+    },
+    {
+      "stage": "validate",
+      "product": "subactor/validator-agent",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["independent-verdict", "process-contract", "bound-receipt"],
+      "contracts": ["repo://subactor/validator-agent/contracts/README.md"],
+      "restrictions": ["fresh-checkout", "no-candidate-write", "no-self-validation"]
+    },
+    {
+      "stage": "validate",
+      "product": "subactor/autonomy-lab",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["scenario-suite", "stress", "mutation-count", "fail-closed-test"],
+      "contracts": ["repo://subactor/autonomy-lab/schemas/autonomy-test-suite.schema.v1.json"],
+      "restrictions": ["external-mutations-zero-by-default", "llm-direct-execution-false"]
+    },
+    {
+      "stage": "validate",
+      "product": "subactor/onedev-agent",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["pr-head-merge-base", "trusted-profile-digest", "required-check-status"],
+      "contracts": ["repo://subactor/onedev-agent/README.md"],
+      "restrictions": ["separate-pr-executor", "no-repository-mount", "unprivileged"]
+    },
+    {
+      "stage": "validate",
+      "product": "semcod/vallm",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["syntax", "imports", "complexity", "security", "semantic-review"],
+      "contracts": ["repo://semcod/vallm/README.md"],
+      "restrictions": ["deterministic-tiers-decisive", "llm-review-advisory", "no-merge-authority"]
+    },
+    {
+      "stage": "validate",
+      "product": "semcod/redup",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["duplication-analysis"],
+      "contracts": ["repo://semcod/redup/README.md"],
+      "restrictions": ["finding-only", "capped-output"]
+    },
+    {
+      "stage": "validate",
+      "product": "semcod/prefact",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["quality-analysis", "refactor-evidence"],
+      "contracts": ["repo://semcod/prefact/README.md"],
+      "restrictions": ["finding-only", "no-source-apply"]
+    },
+    {
+      "stage": "validate",
+      "product": "semcod/docval",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["documentation-validation"],
+      "contracts": ["repo://semcod/docval/README.md"],
+      "restrictions": ["finding-only", "provenance-preserved"]
+    },
+    {
+      "stage": "validate",
+      "product": "semcod/regres",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["import-regression-analysis"],
+      "contracts": ["repo://semcod/regres/README.md"],
+      "restrictions": ["finding-only", "runtime-exercise-required-when-applicable"]
+    },
+    {
+      "stage": "validate",
+      "product": "semcod/testless",
+      "role": "validator",
+      "mode": "validate-only",
+      "capabilities": ["test-gap-analysis"],
+      "contracts": ["repo://semcod/testless/README.md"],
+      "restrictions": ["finding-only", "absence-is-not-failure-proof"]
+    },
+    {
+      "stage": "publish",
+      "product": "subactor/autonom",
+      "role": "publisher",
+      "mode": "protected-publish",
+      "capabilities": ["pr-controller", "freeze", "trusted-review", "merge", "read-back"],
+      "contracts": ["repo://subactor/autonom/autonom/pull_request_controller.py"],
+      "restrictions": ["same-repository", "exact-head", "current-base", "one-mutation-per-cycle"]
+    },
+    {
+      "stage": "publish",
+      "product": "subactor/onedev-agent",
+      "role": "publisher",
+      "mode": "protected-publish",
+      "capabilities": ["validator-app-status", "merge-controller", "branch-cleanup"],
+      "contracts": ["repo://subactor/onedev-agent/README.md"],
+      "restrictions": ["single-pr-authority", "protected-credential", "read-after-write"]
+    },
+    {
+      "stage": "publish",
+      "product": "semcod/goal",
+      "role": "publisher",
+      "mode": "protected-publish",
+      "capabilities": ["diagnose", "test", "version", "changelog", "tag", "publish"],
+      "contracts": ["repo://semcod/goal/README.md"],
+      "restrictions": ["release-grant-required", "trusted-profile", "dry-run-before-effect"]
+    },
+    {
+      "stage": "audit",
+      "product": "subactor/skills-agent",
+      "role": "auditor",
+      "mode": "append-only-audit",
+      "capabilities": ["correlation-id", "run-manifest", "doctor-repair-validator-receipts"],
+      "contracts": ["repo://subactor/skills-agent/schemas/run-manifest.schema.json"],
+      "restrictions": ["secret-free", "strict-json", "immutable-subject-binding"]
+    }
+  ],
+  "protectedBoundaries": {
+    "profileDigestExternal": true,
+    "validatorPrincipalIndependent": true,
+    "publisherCredentialProtected": true,
+    "llmVerdictAdvisory": true
+  }
+}

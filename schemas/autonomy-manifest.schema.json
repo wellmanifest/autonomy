@@ -1,0 +1,617 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wellmanifest.dev/schemas/autonomy-manifest/v1",
+  "title": "Wellmanifest Autonomy manifest and runtime profile",
+  "oneOf": [
+    { "$ref": "#/$defs/manifest" },
+    { "$ref": "#/$defs/profile" }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:/-]*$",
+      "minLength": 3
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$"
+    },
+    "digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "sha": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "branch": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:\\.\\.|//|@\\{|[~^:?*\\[\\\\])).+$"
+    },
+    "pathGlob": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)).+$"
+    },
+    "stringSet": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "roleName": {
+      "enum": [
+        "observer",
+        "planner",
+        "implementer",
+        "validator",
+        "publisher",
+        "auditor"
+      ]
+    },
+    "authority": {
+      "enum": [
+        "observe",
+        "select-task",
+        "propose-plan",
+        "create-ticket",
+        "create-branch",
+        "edit-candidate",
+        "test-candidate",
+        "commit-candidate",
+        "push-candidate",
+        "open-pull-request",
+        "issue-validator-attestation",
+        "approve-via-validator-app",
+        "enable-auto-merge",
+        "merge-pull-request",
+        "post-merge-read-back",
+        "append-audit-receipt"
+      ]
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "role",
+        "principal",
+        "provider",
+        "authorities",
+        "forbiddenAuthorities",
+        "workspaceIsolation"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "role": { "$ref": "#/$defs/roleName" },
+        "principal": { "$ref": "#/$defs/id" },
+        "provider": { "type": "string", "minLength": 1 },
+        "model": { "type": ["string", "null"], "minLength": 1 },
+        "authorities": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/authority" },
+          "uniqueItems": true
+        },
+        "forbiddenAuthorities": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/authority" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "workspaceIsolation": {
+          "enum": ["read-only", "dedicated-worktree", "fresh-checkout", "protected-service"]
+        }
+      }
+    },
+    "separation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["left", "right", "dimensions"],
+      "properties": {
+        "left": { "$ref": "#/$defs/id" },
+        "right": { "$ref": "#/$defs/id" },
+        "dimensions": {
+          "type": "array",
+          "items": {
+            "enum": ["principal", "credential", "workspace", "approval-identity"]
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true
+        }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "stage", "kind", "producer", "protected", "failClosed"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "stage": {
+          "enum": [
+            "pre-edit",
+            "pre-push",
+            "pre-approval",
+            "pre-merge",
+            "post-merge"
+          ]
+        },
+        "kind": { "enum": ["deterministic", "independent-attestation", "read-back"] },
+        "producer": { "$ref": "#/$defs/id" },
+        "protected": { "type": "boolean" },
+        "failClosed": { "const": true }
+      }
+    },
+    "profileRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "digest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "digest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "schema",
+        "id",
+        "version",
+        "status",
+        "subject",
+        "grant",
+        "fleet",
+        "riskPolicy",
+        "budgets",
+        "queue",
+        "pipeline",
+        "publication",
+        "receipts",
+        "continuation"
+      ],
+      "properties": {
+        "$schema": { "const": "https://wellmanifest.dev/schemas/autonomy-manifest/v1" },
+        "schema": { "const": "wellmanifest.autonomy/manifest/v1" },
+        "id": { "$ref": "#/$defs/uri" },
+        "version": { "$ref": "#/$defs/semver" },
+        "status": { "enum": ["draft", "active", "suspended", "revoked", "expired"] },
+        "subject": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "defaultBranch",
+            "adoptedRevision",
+            "policyDigest",
+            "profile"
+          ],
+          "properties": {
+            "repository": { "$ref": "#/$defs/repository" },
+            "defaultBranch": { "$ref": "#/$defs/branch" },
+            "adoptedRevision": { "$ref": "#/$defs/sha" },
+            "policyDigest": { "$ref": "#/$defs/digest" },
+            "profile": { "$ref": "#/$defs/profileRef" }
+          }
+        },
+        "grant": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "issuer",
+            "issuedAt",
+            "notBefore",
+            "reviewAt",
+            "expiresAt",
+            "scope",
+            "constraints"
+          ],
+          "properties": {
+            "id": { "$ref": "#/$defs/uri" },
+            "issuer": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "kind"],
+              "properties": {
+                "id": { "$ref": "#/$defs/id" },
+                "kind": { "enum": ["human", "organization", "external-authority"] }
+              }
+            },
+            "issuedAt": { "type": "string", "format": "date-time" },
+            "notBefore": { "type": "string", "format": "date-time" },
+            "reviewAt": { "type": "string", "format": "date-time" },
+            "expiresAt": { "type": "string", "format": "date-time" },
+            "scope": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "repositories",
+                "branches",
+                "pathAllow",
+                "pathDeny",
+                "actions",
+                "riskCeiling"
+              ],
+              "properties": {
+                "repositories": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/repository" },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "branches": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/branch" },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "pathAllow": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/pathGlob" },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "pathDeny": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/pathGlob" },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "actions": {
+                  "type": "array",
+                  "items": { "$ref": "#/$defs/authority" },
+                  "minItems": 1,
+                  "uniqueItems": true
+                },
+                "riskCeiling": { "enum": ["low", "moderate"] }
+              }
+            },
+            "constraints": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "noPerPullRequestHumanApproval",
+                "allowAutomatedMerge",
+                "selfExtension",
+                "selfRenewal",
+                "killSwitch",
+                "killSwitchExpected"
+              ],
+              "properties": {
+                "noPerPullRequestHumanApproval": { "const": true },
+                "allowAutomatedMerge": { "const": true },
+                "selfExtension": { "const": false },
+                "selfRenewal": { "const": false },
+                "killSwitch": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]+$" },
+                "killSwitchExpected": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "fleet": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["roles", "separation"],
+          "properties": {
+            "roles": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/role" },
+              "minItems": 6,
+              "uniqueItems": true
+            },
+            "separation": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/separation" },
+              "minItems": 3,
+              "uniqueItems": true
+            }
+          }
+        },
+        "riskPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["autonomousTiers", "escalatedTiers", "excludedEffects"],
+          "properties": {
+            "autonomousTiers": {
+              "type": "array",
+              "items": { "enum": ["low", "moderate"] },
+              "minItems": 1,
+              "uniqueItems": true
+            },
+            "escalatedTiers": {
+              "type": "array",
+              "items": { "enum": ["high", "critical"] },
+              "minItems": 2,
+              "uniqueItems": true
+            },
+            "excludedEffects": { "$ref": "#/$defs/stringSet" }
+          }
+        },
+        "budgets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "maxFilesPerChange",
+            "maxComponentsPerChange",
+            "maxPublicInterfacesPerChange",
+            "maxRuntimeDependenciesPerChange",
+            "maxMinutesPerCycle",
+            "maxCostUsdPerCycle",
+            "maxRetriesPerTask",
+            "maxConsecutiveCycles",
+            "maxConcurrentTasks",
+            "cooldownSeconds",
+            "leaseSeconds"
+          ],
+          "properties": {
+            "maxFilesPerChange": { "type": "integer", "minimum": 1, "maximum": 50 },
+            "maxComponentsPerChange": { "type": "integer", "minimum": 1, "maximum": 10 },
+            "maxPublicInterfacesPerChange": { "type": "integer", "minimum": 0, "maximum": 10 },
+            "maxRuntimeDependenciesPerChange": { "type": "integer", "minimum": 0, "maximum": 10 },
+            "maxMinutesPerCycle": { "type": "integer", "minimum": 1, "maximum": 240 },
+            "maxCostUsdPerCycle": { "type": "number", "exclusiveMinimum": 0, "maximum": 100 },
+            "maxRetriesPerTask": { "type": "integer", "minimum": 0, "maximum": 5 },
+            "maxConsecutiveCycles": { "type": "integer", "minimum": 1, "maximum": 100 },
+            "maxConcurrentTasks": { "type": "integer", "minimum": 1, "maximum": 5 },
+            "cooldownSeconds": { "type": "integer", "minimum": 1, "maximum": 86400 },
+            "leaseSeconds": { "type": "integer", "minimum": 60, "maximum": 86400 }
+          }
+        },
+        "queue": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "selection",
+            "freshnessSeconds",
+            "deduplication",
+            "humanBoundaryLabels",
+            "oneMutationPerCycle"
+          ],
+          "properties": {
+            "source": { "enum": ["planfile", "todo2code", "composite"] },
+            "selection": { "const": "runnable-priority-dag" },
+            "freshnessSeconds": { "type": "integer", "minimum": 60, "maximum": 2592000 },
+            "deduplication": { "const": "fingerprint" },
+            "humanBoundaryLabels": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 2,
+              "uniqueItems": true
+            },
+            "oneMutationPerCycle": { "const": true }
+          }
+        },
+        "pipeline": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["states", "requiredGates", "onFailure", "onOutOfScope"],
+          "properties": {
+            "states": {
+              "type": "array",
+              "prefixItems": [
+                { "const": "observe" },
+                { "const": "evidence" },
+                { "const": "plan" },
+                { "const": "grant-check" },
+                { "const": "isolated-edit" },
+                { "const": "deterministic-validate" },
+                { "const": "independent-validate" },
+                { "const": "publish-pr" },
+                { "const": "exact-head-gate" },
+                { "const": "auto-merge" },
+                { "const": "post-merge-verify" },
+                { "const": "continue" }
+              ],
+              "minItems": 12,
+              "maxItems": 12
+            },
+            "requiredGates": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/gate" },
+              "minItems": 5,
+              "uniqueItems": true
+            },
+            "onFailure": { "const": "fail-closed" },
+            "onOutOfScope": { "const": "escalate" }
+          }
+        },
+        "publication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "approval",
+            "requiredChecks",
+            "bindings",
+            "sameRepositoryOnly",
+            "recheckBaseBeforeMerge",
+            "autoMerge",
+            "directDefaultBranchPush",
+            "deleteBranchAfterMerge",
+            "postMergeReadBack"
+          ],
+          "properties": {
+            "mode": { "const": "pull-request" },
+            "approval": { "enum": ["trusted-validator-app", "signed-validator-attestation"] },
+            "requiredChecks": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 4,
+              "uniqueItems": true
+            },
+            "bindings": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "repository",
+                  "pullRequest",
+                  "headSha",
+                  "baseSha",
+                  "ticket",
+                  "grant",
+                  "profileDigest",
+                  "actor"
+                ]
+              },
+              "minItems": 8,
+              "maxItems": 8,
+              "uniqueItems": true
+            },
+            "sameRepositoryOnly": { "const": true },
+            "recheckBaseBeforeMerge": { "const": true },
+            "autoMerge": { "const": true },
+            "directDefaultBranchPush": { "const": false },
+            "deleteBranchAfterMerge": { "const": true },
+            "postMergeReadBack": { "const": true }
+          }
+        },
+        "receipts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["store", "required", "redaction", "retentionDays"],
+          "properties": {
+            "store": { "$ref": "#/$defs/uri" },
+            "required": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "observation",
+                  "plan",
+                  "grant-check",
+                  "change",
+                  "deterministic-validation",
+                  "independent-validation",
+                  "publication",
+                  "read-back"
+                ]
+              },
+              "minItems": 8,
+              "maxItems": 8,
+              "uniqueItems": true
+            },
+            "redaction": { "const": "secret-free" },
+            "retentionDays": { "type": "integer", "minimum": 30, "maximum": 3650 }
+          }
+        },
+        "continuation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enabled",
+            "nextTaskWithoutHumanApproval",
+            "closeOnlyAfterReadBack",
+            "stopConditions"
+          ],
+          "properties": {
+            "enabled": { "const": true },
+            "nextTaskWithoutHumanApproval": { "const": true },
+            "closeOnlyAfterReadBack": { "const": true },
+            "stopConditions": { "$ref": "#/$defs/stringSet" }
+          }
+        }
+      }
+    },
+    "profileBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "product", "role", "mode", "capabilities", "contracts", "restrictions"],
+      "properties": {
+        "stage": {
+          "enum": ["observe", "evidence", "plan", "implement", "validate", "publish", "audit"]
+        },
+        "product": {
+          "type": "string",
+          "pattern": "^(subactor|semcod|wellmanifest)/[A-Za-z0-9_.-]+$"
+        },
+        "role": { "$ref": "#/$defs/roleName" },
+        "mode": {
+          "enum": [
+            "read-only",
+            "propose-only",
+            "candidate-write",
+            "validate-only",
+            "protected-publish",
+            "append-only-audit"
+          ]
+        },
+        "capabilities": { "$ref": "#/$defs/stringSet" },
+        "contracts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/uri" },
+          "uniqueItems": true
+        },
+        "restrictions": { "$ref": "#/$defs/stringSet" }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$schema",
+        "schema",
+        "id",
+        "version",
+        "status",
+        "ownership",
+        "bindings",
+        "protectedBoundaries"
+      ],
+      "properties": {
+        "$schema": { "const": "https://wellmanifest.dev/schemas/autonomy-manifest/v1" },
+        "schema": { "const": "wellmanifest.autonomy/profile/v1" },
+        "id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "status": { "enum": ["experimental", "stable", "deprecated"] },
+        "ownership": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["standardOwner", "runtimeOwners"],
+          "properties": {
+            "standardOwner": { "const": "wellmanifest/autonomy" },
+            "runtimeOwners": {
+              "type": "array",
+              "items": { "type": "string", "pattern": "^(subactor|semcod)/[A-Za-z0-9_.-]+$" },
+              "minItems": 1,
+              "uniqueItems": true
+            }
+          }
+        },
+        "bindings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/profileBinding" },
+          "minItems": 7,
+          "uniqueItems": true
+        },
+        "protectedBoundaries": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profileDigestExternal",
+            "validatorPrincipalIndependent",
+            "publisherCredentialProtected",
+            "llmVerdictAdvisory"
+          ],
+          "properties": {
+            "profileDigestExternal": { "const": true },
+            "validatorPrincipalIndependent": { "const": true },
+            "publisherCredentialProtected": { "const": true },
+            "llmVerdictAdvisory": { "const": true }
+          }
+        }
+      }
+    }
+  }
+}
