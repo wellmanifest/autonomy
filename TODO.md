@@ -2,7 +2,7 @@
 
 - [ ] [`ticket-018`](project/ticket-018/README.md) — align root README and
   changelog with stable Autonomy 0.8, manifest v6 and exact correlation-bound
-  publication evidence. State: `IN_PROGRESS / EDIT`; classification:
+  publication evidence. State: `IN_PROGRESS / PUBLICATION`; classification:
   `SERVICE / P1 / regression`; workstream: `governance`.
 - [x] [`ticket-017`](project/ticket-017/README.md) — standardize scheduler
   heartbeat SLOs, correlation-bound post-dispatch run selection and

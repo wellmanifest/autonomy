@@ -38,10 +38,11 @@ repository mirror, or mutation runtime. Those systems remain owned by
 ## Operational proof boundary
 
 Static schema/checker success proves contract conformance, not a live autonomous
-execution path. Runtime conformance additionally requires fresh non-manual
-trigger, claim, validation, protected publication, read-back, cleanup and
-watchdog recovery receipts. Manual or agent-initiated workflow dispatch remains
-publication/diagnostic evidence and does not substitute for scheduler liveness.
+execution path. Runtime conformance additionally requires a fresh protected
+scheduler heartbeat, automatic trigger, claim, validation, protected
+publication, effect reconciliation, read-back, cleanup and independently
+observed missed-cycle recovery receipts. Manual or recovery dispatch remains
+execution/diagnostic evidence and does not substitute for scheduler liveness.
 
 The Subactor reference runtime has exercised the durable timer/controller path,
 exact-head Validator App merge, checkpoint recovery and an exact-pinned runtime
@@ -53,48 +54,53 @@ Validator run `31830719505`; after deployment, the next natural timer cycle at
 published by the independent scheduled Validator target in run `31827270068`
 without a manual dispatch.
 
-Status: stable `0.7.1`. This patch preserves the Autonomy v5 semantics and
-repairs the cross-standard DSL publication boundary: the stable profile,
-selected example and all declared artifact SHA-256 values now bind the exact
-published bytes. The external Wellmanifest DSL checker passes without an
-exception or same-version artifact rewrite.
+Status: stable `0.8.0`, canonical manifest
+`wellmanifest.autonomy/manifest/v6`. The selected Subactor/Semcod profile has
+exact SHA-256
+`3a5317269418dd31e09b2e630edaf59a4b994e24df9eb2f6bca59f194c81ba64`,
+and all thirteen DSL artifacts bind their exact published bytes.
 
-Publication also exposed a liveness distinction. The `00:17 UTC` scheduled
-cycle was not delivered by `00:45 UTC`; protected recovery run `31854603326`
-used the same matrix `direct-scan` path and autonomously approved and merged
-the exact candidate. That proves recovery execution, target isolation and
-merge authority, but it does not prove scheduler delivery. A deployment must
-therefore retain explicit heartbeat evidence and independent missed-cycle
-detection instead of treating a configured cron expression as a liveness
-receipt.
+Autonomy 0.8 makes scheduler liveness explicit. The execution plane declares
+an expected heartbeat interval and delivery grace; every expected cycle emits
+an external `scheduler-heartbeat` receipt. A protected independent monitor
+marks a missed cycle degraded and starts or reconciles one bounded recovery.
+Successful recovery does not repair the missing heartbeat. If the scheduled
+delivery arrives late, both paths deduplicate through one idempotency subject.
 
-Autonomy 0.7 partitions the effective protected check
-set before review. Every check that can run without approval must already be in
-authoritative terminal success. Only checks whose trigger is the exact trusted
-App approval may be deferred; after approval, each deferred check needs a fresh
-successful attempt newer than that approval. The publisher then observes two
-stable protected reads with the same head, base, approval, effective policy and
-required-check set before explicit merge.
+Provider invocation identity is also closed. Before dispatch, the controller
+records the greatest visible provider run or equivalent event. It then accepts
+only a post-boundary run that exactly binds strategy, repository, target, head
+SHA and correlation ID. The same correlation must reach an effect-capable
+matrix child. Workflow names, PR titles and timing are not identity; zero or
+multiple ambiguous matches fail closed.
 
-A bounded retry is allowed only for an unchanged head/base after convergence;
-it cannot reuse stale evidence. Superseded work may be disposed without a new
-human prompt only after a protected, path-complete lossless receipt proves
-every unique implementation, governance and audit artifact integrated,
-archived or intentionally retained. The platform may support either an
-`explicit-later` close or a `provider-coupled` close caused by branch deletion.
-The coupled mode is accepted only after exact read-back proves branch absence,
-a closed and unmerged PR, and preservation of the archived head. It does not
-authorize unrelated bundled mutations. Unresolved work retains its branch and
-open PR owner.
+Every mutation converges to at most one authoritative external effect. Success
+is `applied` or `already-applied`, and the latter requires external read-back
+of the exact subject. An already merged publication additionally binds its
+pull request, base, trusted approval, merge commit and timestamp and never
+receives a second review or merge. Closed-unmerged, stale, missing-receipt and
+ambiguous subjects remain failures.
 
-These rules come from the protected `wellmanifest/logs` recovery: PR #11 could
-not satisfy a helper that waited for its own approval-triggered governance
-check, while the Validator correctly approved, observed fresh run
-`31849434851`, converged and merged. After PR #12 protected a path-complete
-receipt, deleting PR #10's source branch caused GitHub to close that PR in the
-same provider operation while preserving `refs/pull/10/head`.
+These rules come from live publication behavior. The expected `00:17 UTC`
+cycle for Autonomy 0.7.1 was absent through `00:45 UTC`; recovery captured run
+boundary `31854361196`, selected matrix run `31854603326`, and merged exact
+head `f76a502b` through App review `4942176742`. This proved recovery execution,
+not scheduler delivery. Validator 0.6.48 then proved the duplicate terminal
+path: run `31854007167` read back approval `4942134199` and merge
+`3fe9659011372b734bc24302ed83eb0b49f9c95f` without another review or merge.
 
-Autonomy 0.7 retains the 0.6 boundaries: complete effective-policy inventory,
-post-approval evidence epochs, lossless superseded-work disposition,
-plan-first intent history, successor PRs instead of history rewrite, complete
-contract-consumer migration and authoritative check provenance.
+The 0.8 standard itself was published from exact head
+`c86ec6dbf40783481afb9ca95801251bd428db42`. Hosted conformance runs
+`31856137043` and `31856137020` passed; post-boundary Validator run
+`31856175299` issued deterministic App review `4942309733`, converged twice and
+merged PR #32 as `69d22e41af70e16e78105ae8ae008b53652aa6c0`.
+Its optional LLM advisory was unavailable, demonstrating that deterministic
+approval authority remains sufficient. Governance closure then passed run
+`31856383207`, review `4942321841` and merge
+`85eea5f07379ceb4f73e469a7c979c61637f748e`.
+
+Autonomy 0.8 retains the earlier boundaries: effective-policy inventory,
+post-approval evidence epochs, two stable reads, lossless superseded-work
+disposition, plan-first intent history, successor PRs instead of history
+rewrite, complete contract-consumer migration, authoritative check provenance,
+exact runtime pins and separation of implementer, validator and publisher.

@@ -3,7 +3,7 @@
 - **ID**: ticket-018
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-15
 
 ## Goal and scope
@@ -16,16 +16,18 @@ without changing normative, executable or integration artifacts.
 
 ## Acceptance criteria
 
-- [ ] AC-01: The user's continuation request authorizes this documentation-only
+- [x] AC-01: The user's continuation request authorizes this documentation-only
       update from exact protected `main@85eea5f0`.
-- [ ] AC-02: README identifies stable 0.8.0 / manifest v6 and accurately
+- [x] AC-02: README identifies stable 0.8.0 / manifest v6 and accurately
       summarizes heartbeat, correlation and effect-reconciliation boundaries.
-- [ ] AC-03: README preserves the distinction between recovery execution and
+- [x] AC-03: README preserves the distinction between recovery execution and
       scheduler liveness and records exact practice/publication evidence.
-- [ ] AC-04: CHANGELOG records the 0.8 contract, exact profile/DSL bindings and
+- [x] AC-04: CHANGELOG records the 0.8 contract, exact profile/DSL bindings and
       protected Validator publication plus governance closure.
-- [ ] AC-05: Only README and CHANGELOG change as implementation files and all
+- [x] AC-05: Only README and CHANGELOG change as implementation files and all
       deterministic, schema and external DSL gates pass.
+- [ ] AC-06: The documentation candidate is published only through independent
+      exact-head Validator App review, protected merge and branch cleanup.
 
 ## Participants
 

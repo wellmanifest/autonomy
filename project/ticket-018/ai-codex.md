@@ -26,6 +26,15 @@ surface while keeping all published contract bytes out of scope.
 
 - Initialized the bounded ticket and recorded SESSION_EXECUTION_AUTHORIZATION
   from the request to execute this work.
+- Replaced the stale 0.7.1/v5 root status with stable 0.8.0/manifest v6 and its
+  exact profile, hosted check, Validator review, merge and closure bindings.
+- Documented independent heartbeat evidence, post-boundary run correlation and
+  at-most-one authoritative effect behavior without changing normative bytes.
+- Added the 0.8.0 changelog entry and retained all earlier autonomy boundaries.
+- Passed governance, both Autonomy documents, self-test, 35 unit tests,
+  compile, Ruff, Draft 2020-12, external DSL and whitespace validation.
+- Verified that exactly README and CHANGELOG changed as implementation files
+  and advanced the candidate to `PUBLICATION`.
 
 ## Blockers
 

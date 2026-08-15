@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.8.0 - 2026-08-15
+
+- Advanced the stable contract to `wellmanifest.autonomy/manifest/v6` and
+  required explicit heartbeat interval/grace, protected scheduler-heartbeat
+  evidence, independent missed-cycle receipts and late-delivery deduplication.
+- Required a pre-dispatch provider observation boundary and exact strategy,
+  repository, target, head and correlation bindings for direct and matrix-child
+  run selection; old or ambiguous candidates fail closed.
+- Required at most one authoritative external effect. Exact external read-back
+  may return `already-applied` without another review/merge; closed-unmerged,
+  stale, missing-receipt and ambiguous subjects remain failures.
+- Added `scheduler-heartbeat`, `missed-cycle` and `effect-reconciliation`
+  receipt classes, two protected gates, a negative duplicate-effect fixture,
+  and practice-backed architecture and logic-flow evidence.
+- Bound stable profile 0.8.0 to SHA-256
+  `3a5317269418dd31e09b2e630edaf59a4b994e24df9eb2f6bca59f194c81ba64`
+  and all thirteen DSL artifacts to exact bytes. Governance, both Autonomy
+  documents, self-test, 35 tests, compile, Ruff, Draft 2020-12 and external DSL
+  validation passed.
+- Published exact head `c86ec6dbf40783481afb9ca95801251bd428db42`
+  through hosted runs `31856137043`/`31856137020`, post-boundary Validator run
+  `31856175299`, deterministic App review `4942309733`, two stable reads and
+  merge `69d22e41af70e16e78105ae8ae008b53652aa6c0` with branch cleanup.
+- Closed ticket-017 from protected main through Validator run `31856383207`,
+  review `4942321841` and merge
+  `85eea5f07379ceb4f73e469a7c979c61637f748e`.
+
 ## 0.7.1 - 2026-08-15
 
 - Repaired the stable DSL publication boundary without changing Autonomy v5

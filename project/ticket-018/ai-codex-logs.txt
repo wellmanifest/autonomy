@@ -10,3 +10,25 @@
     Governance closure PR: wellmanifest/autonomy#33
     Closure run/review: 31856383207 / 4942321841
     Closure merge: 85eea5f07379ceb4f73e469a7c979c61637f748e
+
+[2] Deterministic validation
+    ./project/governance-check.sh --actor agent
+      GOV-PASS: passed (0 errors, 0 warnings)
+    python3 src/autonomy_check.py validate examples/valid/project.autonomy.json profiles/subactor-semcod.profile.json
+      PASS both documents
+    python3 src/autonomy_check.py self-test
+      PASS autonomy self-test
+    python3 -m unittest discover -s tests -v
+      Ran 35 tests; OK
+    python3 -m compileall -q src tests
+      PASS
+    ruff check src tests
+      All checks passed
+    jsonschema Draft 2020-12 schema check + both valid documents
+      JSON-SCHEMA-PASS
+    python3 ../../dsl/src/dsl_check.py validate examples/dsl-manifest.json
+      DSL-PASS: passed (0 errors)
+    git diff --check
+      PASS
+    implementation file count
+      exactly 2 declared files: README.md and CHANGELOG.md
