@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.1 - 2026-08-15
+
+- Repaired the stable DSL publication boundary without changing Autonomy v5
+  semantics: version/profile selection now resolves 0.7.1 and every declared
+  artifact SHA-256 matches the exact published candidate bytes.
+- Passed governance, Autonomy schema/conformance, self-test, 32 unit tests,
+  compile, Ruff, Draft 2020-12 validation and the external Wellmanifest DSL
+  checker with zero stale digests.
+- Recorded a missed scheduler heartbeat precisely: the expected `00:17 UTC`
+  cycle was absent through `00:45 UTC`, so it cannot serve as liveness proof.
+- Recovery run `31854603326` used the protected matrix `direct-scan`, approved
+  exact head `f76a502b78ec18b662834ba98b616a183eec2d03` as Validator App review
+  `4942176742`, converged after two stable reads and explicitly merged PR #28
+  as `5a6289c7ed2bc1a752ee1851a70205b9be64c340`; the source branch was absent.
+- Closed publication evidence from integrated main through merge
+  `79df4acc4e0715ac591d84773cdc885a3a752b30`.
+
 ## 0.7.0 - 2026-08-15
 
 - Partitioned pre-approval protected checks: all non-circular checks must be in
