@@ -1,0 +1,101 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-020",
+  "summary": "Autonomy continuation governance for subactor multi-agent operation",
+  "workstream": "governance",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P1",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-020/**",
+    "README.md",
+    "CHANGELOG.md",
+    "TODO.md",
+    "project/TICKETS.md"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    "spec/**",
+    "schemas/**",
+    "examples/**",
+    "src/**",
+    "tests/**",
+    "profiles/**",
+    "docs/**",
+    ".github/**",
+    "AGENTS.md",
+    "VERSION",
+    "pyproject.toml",
+    "Cargo.toml",
+    "package.json",
+    "go.mod"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "7544593e6fb727691ee0df886bf400148d005c42",
+    "targetBranch": "main",
+    "outcome": "Record governance-aligned continuity expectations for subactor multi-agent autonomy and document observed non-merging edge-cases without modifying normative or integration artifacts.",
+    "nonGoals": [
+      "Modify autonomous semantics, schemas, profiles, examples or runtime code",
+      "Add or alter validator execution capabilities",
+      "Expand or relax autonomy authority boundaries",
+      "Change public interfaces or dependency footprint"
+    ],
+    "complexity": "XS",
+    "estimatedMinutes": 8,
+    "budgets": {
+      "maxImplementationFiles": 4,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Restrict changes to governance evidence and roadmaps so multi-agent continuation remains deterministic and auditable while leaving normative integration contracts untouched.",
+      "components": [
+        {
+          "name": "governance-frontmatter",
+          "paths": [
+            "README.md",
+            "CHANGELOG.md",
+            "TODO.md",
+            "project/TICKETS.md"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "No API surface changes"
+      ],
+      "dataChanges": [
+        "No normative data contracts changed"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert this ticket-specific documentation and index updates through protected governance gate."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-06",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests"
+        ],
+        "evidence": "project/ticket-020/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

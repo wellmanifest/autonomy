@@ -339,7 +339,9 @@
         "at-most-one-authoritative-effect",
         "closed-unmerged-fails-closed",
         "missing-or-stale-receipt-fails-closed",
-        "duplicate-review-merge-forbidden"
+        "duplicate-review-merge-forbidden",
+        "orphan-branch-preservation-policy",
+        "provider-branch-inventory-authority"
       ]
     },
     {

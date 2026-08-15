@@ -1,0 +1,25 @@
+2026-08-15T00:00:00+02:00 governance-check: ./project/governance-check.sh --actor agent
+GOV-PASS: passed (0 errors, 0 warnings)
+
+2026-08-15T00:00:00+02:00 autonomy validate:
+python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json
+PASS examples/valid/project.autonomy.json
+PASS profiles/subactor-semcod.profile.json
+
+2026-08-15T00:00:00+02:00 autonomy self-test:
+python3 src/autonomy_check.py self-test
+PASS autonomy self-test
+
+2026-08-15T00:00:00+02:00 unit tests:
+python3 -m unittest discover -s tests -v
+Ran 35 tests in 0.058s
+OK
+
+2026-08-15T00:00:00+02:00 python lint/compile checks:
+python3 -m compileall -q src tests
+ruff check src tests
+All checks passed!
+
+2026-08-15T00:00:00+02:00 DSL manifest check:
+python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json
+DSL-PASS: passed (0 errors)
