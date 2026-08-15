@@ -35,3 +35,18 @@
       PASS
     implementation file count
       exactly 5 declared files
+
+[4] Protected publication and missed-heartbeat recovery
+    Hosted autonomy conformance: 31851601488 success.
+    Hosted remote lifecycle: 31851601480 success.
+    Exact head: f76a502b78ec18b662834ba98b616a183eec2d03.
+    Expected scheduled cycle: 2026-08-15 00:17 UTC.
+    No scheduled run delivered through: 2026-08-15 00:45 UTC.
+    Recovery strategy: protected matrix direct-scan.
+    Run-ID boundary: 31854361196.
+    Recovery run: 31854603326.
+    Validator App review: 4942176742 APPROVED on exact head.
+    Protected convergence: 2 stable reads.
+    Merge: 5a6289c7ed2bc1a752ee1851a70205b9be64c340.
+    Protected main read-back: exact merge SHA.
+    Source branch read-back: absent.

@@ -2,8 +2,8 @@
 
 - **ID**: ticket-015
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-14
 
 ## Goal and scope
@@ -30,3 +30,17 @@ checker against every exact artifact byte.
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Hosted autonomy conformance run `31851601488` and remote lifecycle run
+  `31851601480` passed on exact head
+  `f76a502b78ec18b662834ba98b616a183eec2d03`.
+- The expected `00:17 UTC` scheduled cycle had not been delivered by
+  `00:45 UTC`; recovery used the same matrix `direct-scan` strategy in run
+  `31854603326`, bounded above prior run ID `31854361196`.
+- Validator App review `4942176742` approved that exact head and the protected
+  policy converged after two stable reads.
+- The Validator App explicitly merged PR #28 as
+  `5a6289c7ed2bc1a752ee1851a70205b9be64c340`; protected `main` read-back
+  returned the same SHA and the source branch was absent.

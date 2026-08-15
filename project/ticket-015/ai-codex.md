@@ -37,6 +37,10 @@ selection and tests.
   whitespace checks.
 - Verified that exactly the five declared implementation files changed and
   advanced the exact candidate to `PUBLICATION` for independent App review.
+- Detected a missing scheduled heartbeat, recovered through the same protected
+  matrix `direct-scan`, and verified exact-head App approval `4942176742`, two
+  stable reads, protected merge `5a6289c7` and source-branch cleanup before
+  closing from integrated protected main.
 
 ## Blockers
 
