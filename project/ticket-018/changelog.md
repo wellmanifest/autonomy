@@ -8,3 +8,5 @@
   after Autonomy 0.8 publication and ticket-017 closure.
 - Updated the root release narrative and changelog to stable 0.8.0 without
   changing published contract bytes, then passed all conformance gates.
+- Published through correlation-bound exact-head Validator App approval,
+  protected merge, main read-back and source-branch cleanup.

@@ -1,9 +1,12 @@
 # Project roadmap
 
-- [ ] [`ticket-018`](project/ticket-018/README.md) — align root README and
+- [x] [`ticket-018`](project/ticket-018/README.md) — align root README and
   changelog with stable Autonomy 0.8, manifest v6 and exact correlation-bound
-  publication evidence. State: `IN_PROGRESS / PUBLICATION`; classification:
-  `SERVICE / P1 / regression`; workstream: `governance`.
+  publication evidence. State: `DONE / DONE`; classification:
+  `SERVICE / P1 / regression`; workstream: `governance`. Validator run
+  `31856647275` produced exact-head App review `4942337032`, then merged PR
+  #34 as `3e15a442a07ade17d6d42bd4fc2434aaac6db484` after two stable reads and
+  removed the source branch.
 - [x] [`ticket-017`](project/ticket-017/README.md) — standardize scheduler
   heartbeat SLOs, correlation-bound post-dispatch run selection and
   idempotent authoritative effect reconciliation. State:

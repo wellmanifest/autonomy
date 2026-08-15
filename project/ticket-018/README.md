@@ -2,8 +2,8 @@
 
 - **ID**: ticket-018
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-15
 
 ## Goal and scope
@@ -26,10 +26,24 @@ without changing normative, executable or integration artifacts.
       protected Validator publication plus governance closure.
 - [x] AC-05: Only README and CHANGELOG change as implementation files and all
       deterministic, schema and external DSL gates pass.
-- [ ] AC-06: The documentation candidate is published only through independent
+- [x] AC-06: The documentation candidate is published only through independent
       exact-head Validator App review, protected merge and branch cleanup.
 
 ## Participants
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Hosted autonomy conformance run `31856627266` and remote lifecycle run
+  `31856627257` passed on exact head
+  `9fd3d9bbeeb9fa78d27c27433ef51d1b2bc0691b`.
+- The helper bounded run selection above `31856383207` and selected Validator
+  run `31856647275` with correlation
+  `autonomy-pr-34-ticket-018-root-9fd3d9bbee`.
+- Validator App review `4942337032` approved that exact head and protected
+  policy converged after two stable reads.
+- The Validator App explicitly merged PR #34 as
+  `3e15a442a07ade17d6d42bd4fc2434aaac6db484`; protected `main` returned the
+  same SHA and the source branch was absent.

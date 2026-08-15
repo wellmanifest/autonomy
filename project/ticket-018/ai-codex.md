@@ -35,6 +35,9 @@ surface while keeping all published contract bytes out of scope.
   compile, Ruff, Draft 2020-12, external DSL and whitespace validation.
 - Verified that exactly README and CHANGELOG changed as implementation files
   and advanced the candidate to `PUBLICATION`.
+- Published PR #34 through post-boundary run `31856647275`, exact-head App
+  review `4942337032`, two stable reads, merge `3e15a442` and branch cleanup;
+  closed only from integrated protected main.
 
 ## Blockers
 
