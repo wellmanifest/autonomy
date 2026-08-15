@@ -34,6 +34,9 @@ manual recovery scan does not prove the scheduled trigger was delivered.
 - Passed governance, both Autonomy documents, self-test, 32 unit tests,
   compile, Ruff, Draft 2020-12 validation, external DSL validation and
   whitespace checks; advanced the candidate to `PUBLICATION`.
+- Verified hosted checks, exact-head App review `4942211048`, Validator run
+  `31855112894`, two stable reads, protected merge `e94ad72f` and source-branch
+  cleanup; closed the ticket only from integrated protected main.
 
 ## Blockers
 

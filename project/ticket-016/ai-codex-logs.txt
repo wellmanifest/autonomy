@@ -29,3 +29,14 @@
       PASS
     implementation file count
       exactly 2 declared files
+
+[3] Protected publication
+    Hosted autonomy conformance: 31855090805 success.
+    Hosted remote lifecycle: 31855090814 success.
+    Exact head: 0103d08cd567a7a24210af89d2ff9534f90d3dab.
+    Validator run: 31855112894 success.
+    Validator App review: 4942211048 APPROVED on exact head.
+    Protected convergence: 2 stable reads.
+    Merge: e94ad72f1cfb1229a44be6fa46c2559551c0279d.
+    Protected main read-back: exact merge SHA.
+    Source branch read-back: absent.
