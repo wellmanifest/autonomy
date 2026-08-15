@@ -484,6 +484,14 @@ class AutonomyConformanceTests(unittest.TestCase):
         )
         self.assertIn("at-most-one-authoritative-effect", publish["restrictions"])
         self.assertIn("duplicate-review-merge-forbidden", publish["restrictions"])
+        self.assertIn(
+            "orphan-branch-preservation-policy",
+            publish["restrictions"],
+        )
+        self.assertIn(
+            "provider-branch-inventory-authority",
+            publish["restrictions"],
+        )
 
     def test_normative_durability_and_receipt_origin_rules_are_published(self) -> None:
         standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
@@ -519,6 +527,8 @@ class AutonomyConformanceTests(unittest.TestCase):
             "pre-boundary run or a child\nfrom a different matrix invocation",
             "It MUST NOT submit\na second review or merge request",
             "closed-unmerged pull request is not an already-applied merge",
+            "non-default branches with no authoritative owner mapping are treated as\n"
+            "   unresolved work and MUST be preserved",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):
