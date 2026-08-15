@@ -11,8 +11,8 @@
     "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
-      "version": "0.8.0",
-      "digest": "sha256:3a5317269418dd31e09b2e630edaf59a4b994e24df9eb2f6bca59f194c81ba64"
+      "version": "0.8.1",
+      "digest": "sha256:b9ba8b969057a855358529a4bc543560e3a20a7a3433134baa80d4280eff0465"
     }
   },
   "grant": {
@@ -26,9 +26,17 @@
     "reviewAt": "2026-08-28T08:00:00Z",
     "expiresAt": "2026-09-14T08:00:00Z",
     "scope": {
-      "repositories": ["example/example-api"],
-      "branches": ["main"],
-      "pathAllow": ["src/**", "tests/**", "docs/**"],
+      "repositories": [
+        "example/example-api"
+      ],
+      "branches": [
+        "main"
+      ],
+      "pathAllow": [
+        "src/**",
+        "tests/**",
+        "docs/**"
+      ],
       "pathDeny": [
         ".github/**",
         ".governance/**",
@@ -75,8 +83,13 @@
         "principal": "principal:doctor-app",
         "provider": "subactor/autonom",
         "model": null,
-        "authorities": ["observe"],
-        "forbiddenAuthorities": ["edit-candidate", "merge-pull-request"],
+        "authorities": [
+          "observe"
+        ],
+        "forbiddenAuthorities": [
+          "edit-candidate",
+          "merge-pull-request"
+        ],
         "workspaceIsolation": "read-only"
       },
       {
@@ -85,8 +98,16 @@
         "principal": "principal:dispatcher-app",
         "provider": "subactor/autonom",
         "model": null,
-        "authorities": ["trigger-cycle", "claim-cycle", "reconcile-cycle"],
-        "forbiddenAuthorities": ["edit-candidate", "approve-via-validator-app", "merge-pull-request"],
+        "authorities": [
+          "trigger-cycle",
+          "claim-cycle",
+          "reconcile-cycle"
+        ],
+        "forbiddenAuthorities": [
+          "edit-candidate",
+          "approve-via-validator-app",
+          "merge-pull-request"
+        ],
         "workspaceIsolation": "protected-service"
       },
       {
@@ -95,8 +116,15 @@
         "principal": "principal:planner-app",
         "provider": "subactor/orchestrator",
         "model": "openrouter/planner",
-        "authorities": ["select-task", "propose-plan"],
-        "forbiddenAuthorities": ["edit-candidate", "approve-via-validator-app", "merge-pull-request"],
+        "authorities": [
+          "select-task",
+          "propose-plan"
+        ],
+        "forbiddenAuthorities": [
+          "edit-candidate",
+          "approve-via-validator-app",
+          "merge-pull-request"
+        ],
         "workspaceIsolation": "read-only"
       },
       {
@@ -113,7 +141,11 @@
           "commit-candidate",
           "push-candidate"
         ],
-        "forbiddenAuthorities": ["issue-validator-attestation", "approve-via-validator-app", "merge-pull-request"],
+        "forbiddenAuthorities": [
+          "issue-validator-attestation",
+          "approve-via-validator-app",
+          "merge-pull-request"
+        ],
         "workspaceIsolation": "dedicated-worktree"
       },
       {
@@ -122,8 +154,16 @@
         "principal": "principal:validator-app",
         "provider": "subactor/validator-agent",
         "model": "openrouter/validator",
-        "authorities": ["issue-validator-attestation", "approve-via-validator-app"],
-        "forbiddenAuthorities": ["edit-candidate", "commit-candidate", "push-candidate", "merge-pull-request"],
+        "authorities": [
+          "issue-validator-attestation",
+          "approve-via-validator-app"
+        ],
+        "forbiddenAuthorities": [
+          "edit-candidate",
+          "commit-candidate",
+          "push-candidate",
+          "merge-pull-request"
+        ],
         "workspaceIsolation": "fresh-checkout"
       },
       {
@@ -137,7 +177,10 @@
           "merge-pull-request",
           "post-merge-read-back"
         ],
-        "forbiddenAuthorities": ["edit-candidate", "issue-validator-attestation"],
+        "forbiddenAuthorities": [
+          "edit-candidate",
+          "issue-validator-attestation"
+        ],
         "workspaceIsolation": "protected-service"
       },
       {
@@ -146,8 +189,15 @@
         "principal": "principal:audit-app",
         "provider": "subactor/skills-agent",
         "model": null,
-        "authorities": ["observe", "append-audit-receipt"],
-        "forbiddenAuthorities": ["edit-candidate", "approve-via-validator-app", "merge-pull-request"],
+        "authorities": [
+          "observe",
+          "append-audit-receipt"
+        ],
+        "forbiddenAuthorities": [
+          "edit-candidate",
+          "approve-via-validator-app",
+          "merge-pull-request"
+        ],
         "workspaceIsolation": "protected-service"
       }
     ],
@@ -155,23 +205,44 @@
       {
         "left": "agent:repair",
         "right": "agent:validator",
-        "dimensions": ["principal", "credential", "workspace", "approval-identity"]
+        "dimensions": [
+          "principal",
+          "credential",
+          "workspace",
+          "approval-identity"
+        ]
       },
       {
         "left": "agent:repair",
         "right": "agent:publisher",
-        "dimensions": ["principal", "credential", "workspace", "approval-identity"]
+        "dimensions": [
+          "principal",
+          "credential",
+          "workspace",
+          "approval-identity"
+        ]
       },
       {
         "left": "agent:validator",
         "right": "agent:publisher",
-        "dimensions": ["principal", "credential", "workspace", "approval-identity"]
+        "dimensions": [
+          "principal",
+          "credential",
+          "workspace",
+          "approval-identity"
+        ]
       }
     ]
   },
   "riskPolicy": {
-    "autonomousTiers": ["low", "moderate"],
-    "escalatedTiers": ["high", "critical"],
+    "autonomousTiers": [
+      "low",
+      "moderate"
+    ],
+    "escalatedTiers": [
+      "high",
+      "critical"
+    ],
     "excludedEffects": [
       "secrets",
       "destructive-infrastructure",
@@ -205,7 +276,10 @@
     "selection": "runnable-priority-dag",
     "freshnessSeconds": 86400,
     "deduplication": "fingerprint",
-    "humanBoundaryLabels": ["human", "autonomy-frontier"],
+    "humanBoundaryLabels": [
+      "human",
+      "autonomy-frontier"
+    ],
     "oneMutationPerCycle": true,
     "durable": true,
     "delivery": "at-least-once",
@@ -221,7 +295,10 @@
     "resumeFromCheckpoint": true,
     "effectReconciliation": {
       "mode": "at-most-one-authoritative-effect",
-      "successOutcomes": ["applied", "already-applied"],
+      "successOutcomes": [
+        "applied",
+        "already-applied"
+      ],
       "duplicateOutcome": "already-applied",
       "externalReadBack": true,
       "requiredBindings": [
@@ -499,7 +576,13 @@
     },
     "checkProvenance": {
       "protectedRegistry": true,
-      "requiredBindings": ["producer", "event", "repository", "headSha", "checkName"],
+      "requiredBindings": [
+        "producer",
+        "event",
+        "repository",
+        "headSha",
+        "checkName"
+      ],
       "authoritativeProducerRequired": true,
       "duplicateContextPolicy": "reject-ambiguous",
       "nonAuthoritativeStatusBlocksMerge": false
@@ -543,7 +626,10 @@
       "uniqueDataPolicy": "preserve",
       "equivalentBranchDisposition": "delete-after-lossless-proof",
       "closureEffect": {
-        "allowedModes": ["explicit-later", "provider-coupled"],
+        "allowedModes": [
+          "explicit-later",
+          "provider-coupled"
+        ],
         "providerCoupledEffectIsSingleMutation": true,
         "explicitCloseOnlyWhenStillOpen": true,
         "requiredReadBack": [
@@ -566,7 +652,12 @@
   "publication": {
     "mode": "pull-request",
     "approval": "trusted-validator-app",
-    "requiredChecks": ["governance", "tests", "security", "validator"],
+    "requiredChecks": [
+      "governance",
+      "tests",
+      "security",
+      "validator"
+    ],
     "bindings": [
       "repository",
       "pullRequest",

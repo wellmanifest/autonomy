@@ -1,0 +1,4 @@
+ticket-021 validation
+python3 -m unittest discover -s tests -v → OK (35)
+python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json → PASS
+python3 src/autonomy_check.py self-test → PASS

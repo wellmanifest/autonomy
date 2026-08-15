@@ -371,8 +371,16 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.8.0", self.profile["version"])
+        self.assertEqual("0.8.1", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
+        self.assertIn("subactor/platform", self.profile["ownership"]["runtimeOwners"])
+        self.assertIn("subactor/deployment", self.profile["ownership"]["runtimeOwners"])
+        self.assertTrue(
+            any(
+                b["product"] == "subactor/deployment" and b["stage"] == "observe"
+                for b in self.profile["bindings"]
+            )
+        )
         self.assertTrue(self.profile["protectedBoundaries"]["heartbeatEvidenceExternal"])
         self.assertTrue(
             self.profile["protectedBoundaries"]["invocationCorrelationProtected"]
