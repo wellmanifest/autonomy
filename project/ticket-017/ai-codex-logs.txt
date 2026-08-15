@@ -1,0 +1,14 @@
+2026-08-15 ticket-017 (agent:codex)
+
+[1] Accepted production evidence and design boundary
+    Base: 0f5f80ab1a3eafbcfba1910003f25751d7f5ec95
+    Scheduled cycle expected: 2026-08-15 00:17 UTC.
+    No scheduled delivery observed through: 2026-08-15 00:45 UTC.
+    Pre-recovery run-ID boundary: 31854361196.
+    Protected matrix recovery run: 31854603326.
+    Exact-head approval: 4942176742.
+    Protected merge: 5a6289c7ed2bc1a752ee1851a70205b9be64c340.
+    Duplicate exact-subject proof: run 31854007167 reused approval
+      4942134199 and merge 3fe9659011372b734bc24302ed83eb0b49f9c95f
+      without a second review or merge.
+    Design boundary: recovery execution is not scheduler-liveness evidence.
