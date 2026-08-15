@@ -45,6 +45,10 @@ external, exact, idempotent receipts instead of relying on timing or prose.
   Draft 2020-12 validation, external DSL validation and whitespace checks.
 - Verified exactly eleven declared implementation files and advanced the
   candidate to `PUBLICATION` for independent App review.
+- Published PR #32 through correlation-bound run `31856175299`, deterministic
+  exact-head App approval `4942309733`, two stable policy reads, explicit merge
+  `69d22e41` and source-branch cleanup; closed only from integrated protected
+  main.
 
 ## Blockers
 

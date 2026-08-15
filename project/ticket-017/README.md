@@ -2,8 +2,8 @@
 
 - **ID**: ticket-017
 - **Owner**: unresolved:human
-- **Status**: IN_PROGRESS
-- **Workflow state**: PUBLICATION
+- **Status**: DONE
+- **Workflow state**: DONE
 - **Created**: 2026-08-15
 
 ## Goal and scope
@@ -34,10 +34,26 @@ authoritative external receipt without issuing a second review or merge.
 - [x] AC-06: Governance, semantic, schema, unit, compile, lint and external
       DSL validation pass with exact artifact digests and no new runtime
       dependency.
-- [ ] AC-07: Publication occurs only through independent exact-head Validator
+- [x] AC-07: Publication occurs only through independent exact-head Validator
       App review, explicit protected merge, read-back and branch cleanup.
 
 ## Participants
 
 - Human participant: unresolved; no user-* file was created by this script.
 - Agent participant: [ai-codex.md](ai-codex.md)
+
+## Publication evidence
+
+- Hosted autonomy conformance run `31856137043` and remote lifecycle run
+  `31856137020` passed on exact head
+  `c86ec6dbf40783481afb9ca95801251bd428db42`.
+- The dispatch helper captured run-ID boundary `31855488871` and selected only
+  post-boundary Validator run `31856175299` with correlation
+  `autonomy-pr-32-ticket-017-c86ec6dbf4`.
+- Validator App review `4942309733` approved that exact head; its deterministic
+  verdict remained authoritative while the optional LLM advisory was degraded.
+- The protected policy converged after two stable reads and the Validator App
+  explicitly merged PR #32 as
+  `69d22e41af70e16e78105ae8ae008b53652aa6c0`.
+- Protected `main` read-back returned the same merge SHA and the source branch
+  was absent.

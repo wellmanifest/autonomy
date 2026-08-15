@@ -11,3 +11,6 @@
   post-boundary correlation and authoritative effect-reconciliation contracts.
 - Bound the 0.8.0 profile and thirteen DSL artifacts to exact bytes and passed
   every deterministic and cross-standard conformance gate.
+- Published through correlation-bound exact-head Validator App review,
+  deterministic approval, two stable policy reads, explicit protected merge,
+  main read-back and source-branch cleanup.
