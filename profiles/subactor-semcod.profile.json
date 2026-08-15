@@ -2,19 +2,23 @@
   "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v6",
   "schema": "wellmanifest.autonomy/profile/v6",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
     "runtimeOwners": [
       "subactor/autonom",
       "subactor/autonomy-lab",
+      "subactor/deployment",
+      "subactor/doctor-agent",
       "subactor/onedev-agent",
       "subactor/orchestrator",
+      "subactor/platform",
       "subactor/repair-agent",
       "subactor/skills-agent",
       "subactor/twin-probes",
       "subactor/validator-agent",
+      "subactor/www-sub-actor",
       "semcod/docval",
       "semcod/goal",
       "semcod/koru",
@@ -103,12 +107,55 @@
     },
     {
       "stage": "observe",
+      "product": "subactor/deployment",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["topology", "procedures", "host-policy-pointer"],
+      "contracts": [
+        "repo://subactor/deployment/docs/TOPOLOGY.md",
+        "repo://subactor/deployment/docs/PROCEDURES.md",
+        "repo://subactor/deployment/AGENTS.md"
+      ],
+      "restrictions": ["no-mutate", "redeploy-apply-not-authority", "ssot-in-subactor-deployment"]
+    },
+    {
+      "stage": "observe",
+      "product": "subactor/doctor-agent",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["environment-scan", "operational-findings"],
+      "contracts": ["repo://subactor/doctor-agent/README.md"],
+      "restrictions": ["read-only", "findings-do-not-grant-mutate"]
+    },
+    {
+      "stage": "observe",
+      "product": "subactor/platform",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["knowledge-context", "deployment-bindings", "wellmanifest-adopt-map"],
+      "contracts": [
+        "repo://subactor/platform/config/adopt/wellmanifest.v1.json",
+        "repo://subactor/platform/AGENTS.md"
+      ],
+      "restrictions": ["knowledge-first", "no-secret-in-knowledge-url", "home-subactor"]
+    },
+    {
+      "stage": "observe",
       "product": "subactor/twin-probes",
       "role": "observer",
       "mode": "read-only",
       "capabilities": ["quality-probes", "runtime-intent-evidence"],
       "contracts": ["repo://subactor/twin-probes/README.md"],
       "restrictions": ["capped-findings", "producer-classification-preserved"]
+    },
+    {
+      "stage": "observe",
+      "product": "subactor/www-sub-actor",
+      "role": "observer",
+      "mode": "read-only",
+      "capabilities": ["portal-runbook", "host-policy-tables"],
+      "contracts": ["repo://subactor/www-sub-actor/docs/deployment.md"],
+      "restrictions": ["runbook-not-deploy-ssot", "point-at-subactor-deployment"]
     },
     {
       "stage": "evidence",

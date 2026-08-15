@@ -3,7 +3,7 @@
   "schema": "wellmanifest.dsl/manifest/v1",
   "id": "wellmanifest.autonomy",
   "name": "Wellmanifest Autonomy Standard",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "status": "stable",
   "purpose": "Durable, independently watched autonomous software-development continuation without per-pull-request human approval",
   "domain": "autonomous-development",
@@ -56,7 +56,7 @@
     {
       "path": "profiles/subactor-semcod.profile.json",
       "role": "profile",
-      "digest": "sha256:3a5317269418dd31e09b2e630edaf59a4b994e24df9eb2f6bca59f194c81ba64"
+      "digest": "sha256:b9ba8b969057a855358529a4bc543560e3a20a7a3433134baa80d4280eff0465"
     },
     {
       "path": "src/autonomy_check.py",
@@ -66,7 +66,7 @@
     {
       "path": "examples/valid/project.autonomy.json",
       "role": "example",
-      "digest": "sha256:3b62dac06421a49da983f95fbf8ff66160227b5e03edeb8dce95776e1e15e13e"
+      "digest": "sha256:e385198fe15ee100baaa2d6a705f3880d5bc0ebba093b0d638aad6b3b8cc6fa4"
     },
     {
       "path": "examples/invalid/self-approval.autonomy.json",
@@ -107,6 +107,11 @@
       "path": "docs/CRITICAL/AUTONOMY-BOUNDARY-001.md",
       "role": "documentation",
       "digest": "sha256:e69b905d8b0e080cebdf24f1898198d57ec9bd75dbddbc4c3a59cfc06d05ba2e"
+    },
+    {
+      "path": "docs/SUBACTOR_RUNTIME_ADOPT.md",
+      "role": "documentation",
+      "digest": "sha256:973536b20a11f8e3bad11a2ce522f9f63c83fc343867ad3f7da1627b5b8a3839"
     }
   ],
   "namespaces": [
@@ -168,7 +173,9 @@
     "errorRoot": "docs/ERROR",
     "criticalRoot": "docs/CRITICAL",
     "commands": [],
-    "errorCodes": ["AUTONOMY-SYNTAX-001"],
+    "errorCodes": [
+      "AUTONOMY-SYNTAX-001"
+    ],
     "criticalCodes": [
       "AUTONOMY-BOUNDARY-001",
       "AUTONOMY-POLICY-001"
@@ -176,9 +183,16 @@
   },
   "findingPolicy": {
     "schema": "wellmanifest.dsl/findings/v1",
-    "requiredProducers": ["wellmanifest.autonomy-check"],
-    "securityProducers": ["wellmanifest.autonomy-check"],
-    "blockingSeverities": ["error", "critical"],
+    "requiredProducers": [
+      "wellmanifest.autonomy-check"
+    ],
+    "securityProducers": [
+      "wellmanifest.autonomy-check"
+    ],
+    "blockingSeverities": [
+      "error",
+      "critical"
+    ],
     "requireEvaluable": true,
     "blockUnresolvedSecurity": true
   },
@@ -190,7 +204,12 @@
     "runtimeIsolation": true
   },
   "conformance": {
-    "levels": ["manifest", "contract", "runtime", "llm-boundary"],
+    "levels": [
+      "manifest",
+      "contract",
+      "runtime",
+      "llm-boundary"
+    ],
     "commands": [
       "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
       "python3 src/autonomy_check.py self-test",

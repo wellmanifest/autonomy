@@ -1,5 +1,6 @@
 # Project roadmap
 
+- [ ] [`ticket-021`](project/ticket-021/README.md) — Subactor runtime ADOPT binding map in autonomy profile 0.8.1. State: `IN_PROGRESS / EDIT`; workstream: `integration`.
 - [x] [`ticket-018`](project/ticket-018/README.md) — align root README and
   changelog with stable Autonomy 0.8, manifest v6 and exact correlation-bound
   publication evidence. State: `DONE / DONE`; classification:

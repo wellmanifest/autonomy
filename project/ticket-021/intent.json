@@ -1,0 +1,114 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-021",
+  "summary": "Subactor runtime ADOPT binding map in autonomy profile",
+  "workstream": "integration",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-021/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "profiles/subactor-semcod.profile.json",
+    "examples/valid/project.autonomy.json",
+    "examples/dsl-manifest.json",
+    "docs/SUBACTOR_RUNTIME_ADOPT.md",
+    "tests/test_autonomy.py"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    ".github/**",
+    "AGENTS.md",
+    "spec/**",
+    "schemas/**",
+    "src/**",
+    "pyproject.toml"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "f32d681145ed1301592e25cb1c8251082f31261d",
+    "targetBranch": "main",
+    "outcome": "Autonomy profile lists Subactor platform/deployment/doctor/www runtime owners and documents ADOPT map binding without expanding autonomous authority.",
+    "nonGoals": [
+      "Change autonomy authority, grants, or merge gates",
+      "Move Subactor deployment SSOT into wellmanifest",
+      "HOME wellmanifest for runtime_service"
+    ],
+    "complexity": "L",
+    "estimatedMinutes": 30,
+    "budgets": {
+      "maxImplementationFiles": 11,
+      "maxAffectedComponents": 5,
+      "maxPublicInterfaceChanges": 3,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Extend integration profile ownership/bindings; document ADOPT in docs/; root README/CHANGELOG stay governance workstream.",
+      "components": [
+        {
+          "name": "practice-profile",
+          "paths": [
+            "profiles/**",
+            "VERSION"
+          ]
+        },
+        {
+          "name": "digest-bindings",
+          "paths": [
+            "examples/valid/**",
+            "examples/dsl-manifest.json"
+          ]
+        },
+        {
+          "name": "adopt-docs",
+          "paths": [
+            "docs/SUBACTOR_RUNTIME_ADOPT.md"
+          ]
+        },
+        {
+          "name": "conformance-tests",
+          "paths": [
+            "tests/test_autonomy.py"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "Profile 0.8.1 adds Subactor runtime owners and observe bindings"
+      ],
+      "dataChanges": [
+        "Profile and example digests advance to 0.8.1"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert profile and docs through Validator merge."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-06",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests"
+        ],
+        "evidence": "project/ticket-021/ai-cursor-composer-logs.txt"
+      }
+    ]
+  }
+}
