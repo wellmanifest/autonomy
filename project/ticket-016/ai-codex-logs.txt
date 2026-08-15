@@ -1,0 +1,9 @@
+2026-08-15 ticket-016 (agent:codex)
+
+[1] Plan checkpoint
+    Accepted base: 79df4acc4e0715ac591d84773cdc885a3a752b30
+    Dependency: ticket-015 DONE on protected main.
+    Workstream: governance.
+    Implementation scope: README.md, CHANGELOG.md.
+    Normative and executable surfaces: forbidden.
+    SESSION_EXECUTION_AUTHORIZATION: user's autonomous continuation request.

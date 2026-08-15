@@ -1,5 +1,9 @@
 # Project roadmap
 
+- [ ] [`ticket-016`](project/ticket-016/README.md) — align root README and
+  changelog with stable Autonomy 0.7.1, exact DSL digest closure and precise
+  missed-heartbeat recovery evidence. State: `IN_PROGRESS / EDIT`;
+  classification: `SERVICE / P1 / regression`; workstream: `governance`.
 - [x] [`ticket-015`](project/ticket-015/README.md) — repair stale DSL artifact
   digests as stable patch 0.7.1 with coherent profile selection and external
   DSL conformance. State: `DONE / DONE`; classification:
