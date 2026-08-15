@@ -53,7 +53,22 @@ Validator run `31830719505`; after deployment, the next natural timer cycle at
 published by the independent scheduled Validator target in run `31827270068`
 without a manual dispatch.
 
-Status: stable `0.7.0`. Autonomy 0.7 partitions the effective protected check
+Status: stable `0.7.1`. This patch preserves the Autonomy v5 semantics and
+repairs the cross-standard DSL publication boundary: the stable profile,
+selected example and all declared artifact SHA-256 values now bind the exact
+published bytes. The external Wellmanifest DSL checker passes without an
+exception or same-version artifact rewrite.
+
+Publication also exposed a liveness distinction. The `00:17 UTC` scheduled
+cycle was not delivered by `00:45 UTC`; protected recovery run `31854603326`
+used the same matrix `direct-scan` path and autonomously approved and merged
+the exact candidate. That proves recovery execution, target isolation and
+merge authority, but it does not prove scheduler delivery. A deployment must
+therefore retain explicit heartbeat evidence and independent missed-cycle
+detection instead of treating a configured cron expression as a liveness
+receipt.
+
+Autonomy 0.7 partitions the effective protected check
 set before review. Every check that can run without approval must already be in
 authoritative terminal success. Only checks whose trigger is the exact trusted
 App approval may be deferred; after approval, each deferred check needs a fresh

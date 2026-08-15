@@ -3,7 +3,7 @@
 - **ID**: ticket-016
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-15
 
 ## Goal and scope
@@ -18,11 +18,11 @@ executable or integration artifacts.
 
 - [x] AC-01: The user's continuation request authorizes this documentation-only
       update from exact protected `main@79df4acc`.
-- [ ] AC-02: README identifies stable 0.7.1 and records exact-byte DSL digest
+- [x] AC-02: README identifies stable 0.7.1 and records exact-byte DSL digest
       closure without changing the Autonomy 0.7 semantic contract.
-- [ ] AC-03: README distinguishes the missed scheduled heartbeat from the
+- [x] AC-03: README distinguishes the missed scheduled heartbeat from the
       successful protected matrix direct-scan recovery.
-- [ ] AC-04: CHANGELOG records Autonomy 0.7.1 and exact publication evidence;
+- [x] AC-04: CHANGELOG records Autonomy 0.7.1 and exact publication evidence;
       only two implementation files change and every deterministic gate passes.
 
 ## Participants

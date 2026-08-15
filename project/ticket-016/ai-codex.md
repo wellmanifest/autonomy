@@ -27,6 +27,13 @@ manual recovery scan does not prove the scheduled trigger was delivered.
 - Bound the two-file documentation plan to protected `main@79df4acc`; all
   normative, executable, workflow and governance-package paths remain
   forbidden.
+- Updated README and CHANGELOG to stable 0.7.1 with exact digest-repair,
+  protected publication and missed-heartbeat recovery evidence.
+- Kept the evidence boundary explicit: the recovery proves matrix execution
+  and merge authority, while scheduled-trigger liveness remains unproven.
+- Passed governance, both Autonomy documents, self-test, 32 unit tests,
+  compile, Ruff, Draft 2020-12 validation, external DSL validation and
+  whitespace checks; advanced the candidate to `PUBLICATION`.
 
 ## Blockers
 

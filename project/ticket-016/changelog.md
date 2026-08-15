@@ -6,3 +6,6 @@
 - No human participant identity or content was generated.
 - Accepted a two-file 0.7.1 root-documentation delivery contract on exact
   protected main after ticket-015 closure.
+- Updated root release status and evidence without changing the normative or
+  executable contract.
+- Passed every declared deterministic gate and advanced to publication.

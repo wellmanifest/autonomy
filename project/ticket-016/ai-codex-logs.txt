@@ -7,3 +7,25 @@
     Implementation scope: README.md, CHANGELOG.md.
     Normative and executable surfaces: forbidden.
     SESSION_EXECUTION_AUTHORIZATION: user's autonomous continuation request.
+
+[2] Deterministic validation
+    ./project/governance-check.sh --actor agent
+      GOV-PASS: passed (0 errors, 0 warnings)
+    python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json
+      PASS both documents
+    python3 src/autonomy_check.py self-test
+      PASS autonomy self-test
+    python3 -m unittest discover -s tests -v
+      Ran 32 tests; OK
+    python3 -m compileall -q src tests
+      PASS
+    ruff check src tests
+      All checks passed
+    jsonschema Draft 2020-12 schema check + valid project document
+      JSON-SCHEMA-PASS
+    python3 ../../dsl/src/dsl_check.py validate examples/dsl-manifest.json
+      DSL-PASS: passed (0 errors)
+    git diff --check
+      PASS
+    implementation file count
+      exactly 2 declared files
