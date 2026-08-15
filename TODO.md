@@ -1,5 +1,11 @@
 # Project roadmap
 
+- [ ] [`ticket-020`](project/ticket-020/README.md) — establish governance continuity
+  for multi-agent autonomous operation: explicit workstream boundaries, zero-manual-PR
+  continuation posture, and non-merge validator edge-case handling with no autonomy
+  expansion.
+  State: `IN_PROGRESS / EDIT`; classification: `SERVICE / P1 / regression`;
+  workstream: `governance`.
 - [x] [`ticket-018`](project/ticket-018/README.md) — align root README and
   changelog with stable Autonomy 0.8, manifest v6 and exact correlation-bound
   publication evidence. State: `DONE / DONE`; classification:
