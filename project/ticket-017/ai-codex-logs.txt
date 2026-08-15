@@ -43,3 +43,19 @@
       PASS
     implementation file count
       exactly 11 declared files
+
+[4] Protected publication
+    Pull request: wellmanifest/autonomy#32.
+    Exact candidate head: c86ec6dbf40783481afb9ca95801251bd428db42.
+    Hosted autonomy conformance: 31856137043 success.
+    Hosted remote lifecycle: 31856137020 success.
+    Pre-dispatch run-ID boundary: 31855488871.
+    Correlation: autonomy-pr-32-ticket-017-c86ec6dbf4.
+    Validator run: 31856175299 success.
+    Validator App review: 4942309733 APPROVED on exact head.
+    Advisory LLM state: unavailable/degraded; deterministic verdict remained
+      authoritative under the protected profile.
+    Protected convergence: 2 stable reads.
+    Merge: 69d22e41af70e16e78105ae8ae008b53652aa6c0.
+    Protected main read-back: exact merge SHA.
+    Source branch read-back: absent.
