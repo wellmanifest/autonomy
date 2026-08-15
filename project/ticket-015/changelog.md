@@ -9,3 +9,6 @@
   exact byte bindings without changing v5 semantics.
 - Passed core and cross-standard deterministic conformance and advanced to
   protected publication.
+- Recovered a missing scheduled heartbeat through the protected matrix
+  direct-scan, then published through exact-head Validator App review and
+  merge with protected-main read-back and source-branch cleanup.

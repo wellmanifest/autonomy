@@ -1,9 +1,12 @@
 # Project roadmap
 
-- [ ] [`ticket-015`](project/ticket-015/README.md) — repair stale DSL artifact
+- [x] [`ticket-015`](project/ticket-015/README.md) — repair stale DSL artifact
   digests as stable patch 0.7.1 with coherent profile selection and external
-  DSL conformance. State: `IN_PROGRESS / PUBLICATION`; classification:
-  `BUG / P1 / regression`; workstream: `integration`.
+  DSL conformance. State: `DONE / DONE`; classification:
+  `BUG / P1 / regression`; workstream: `integration`. Recovery direct-scan
+  run `31854603326` produced Validator App review `4942176742` on exact head
+  `f76a502b`, merged it as `5a6289c7ed2bc1a752ee1851a70205b9be64c340`
+  after two stable reads, and removed the source branch.
 - [x] [`ticket-014`](project/ticket-014/README.md) — align root README and
   changelog with stable Autonomy 0.7 and its exact publication evidence.
   State: `DONE / DONE`; classification: `SERVICE / P1 / regression`;
