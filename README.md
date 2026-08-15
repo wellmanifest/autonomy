@@ -35,6 +35,21 @@ repository mirror, or mutation runtime. Those systems remain owned by
 - `src/autonomy_check.py` — deterministic conformance CLI;
 - `docs/ARCHITECTURE.md` and `docs/LOGIC_FLOW.md` — deployment guidance.
 
+## Autonomous continuation governance in this repository
+
+This repository uses an explicit ticket handoff model: work may continue across
+multiple agents without re-issuing new human approvals for every PR, while keeping
+a hard boundary that no ticket can modify autonomy authority.
+
+- `TODO.md` is the execution posture ledger.
+- `project/TICKETS.md` is the machine-readable ticket index.
+- A ticket must remain in a bounded workstream (`governance` / `integration` /
+  `application` / `interfaces` / `infrastructure`) and use the declared scope.
+- Continuation events that require policy or authority changes are redirected to the
+  governing workstream and cannot be piggy-backed as low-risk documentation edits.
+- Non-merge validator events are evidence for investigation or recovery; they do not
+  authorize extra control-plane privileges by themselves.
+
 ## Operational proof boundary
 
 Static schema/checker success proves contract conformance, not a live autonomous
