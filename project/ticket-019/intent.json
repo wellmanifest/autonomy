@@ -1,0 +1,93 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-019",
+  "summary": "Strengthen orphan-branch and practice-based convergence standards",
+  "workstream": "integration",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P1",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-019/**",
+    "spec/AUTONOMY_STANDARD.md",
+    "profiles/subactor-semcod.profile.json",
+    "tests/test_autonomy.py",
+    "examples/valid/project.autonomy.json",
+    "examples/dsl-manifest.json"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    ".github/**",
+    "AGENTS.md",
+    "VERSION",
+    "schemas/**",
+    "pyproject.toml"
+  ],
+  "stacks": [],
+  "dependsOn": ["ticket-018"],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "f32d681145ed1301592e25cb1c8251082f31261d",
+    "targetBranch": "main",
+    "outcome": "Clarify branch-continuity and orphan handling requirements in the autonomy standard and profile so unresolved non-default branches cannot be implicitly deleted.",
+    "nonGoals": [
+      "Change runtime code or the validator execution container",
+      "Introduce dynamic branch cleanup policies outside manifest/policy evidence",
+      "Change the core permission model or workstream ownership boundaries"
+    ],
+    "complexity": "L",
+    "estimatedMinutes": 20,
+    "budgets": {
+      "maxImplementationFiles": 11,
+      "maxAffectedComponents": 5,
+      "maxPublicInterfaceChanges": 3,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Keep changes in normative and profile layers only, preserving release semantics while adding explicit branch inventory requirements.",
+      "components": [
+        {
+          "name": "normative-contract",
+          "paths": ["spec/AUTONOMY_STANDARD.md"]
+        },
+        {
+          "name": "integration-profile",
+          "paths": ["profiles/subactor-semcod.profile.json"]
+        },
+        {
+          "name": "semantic-profile-evidence",
+          "paths": [
+            "examples/dsl-manifest.json",
+            "examples/valid/project.autonomy.json"
+          ]
+        },
+        {
+          "name": "governance-test",
+          "paths": ["tests/test_autonomy.py"]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": ["None for runtime contracts"],
+      "dataChanges": ["No deployment/runtime schema bindings changed"],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert documentation and profile restriction updates if policy tests fail in protected evidence gates."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-01",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v"
+        ],
+        "evidence": "project/ticket-019/ai-codex-logs.txt"
+      }
+    ]
+  }
+}
