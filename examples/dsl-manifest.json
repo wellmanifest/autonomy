@@ -51,12 +51,12 @@
     {
       "path": "spec/AUTONOMY_STANDARD.md",
       "role": "documentation",
-      "digest": "sha256:21f70232aac0b29f3c4b99d4660007bb864c881d17014599d3aeb0f0e092cc18"
+      "digest": "sha256:472d40d64c23d2d06426ced28523f1bc694d62f0c230a4a4ee5897897c164634"
     },
     {
       "path": "profiles/subactor-semcod.profile.json",
       "role": "profile",
-      "digest": "sha256:b9ba8b969057a855358529a4bc543560e3a20a7a3433134baa80d4280eff0465"
+      "digest": "sha256:9c458d9a399b7329a4ee35336b22c7f5d5afe7a77f45a8535f9dfcc280bf6199"
     },
     {
       "path": "src/autonomy_check.py",
@@ -66,7 +66,7 @@
     {
       "path": "examples/valid/project.autonomy.json",
       "role": "example",
-      "digest": "sha256:e385198fe15ee100baaa2d6a705f3880d5bc0ebba093b0d638aad6b3b8cc6fa4"
+      "digest": "sha256:916d2ab74b99f8612cda7616e605ae5879b04b852faa97db59ca9d7af93885c7"
     },
     {
       "path": "examples/invalid/self-approval.autonomy.json",

@@ -481,6 +481,36 @@ content is unresolved, the proof is unavailable, the archive head moved, or
 read-back is incomplete, the branch MUST be preserved and its pull request MUST
 remain open as its explicit owner.
 
+### 10.4 Deterministic branch continuity and orphan handling
+
+Autonomous continuation is safe only when branch ownership is explicit.
+Before any branch-cleanup or supersession mutation, the publisher MUST capture
+provider-authoritative branch snapshots and branch-to-task ownership for every
+non-default branch it may remove.
+
+The controller MUST apply a clear ownership policy:
+
+1. branches created for active tasks remain open and mutable until their task
+   state converges with a verified read-back;
+2. branches proven equivalent to a merged successor may be deleted only with
+   lossless disposition read-back and archived-content proof; and
+3. non-default branches with no authoritative owner mapping are treated as
+   unresolved work and MUST be preserved until explicit authority resolves
+   ownership.
+
+An attempt to delete or rename an unknown non-default branch without proof MUST
+fail closed.
+
+A repository may retain remote branches during successful tasks for rollback,
+audit, and queue replay, but the branch inventory itself is part of the
+publication authority surface and MUST be read through an authority-preserving
+provider API before each mutation.
+
+Unresolved or unowned branches do not block independent task planning in a
+different repository, but they block mutation in that repository until a
+newly authoritative resolution changes `stop` behavior or creates an explicit
+recovery task for branch disposition.
+
 ## 11. Publication requirements
 
 Autonomous merge without per-PR human approval is conforming only when all of the
