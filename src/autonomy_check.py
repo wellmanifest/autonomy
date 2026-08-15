@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free conformance checker for Wellmanifest Autonomy 0.7."""
+"""Dependency-free conformance checker for Wellmanifest Autonomy 0.8."""
 
 from __future__ import annotations
 
@@ -128,6 +128,7 @@ PIPELINE_STATES = [
 REQUIRED_GATES = {
     "trigger-liveness",
     "queue-claim",
+    "invocation-correlation",
     "registry-consistency",
     "grant-active",
     "candidate-scope",
@@ -138,6 +139,7 @@ REQUIRED_GATES = {
     "independent-validator",
     "exact-head-current-base",
     "post-approval-convergence",
+    "effect-reconciliation",
     "post-merge-read-back",
 }
 REQUIRED_BINDINGS = {
@@ -171,6 +173,9 @@ REQUIRED_RECEIPTS = {
     "read-back",
     "liveness-canary",
     "branch-cleanup",
+    "scheduler-heartbeat",
+    "missed-cycle",
+    "effect-reconciliation",
 }
 REQUIRED_IDEMPOTENCY_BINDINGS = {
     "repository",
@@ -178,6 +183,32 @@ REQUIRED_IDEMPOTENCY_BINDINGS = {
     "correlationId",
     "headSha",
     "operation",
+}
+REQUIRED_EFFECT_BINDINGS = {
+    "repository",
+    "target",
+    "headSha",
+    "ticket",
+    "correlationId",
+    "operation",
+    "externalEffectId",
+}
+REQUIRED_ALREADY_APPLIED_BINDINGS = {
+    "repository",
+    "pullRequest",
+    "baseSha",
+    "headSha",
+    "operation",
+    "approvalId",
+    "mergeCommitSha",
+    "mergedAt",
+}
+REQUIRED_INVOCATION_BINDINGS = {
+    "strategy",
+    "repository",
+    "target",
+    "headSha",
+    "correlationId",
 }
 REQUIRED_REGISTRY_BINDINGS = {
     "repository",
@@ -188,6 +219,7 @@ REQUIRED_REGISTRY_BINDINGS = {
     "mergePolicy",
 }
 REQUIRED_CANARY_RECEIPTS = {
+    "scheduler-heartbeat",
     "trigger-delivery",
     "queue-claim",
     "registry-resolution",
@@ -415,9 +447,9 @@ class Validator:
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v5":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v6":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/manifest/v5":
+        if doc["schema"] != "wellmanifest.autonomy/manifest/v6":
             self.add(SYNTAX, f"{path}.schema", "unknown manifest version")
         self.uri(doc["id"], f"{path}.id")
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -638,6 +670,7 @@ class Validator:
             "idempotencyBindings",
             "deadLetterAfterAttempts",
             "resumeFromCheckpoint",
+            "effectReconciliation",
         )
         if not self.closed(value, path, fields, fields):
             return
@@ -662,10 +695,81 @@ class Validator:
         self.integer(value["deadLetterAfterAttempts"], f"{path}.deadLetterAfterAttempts", 1, 10)
         self.boolean(value["resumeFromCheckpoint"], f"{path}.resumeFromCheckpoint")
 
+        reconciliation = value["effectReconciliation"]
+        reconciliation_fields = (
+            "mode",
+            "successOutcomes",
+            "duplicateOutcome",
+            "externalReadBack",
+            "requiredBindings",
+            "alreadyAppliedRequiredBindings",
+            "repeatReviewOrMerge",
+            "closedUnmergedOutcome",
+            "staleSubjectOutcome",
+            "ambiguousReceiptOutcome",
+        )
+        if self.closed(
+            reconciliation,
+            f"{path}.effectReconciliation",
+            reconciliation_fields,
+            reconciliation_fields,
+        ):
+            if reconciliation["mode"] != "at-most-one-authoritative-effect":
+                self.add(
+                    POLICY,
+                    f"{path}.effectReconciliation.mode",
+                    "effects must converge to one authoritative result",
+                )
+            self.string_set(
+                reconciliation["successOutcomes"],
+                f"{path}.effectReconciliation.successOutcomes",
+                minimum=2,
+                allowed={"applied", "already-applied"},
+            )
+            if reconciliation["duplicateOutcome"] != "already-applied":
+                self.add(
+                    POLICY,
+                    f"{path}.effectReconciliation.duplicateOutcome",
+                    "an exact duplicate must reconcile as already-applied",
+                )
+            self.boolean(
+                reconciliation["externalReadBack"],
+                f"{path}.effectReconciliation.externalReadBack",
+            )
+            self.string_set(
+                reconciliation["requiredBindings"],
+                f"{path}.effectReconciliation.requiredBindings",
+                minimum=1,
+                allowed=REQUIRED_EFFECT_BINDINGS,
+            )
+            self.string_set(
+                reconciliation["alreadyAppliedRequiredBindings"],
+                f"{path}.effectReconciliation.alreadyAppliedRequiredBindings",
+                minimum=1,
+                allowed=REQUIRED_ALREADY_APPLIED_BINDINGS,
+            )
+            self.boolean(
+                reconciliation["repeatReviewOrMerge"],
+                f"{path}.effectReconciliation.repeatReviewOrMerge",
+            )
+            for field in (
+                "closedUnmergedOutcome",
+                "staleSubjectOutcome",
+                "ambiguousReceiptOutcome",
+            ):
+                if reconciliation[field] != "failed":
+                    self.add(
+                        POLICY,
+                        f"{path}.effectReconciliation.{field}",
+                        "unverified effect reconciliation must fail closed",
+                    )
+
     def execution_liveness_shape(self, value: Any, path: str) -> None:
         fields = (
             "primaryTrigger",
             "watchdog",
+            "heartbeat",
+            "invocationIdentity",
             "independentPrincipals",
             "manualDispatchProvesLiveness",
             "missedTriggerStatus",
@@ -709,6 +813,80 @@ class Validator:
                 watchdog["maxSilenceSeconds"], f"{path}.watchdog.maxSilenceSeconds", 60, 86400
             )
             self.boolean(watchdog["triggerOnSilence"], f"{path}.watchdog.triggerOnSilence")
+
+        heartbeat = value["heartbeat"]
+        heartbeat_fields = (
+            "expectedIntervalSeconds",
+            "deliveryGraceSeconds",
+            "receiptRequired",
+            "protectedMonitor",
+            "missedCycleReceiptRequired",
+            "lateDeliveryPolicy",
+            "manualRecoveryRestoresLiveness",
+        )
+        if self.closed(heartbeat, f"{path}.heartbeat", heartbeat_fields, heartbeat_fields):
+            self.integer(
+                heartbeat["expectedIntervalSeconds"],
+                f"{path}.heartbeat.expectedIntervalSeconds",
+                60,
+                86400,
+            )
+            self.integer(
+                heartbeat["deliveryGraceSeconds"],
+                f"{path}.heartbeat.deliveryGraceSeconds",
+                0,
+                86400,
+            )
+            for field in (
+                "receiptRequired",
+                "protectedMonitor",
+                "missedCycleReceiptRequired",
+                "manualRecoveryRestoresLiveness",
+            ):
+                self.boolean(heartbeat[field], f"{path}.heartbeat.{field}")
+            if heartbeat["lateDeliveryPolicy"] != "deduplicate-with-recovery":
+                self.add(
+                    POLICY,
+                    f"{path}.heartbeat.lateDeliveryPolicy",
+                    "late scheduled delivery must deduplicate with recovery",
+                )
+
+        invocation = value["invocationIdentity"]
+        invocation_fields = (
+            "correlationRequired",
+            "providerRunIdentityRequired",
+            "preDispatchBoundaryRequired",
+            "postBoundaryOnly",
+            "requiredBindings",
+            "matrixChildCorrelationRequired",
+            "ambiguousRunOutcome",
+        )
+        if self.closed(
+            invocation,
+            f"{path}.invocationIdentity",
+            invocation_fields,
+            invocation_fields,
+        ):
+            for field in (
+                "correlationRequired",
+                "providerRunIdentityRequired",
+                "preDispatchBoundaryRequired",
+                "postBoundaryOnly",
+                "matrixChildCorrelationRequired",
+            ):
+                self.boolean(invocation[field], f"{path}.invocationIdentity.{field}")
+            self.string_set(
+                invocation["requiredBindings"],
+                f"{path}.invocationIdentity.requiredBindings",
+                minimum=1,
+                allowed=REQUIRED_INVOCATION_BINDINGS,
+            )
+            if invocation["ambiguousRunOutcome"] != "failed":
+                self.add(
+                    POLICY,
+                    f"{path}.invocationIdentity.ambiguousRunOutcome",
+                    "ambiguous provider run selection must fail closed",
+                )
 
         for field in (
             "independentPrincipals",
@@ -773,8 +951,8 @@ class Validator:
                 CONTINUATION, f"{path}.states", "pipeline states must match the normative order"
             )
         gates = value["requiredGates"]
-        if not isinstance(gates, list) or len(gates) < 13:
-            self.add(SYNTAX, f"{path}.requiredGates", "expected at least thirteen gates")
+        if not isinstance(gates, list) or len(gates) < 15:
+            self.add(SYNTAX, f"{path}.requiredGates", "expected at least fifteen gates")
         else:
             for index, gate in enumerate(gates):
                 item_path = f"{path}.requiredGates[{index}]"
@@ -1148,7 +1326,7 @@ class Validator:
             return
         self.uri(value["store"], f"{path}.store")
         self.string_set(
-            value["required"], f"{path}.required", minimum=17, allowed=REQUIRED_RECEIPTS
+            value["required"], f"{path}.required", minimum=22, allowed=REQUIRED_RECEIPTS
         )
         if value["redaction"] != "secret-free":
             self.add(RISK, f"{path}.redaction", "receipts must be secret-free")
@@ -1183,9 +1361,9 @@ class Validator:
         )
         if not self.closed(doc, path, fields, fields):
             return False
-        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v5":
+        if doc["$schema"] != "https://wellmanifest.com/schemas/autonomy-manifest/v6":
             self.add(SYNTAX, f"{path}.$schema", "unknown schema URI")
-        if doc["schema"] != "wellmanifest.autonomy/profile/v5":
+        if doc["schema"] != "wellmanifest.autonomy/profile/v6":
             self.add(SYNTAX, f"{path}.schema", "unknown profile version")
         self.string(doc["id"], f"{path}.id", pattern=ID_RE)
         self.string(doc["version"], f"{path}.version", pattern=SEMVER_RE)
@@ -1225,6 +1403,9 @@ class Validator:
             "profileDigestExternal",
             "durableQueueProtected",
             "watchdogPrincipalIndependent",
+            "heartbeatEvidenceExternal",
+            "invocationCorrelationProtected",
+            "effectReceiptExternal",
             "registryDigestExternal",
             "effectivePolicyExternal",
             "approvalEventObservedExternally",
@@ -1465,6 +1646,51 @@ class Validator:
                 f"{path}.queue.resumeFromCheckpoint",
                 "continuation must resume from a durable checkpoint",
             )
+        reconciliation = queue.get("effectReconciliation", {})
+        if (
+            reconciliation.get("mode") != "at-most-one-authoritative-effect"
+            or reconciliation.get("externalReadBack") is not True
+            or reconciliation.get("duplicateOutcome") != "already-applied"
+            or set(reconciliation.get("successOutcomes", []))
+            != {"applied", "already-applied"}
+        ):
+            self.add(
+                BOUNDARY,
+                f"{path}.queue.effectReconciliation",
+                "effect success requires one externally reconciled authoritative result",
+            )
+        if set(reconciliation.get("requiredBindings", [])) != REQUIRED_EFFECT_BINDINGS:
+            self.add(
+                BOUNDARY,
+                f"{path}.queue.effectReconciliation.requiredBindings",
+                "every effect receipt must carry the complete idempotency subject",
+            )
+        if (
+            set(reconciliation.get("alreadyAppliedRequiredBindings", []))
+            != REQUIRED_ALREADY_APPLIED_BINDINGS
+        ):
+            self.add(
+                BOUNDARY,
+                f"{path}.queue.effectReconciliation.alreadyAppliedRequiredBindings",
+                "already-applied publication requires exact external approval and merge bindings",
+            )
+        if reconciliation.get("repeatReviewOrMerge") is not False:
+            self.add(
+                BOUNDARY,
+                f"{path}.queue.effectReconciliation.repeatReviewOrMerge",
+                "an already-applied subject must not receive another review or merge",
+            )
+        for field in (
+            "closedUnmergedOutcome",
+            "staleSubjectOutcome",
+            "ambiguousReceiptOutcome",
+        ):
+            if reconciliation.get(field) != "failed":
+                self.add(
+                    BOUNDARY,
+                    f"{path}.queue.effectReconciliation.{field}",
+                    "missing, stale, ambiguous, or unmerged evidence must fail closed",
+                )
 
         liveness = doc.get("executionLiveness", {})
         primary = liveness.get("primaryTrigger", {})
@@ -1544,6 +1770,67 @@ class Validator:
                 CONTINUATION,
                 f"{path}.executionLiveness.canary.requiredReceipts",
                 "canary must prove the complete protected execution path",
+            )
+        heartbeat = liveness.get("heartbeat", {})
+        for field, expected in (
+            ("receiptRequired", True),
+            ("protectedMonitor", True),
+            ("missedCycleReceiptRequired", True),
+            ("manualRecoveryRestoresLiveness", False),
+        ):
+            if heartbeat.get(field) is not expected:
+                self.add(
+                    BOUNDARY,
+                    f"{path}.executionLiveness.heartbeat.{field}",
+                    "scheduler heartbeat must remain externally observable "
+                    "and independent of recovery",
+                )
+        if heartbeat.get("lateDeliveryPolicy") != "deduplicate-with-recovery":
+            self.add(
+                CONTINUATION,
+                f"{path}.executionLiveness.heartbeat.lateDeliveryPolicy",
+                "late scheduled delivery and recovery must converge without duplicate effects",
+            )
+        interval = heartbeat.get("expectedIntervalSeconds")
+        grace = heartbeat.get("deliveryGraceSeconds")
+        silence = watchdog.get("maxSilenceSeconds")
+        numeric_timing = all(
+            isinstance(item, int) and not isinstance(item, bool)
+            for item in (interval, grace, silence)
+        )
+        if numeric_timing:
+            if silence > interval + grace:
+                self.add(
+                    CONTINUATION,
+                    f"{path}.executionLiveness.watchdog.maxSilenceSeconds",
+                    "watchdog detection must not exceed the heartbeat interval plus delivery grace",
+                )
+
+        invocation = liveness.get("invocationIdentity", {})
+        for field in (
+            "correlationRequired",
+            "providerRunIdentityRequired",
+            "preDispatchBoundaryRequired",
+            "postBoundaryOnly",
+            "matrixChildCorrelationRequired",
+        ):
+            if invocation.get(field) is not True:
+                self.add(
+                    BOUNDARY,
+                    f"{path}.executionLiveness.invocationIdentity.{field}",
+                    "provider run selection requires protected exact invocation identity",
+                )
+        if set(invocation.get("requiredBindings", [])) != REQUIRED_INVOCATION_BINDINGS:
+            self.add(
+                BOUNDARY,
+                f"{path}.executionLiveness.invocationIdentity.requiredBindings",
+                "run selection must bind strategy, repository, target, exact head, and correlation",
+            )
+        if invocation.get("ambiguousRunOutcome") != "failed":
+            self.add(
+                BOUNDARY,
+                f"{path}.executionLiveness.invocationIdentity.ambiguousRunOutcome",
+                "an ambiguous or pre-boundary run candidate must fail closed",
             )
 
         pipeline = doc.get("pipeline", {})
@@ -1790,11 +2077,11 @@ def validate_document(
         validator.add(SYNTAX, path, "expected a JSON object")
         return validator.findings
     schema = document.get("schema")
-    if schema == "wellmanifest.autonomy/manifest/v5":
+    if schema == "wellmanifest.autonomy/manifest/v6":
         before = len(validator.findings)
         if validator.manifest_shape(document, path) and len(validator.findings) == before:
             validator.manifest_semantics(document, path)
-    elif schema == "wellmanifest.autonomy/profile/v5":
+    elif schema == "wellmanifest.autonomy/profile/v6":
         before = len(validator.findings)
         if validator.profile_shape(document, path) and len(validator.findings) == before:
             validator.profile_semantics(document, path)

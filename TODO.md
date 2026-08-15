@@ -1,5 +1,10 @@
 # Project roadmap
 
+- [ ] [`ticket-017`](project/ticket-017/README.md) — standardize scheduler
+  heartbeat SLOs, correlation-bound post-dispatch run selection and
+  idempotent authoritative effect reconciliation. State:
+  `IN_PROGRESS / PUBLICATION`; classification: `FEATURE / P1 / regression`;
+  workstream: `integration`.
 - [x] [`ticket-016`](project/ticket-016/README.md) — align root README and
   changelog with stable Autonomy 0.7.1, exact DSL digest closure and precise
   missed-heartbeat recovery evidence. State: `DONE / DONE`;

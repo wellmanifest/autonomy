@@ -1,0 +1,19 @@
+{
+  "schema": "wellmanifest.autonomy/invalid-case/v1",
+  "base": "../valid/project.autonomy.json",
+  "mutations": [
+    {
+      "op": "replace",
+      "path": "/executionLiveness/invocationIdentity/postBoundaryOnly",
+      "value": false
+    },
+    {
+      "op": "replace",
+      "path": "/queue/effectReconciliation/repeatReviewOrMerge",
+      "value": true
+    }
+  ],
+  "expectedCodes": [
+    "AUTONOMY-BOUNDARY-001"
+  ]
+}

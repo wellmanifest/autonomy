@@ -1,0 +1,113 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-017",
+  "summary": "Standardize heartbeat correlation and idempotent effects",
+  "workstream": "integration",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-017/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "VERSION",
+    "spec/AUTONOMY_STANDARD.md",
+    "schemas/autonomy-manifest.schema.json",
+    "profiles/subactor-semcod.profile.json",
+    "examples/valid/project.autonomy.json",
+    "examples/invalid/duplicate-effect.autonomy.json",
+    "src/autonomy_check.py",
+    "tests/test_autonomy.py",
+    "docs/ARCHITECTURE.md",
+    "docs/LOGIC_FLOW.md",
+    "examples/dsl-manifest.json"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md",
+    ".governance/**",
+    ".github/**",
+    "AGENTS.md",
+    "README.md",
+    "CHANGELOG.md",
+    "pyproject.toml"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "0f5f80ab1a3eafbcfba1910003f25751d7f5ec95",
+    "targetBranch": "main",
+    "outcome": "Publish Autonomy 0.8 with practice-backed scheduler heartbeat, invocation correlation and idempotent effect reconciliation contracts",
+    "nonGoals": [
+      "Change Validator Agent runtime or hosted workflows",
+      "Claim that manual recovery proves scheduler liveness",
+      "Broaden repository, credential or merge authority",
+      "Rewrite historical 0.7 receipts or publication evidence",
+      "Update root README or CHANGELOG in the integration workstream"
+    ],
+    "complexity": "L",
+    "estimatedMinutes": 30,
+    "budgets": {
+      "maxImplementationFiles": 11,
+      "maxAffectedComponents": 5,
+      "maxPublicInterfaceChanges": 3,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Extend the closed manifest contract instead of encoding scheduler, run selection and duplicate effects as implementation-specific prose.",
+      "components": [
+        {
+          "name": "normative-contract",
+          "paths": ["VERSION", "spec/**", "schemas/**"]
+        },
+        {
+          "name": "practice-profile",
+          "paths": ["profiles/**", "examples/valid/**", "examples/invalid/duplicate-effect.autonomy.json"]
+        },
+        {
+          "name": "semantic-checker",
+          "paths": ["src/autonomy_check.py", "tests/test_autonomy.py"]
+        },
+        {
+          "name": "operational-model",
+          "paths": ["docs/ARCHITECTURE.md", "docs/LOGIC_FLOW.md"]
+        },
+        {
+          "name": "cross-standard-binding",
+          "paths": ["examples/dsl-manifest.json"]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [
+        "Autonomy manifest schema advances from v5 to v6",
+        "Execution liveness gains heartbeat and invocation identity contracts",
+        "Queue effects gain authoritative reconciliation receipts"
+      ],
+      "dataChanges": [
+        "Profile, examples and DSL artifact digests advance to Autonomy 0.8.0"
+      ],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert before adoption; v5 remains the last compatible schema generation and must not accept v6 documents silently."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-06",
+        "commands": [
+          "./project/governance-check.sh --actor agent",
+          "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m unittest discover -s tests -v",
+          "python3 -m compileall -q src tests",
+          "ruff check src tests",
+          "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json"
+        ],
+        "evidence": "project/ticket-017/ai-codex-logs.txt"
+      }
+    ]
+  }
+}

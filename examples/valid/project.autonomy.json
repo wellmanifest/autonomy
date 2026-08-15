@@ -1,6 +1,6 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
-  "schema": "wellmanifest.autonomy/manifest/v5",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v6",
+  "schema": "wellmanifest.autonomy/manifest/v6",
   "id": "subactor://autonomy/project/example-api",
   "version": "1.0.0",
   "status": "active",
@@ -11,8 +11,8 @@
     "policyDigest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
-      "version": "0.7.1",
-      "digest": "sha256:55aca1af0489f8f2c081bb1e8d262d359526481b66703a813f685dbb57c496ec"
+      "version": "0.8.0",
+      "digest": "sha256:3a5317269418dd31e09b2e630edaf59a4b994e24df9eb2f6bca59f194c81ba64"
     }
   },
   "grant": {
@@ -218,7 +218,36 @@
       "operation"
     ],
     "deadLetterAfterAttempts": 3,
-    "resumeFromCheckpoint": true
+    "resumeFromCheckpoint": true,
+    "effectReconciliation": {
+      "mode": "at-most-one-authoritative-effect",
+      "successOutcomes": ["applied", "already-applied"],
+      "duplicateOutcome": "already-applied",
+      "externalReadBack": true,
+      "requiredBindings": [
+        "repository",
+        "target",
+        "headSha",
+        "ticket",
+        "correlationId",
+        "operation",
+        "externalEffectId"
+      ],
+      "alreadyAppliedRequiredBindings": [
+        "repository",
+        "pullRequest",
+        "baseSha",
+        "headSha",
+        "operation",
+        "approvalId",
+        "mergeCommitSha",
+        "mergedAt"
+      ],
+      "repeatReviewOrMerge": false,
+      "closedUnmergedOutcome": "failed",
+      "staleSubjectOutcome": "failed",
+      "ambiguousReceiptOutcome": "failed"
+    }
   },
   "executionLiveness": {
     "primaryTrigger": {
@@ -234,6 +263,30 @@
       "protected": true,
       "maxSilenceSeconds": 3600,
       "triggerOnSilence": true
+    },
+    "heartbeat": {
+      "expectedIntervalSeconds": 3600,
+      "deliveryGraceSeconds": 1800,
+      "receiptRequired": true,
+      "protectedMonitor": true,
+      "missedCycleReceiptRequired": true,
+      "lateDeliveryPolicy": "deduplicate-with-recovery",
+      "manualRecoveryRestoresLiveness": false
+    },
+    "invocationIdentity": {
+      "correlationRequired": true,
+      "providerRunIdentityRequired": true,
+      "preDispatchBoundaryRequired": true,
+      "postBoundaryOnly": true,
+      "requiredBindings": [
+        "strategy",
+        "repository",
+        "target",
+        "headSha",
+        "correlationId"
+      ],
+      "matrixChildCorrelationRequired": true,
+      "ambiguousRunOutcome": "failed"
     },
     "independentPrincipals": true,
     "manualDispatchProvesLiveness": false,
@@ -261,6 +314,7 @@
       "maximumAgeSeconds": 86400,
       "manualDispatchCounts": false,
       "requiredReceipts": [
+        "scheduler-heartbeat",
         "trigger-delivery",
         "queue-claim",
         "registry-resolution",
@@ -304,6 +358,14 @@
       },
       {
         "id": "queue-claim",
+        "stage": "pre-cycle",
+        "kind": "deterministic",
+        "producer": "controller.dispatcher",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "invocation-correlation",
         "stage": "pre-cycle",
         "kind": "deterministic",
         "producer": "controller.dispatcher",
@@ -386,6 +448,14 @@
         "id": "post-approval-convergence",
         "stage": "pre-merge",
         "kind": "deterministic",
+        "producer": "controller.publisher",
+        "protected": true,
+        "failClosed": true
+      },
+      {
+        "id": "effect-reconciliation",
+        "stage": "pre-merge",
+        "kind": "read-back",
         "producer": "controller.publisher",
         "protected": true,
         "failClosed": true
@@ -537,7 +607,10 @@
       "publication",
       "read-back",
       "liveness-canary",
-      "branch-cleanup"
+      "branch-cleanup",
+      "scheduler-heartbeat",
+      "missed-cycle",
+      "effect-reconciliation"
     ],
     "redaction": "secret-free",
     "retentionDays": 365

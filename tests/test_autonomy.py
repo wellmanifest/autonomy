@@ -160,6 +160,48 @@ class AutonomyConformanceTests(unittest.TestCase):
         mutation["queue"]["idempotencyBindings"].remove("operation")
         self.assertIn(autonomy_check.POLICY, self.codes(mutation))
 
+    def test_effect_reconciliation_forbids_duplicate_review_or_merge(self) -> None:
+        duplicate = copy.deepcopy(self.valid)
+        duplicate["queue"]["effectReconciliation"]["repeatReviewOrMerge"] = True
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(duplicate))
+
+        incomplete = copy.deepcopy(self.valid)
+        incomplete["queue"]["effectReconciliation"][
+            "alreadyAppliedRequiredBindings"
+        ].remove("approvalId")
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(incomplete))
+
+        closed_unmerged = copy.deepcopy(self.valid)
+        closed_unmerged["queue"]["effectReconciliation"][
+            "closedUnmergedOutcome"
+        ] = "already-applied"
+        self.assertIn(autonomy_check.POLICY, self.codes(closed_unmerged))
+
+    def test_scheduler_heartbeat_is_independent_from_recovery(self) -> None:
+        recovery = copy.deepcopy(self.valid)
+        recovery["executionLiveness"]["heartbeat"][
+            "manualRecoveryRestoresLiveness"
+        ] = True
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(recovery))
+
+        missing_receipt = copy.deepcopy(self.valid)
+        missing_receipt["executionLiveness"]["heartbeat"][
+            "missedCycleReceiptRequired"
+        ] = False
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(missing_receipt))
+
+        overlapping = copy.deepcopy(self.valid)
+        overlapping["executionLiveness"]["heartbeat"]["lateDeliveryPolicy"] = "run-both"
+        self.assertIn(autonomy_check.POLICY, self.codes(overlapping))
+
+    def test_provider_run_selection_is_post_boundary_and_correlation_bound(self) -> None:
+        mutation = copy.deepcopy(self.valid)
+        invocation = mutation["executionLiveness"]["invocationIdentity"]
+        invocation["postBoundaryOnly"] = False
+        invocation["matrixChildCorrelationRequired"] = False
+        invocation["requiredBindings"].remove("correlationId")
+        self.assertIn(autonomy_check.BOUNDARY, self.codes(mutation))
+
     def test_repository_outcomes_cannot_be_globally_fail_fast(self) -> None:
         mutation = copy.deepcopy(self.valid)
         mutation["executionLiveness"]["perRepositoryIsolation"] = False
@@ -329,8 +371,13 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
     def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.7.1", self.profile["version"])
+        self.assertEqual("0.8.0", self.profile["version"])
         self.assertEqual("stable", self.profile["status"])
+        self.assertTrue(self.profile["protectedBoundaries"]["heartbeatEvidenceExternal"])
+        self.assertTrue(
+            self.profile["protectedBoundaries"]["invocationCorrelationProtected"]
+        )
+        self.assertTrue(self.profile["protectedBoundaries"]["effectReceiptExternal"])
         dispatch = next(
             binding
             for binding in self.profile["bindings"]
@@ -357,6 +404,12 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "contract-consumer-inventory",
                 "provider-read-fallback",
                 "watchdog-reconcile",
+                "scheduler-heartbeat",
+                "missed-cycle-recovery",
+                "correlation-bound-run-selection",
+                "post-boundary-run-discovery",
+                "matrix-child-correlation",
+                "late-delivery-deduplication",
             },
             set(dispatch["capabilities"]),
         )
@@ -368,6 +421,8 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "repo://subactor/autonom/systemd/subactor-pr-controller.service",
                 "repo://subactor/autonom/systemd/subactor-pr-controller.timer",
                 "repo://subactor/validator-agent/config/direct-pr-registry.json",
+                "repo://subactor/validator-agent/.github/workflows/validator.yml",
+                "repo://subactor/validator-agent/bin/dispatch-direct-pr.sh",
             },
             set(dispatch["contracts"]),
         )
@@ -396,6 +451,8 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "provider-coupled-pr-closure",
                 "lossless-superseded-branch-disposition",
                 "durable-publication-checkpoint",
+                "idempotent-effect-reconciliation",
+                "already-applied-exact-receipt",
             },
             set(publish["capabilities"]),
         )
@@ -425,6 +482,8 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(
             "unresolved-superseded-pr-remains-open", publish["restrictions"]
         )
+        self.assertIn("at-most-one-authoritative-effect", publish["restrictions"])
+        self.assertIn("duplicate-review-merge-forbidden", publish["restrictions"])
 
     def test_normative_durability_and_receipt_origin_rules_are_published(self) -> None:
         standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
@@ -455,6 +514,11 @@ class AutonomyConformanceTests(unittest.TestCase):
             "request branch deletion while\nthe pull request is still open",
             "platform-coupled effect",
             "pull request MUST\nremain open as its explicit owner",
+            "MUST NOT repair, synthesize, or\nreplace the missing scheduler heartbeat",
+            "MUST carry a stable correlation\nID into the provider's run identity",
+            "pre-boundary run or a child\nfrom a different matrix invocation",
+            "It MUST NOT submit\na second review or merge request",
+            "closed-unmerged pull request is not an already-applied merge",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):
@@ -482,14 +546,32 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn("31843668089", architecture)
         self.assertIn("31844397273", architecture)
         self.assertIn("GOV-BRANCH-LIFECYCLE-002", architecture)
+        self.assertIn("31854603326", architecture)
+        self.assertIn("4942176742", architecture)
+        self.assertIn("31854007167", architecture)
+        self.assertIn("3fe9659011372b734bc24302ed83eb0b49f9c95f", architecture)
 
     def test_public_schema_is_draft_2020_12_and_closed(self) -> None:
         schema = json.loads(
             (ROOT / "schemas" / "autonomy-manifest.schema.json").read_text(encoding="utf-8")
         )
         self.assertEqual("https://json-schema.org/draft/2020-12/schema", schema["$schema"])
+        self.assertEqual(
+            "https://wellmanifest.com/schemas/autonomy-manifest/v6", schema["$id"]
+        )
         self.assertFalse(schema["$defs"]["manifest"]["additionalProperties"])
         self.assertFalse(schema["$defs"]["profile"]["additionalProperties"])
+        manifest_properties = schema["$defs"]["manifest"]["properties"]
+        self.assertFalse(
+            manifest_properties["queue"]["properties"]["effectReconciliation"][
+                "additionalProperties"
+            ]
+        )
+        self.assertFalse(
+            manifest_properties["executionLiveness"]["properties"]["heartbeat"][
+                "additionalProperties"
+            ]
+        )
 
     def test_invalid_case_cannot_escape_examples_root(self) -> None:
         case = {

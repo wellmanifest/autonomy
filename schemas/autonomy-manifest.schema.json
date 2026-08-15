@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
+  "$id": "https://wellmanifest.com/schemas/autonomy-manifest/v6",
   "title": "Wellmanifest Autonomy manifest and runtime profile",
   "oneOf": [
     { "$ref": "#/$defs/manifest" },
@@ -190,8 +190,8 @@
         "continuation"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v5" },
-        "schema": { "const": "wellmanifest.autonomy/manifest/v5" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v6" },
+        "schema": { "const": "wellmanifest.autonomy/manifest/v6" },
         "id": { "$ref": "#/$defs/uri" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["draft", "active", "suspended", "revoked", "expired"] },
@@ -392,7 +392,8 @@
             "checkpointStore",
             "idempotencyBindings",
             "deadLetterAfterAttempts",
-            "resumeFromCheckpoint"
+            "resumeFromCheckpoint",
+            "effectReconciliation"
           ],
           "properties": {
             "source": { "enum": ["planfile", "todo2code", "composite"] },
@@ -419,7 +420,74 @@
               "uniqueItems": true
             },
             "deadLetterAfterAttempts": { "type": "integer", "minimum": 1, "maximum": 10 },
-            "resumeFromCheckpoint": { "const": true }
+            "resumeFromCheckpoint": { "const": true },
+            "effectReconciliation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "mode",
+                "successOutcomes",
+                "duplicateOutcome",
+                "externalReadBack",
+                "requiredBindings",
+                "alreadyAppliedRequiredBindings",
+                "repeatReviewOrMerge",
+                "closedUnmergedOutcome",
+                "staleSubjectOutcome",
+                "ambiguousReceiptOutcome"
+              ],
+              "properties": {
+                "mode": { "const": "at-most-one-authoritative-effect" },
+                "successOutcomes": {
+                  "type": "array",
+                  "items": { "enum": ["applied", "already-applied"] },
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "uniqueItems": true
+                },
+                "duplicateOutcome": { "const": "already-applied" },
+                "externalReadBack": { "const": true },
+                "requiredBindings": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "repository",
+                      "target",
+                      "headSha",
+                      "ticket",
+                      "correlationId",
+                      "operation",
+                      "externalEffectId"
+                    ]
+                  },
+                  "minItems": 7,
+                  "maxItems": 7,
+                  "uniqueItems": true
+                },
+                "alreadyAppliedRequiredBindings": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "repository",
+                      "pullRequest",
+                      "baseSha",
+                      "headSha",
+                      "operation",
+                      "approvalId",
+                      "mergeCommitSha",
+                      "mergedAt"
+                    ]
+                  },
+                  "minItems": 8,
+                  "maxItems": 8,
+                  "uniqueItems": true
+                },
+                "repeatReviewOrMerge": { "const": false },
+                "closedUnmergedOutcome": { "const": "failed" },
+                "staleSubjectOutcome": { "const": "failed" },
+                "ambiguousReceiptOutcome": { "const": "failed" }
+              }
+            }
           }
         },
         "executionLiveness": {
@@ -428,6 +496,8 @@
           "required": [
             "primaryTrigger",
             "watchdog",
+            "heartbeat",
+            "invocationIdentity",
             "independentPrincipals",
             "manualDispatchProvesLiveness",
             "missedTriggerStatus",
@@ -467,6 +537,58 @@
                 "protected": { "const": true },
                 "maxSilenceSeconds": { "type": "integer", "minimum": 60, "maximum": 86400 },
                 "triggerOnSilence": { "const": true }
+              }
+            },
+            "heartbeat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "expectedIntervalSeconds",
+                "deliveryGraceSeconds",
+                "receiptRequired",
+                "protectedMonitor",
+                "missedCycleReceiptRequired",
+                "lateDeliveryPolicy",
+                "manualRecoveryRestoresLiveness"
+              ],
+              "properties": {
+                "expectedIntervalSeconds": { "type": "integer", "minimum": 60, "maximum": 86400 },
+                "deliveryGraceSeconds": { "type": "integer", "minimum": 0, "maximum": 86400 },
+                "receiptRequired": { "const": true },
+                "protectedMonitor": { "const": true },
+                "missedCycleReceiptRequired": { "const": true },
+                "lateDeliveryPolicy": { "const": "deduplicate-with-recovery" },
+                "manualRecoveryRestoresLiveness": { "const": false }
+              }
+            },
+            "invocationIdentity": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "correlationRequired",
+                "providerRunIdentityRequired",
+                "preDispatchBoundaryRequired",
+                "postBoundaryOnly",
+                "requiredBindings",
+                "matrixChildCorrelationRequired",
+                "ambiguousRunOutcome"
+              ],
+              "properties": {
+                "correlationRequired": { "const": true },
+                "providerRunIdentityRequired": { "const": true },
+                "preDispatchBoundaryRequired": { "const": true },
+                "postBoundaryOnly": { "const": true },
+                "requiredBindings": {
+                  "type": "array",
+                  "items": {
+                    "enum": ["strategy", "repository", "target", "headSha", "correlationId"]
+                  },
+                  "minItems": 5,
+                  "maxItems": 5,
+                  "uniqueItems": true
+                },
+                "matrixChildCorrelationRequired": { "const": true },
+                "ambiguousRunOutcome": { "const": "failed" }
               }
             },
             "independentPrincipals": { "const": true },
@@ -509,6 +631,7 @@
                   "items": {
                     "enum": [
                       "trigger-delivery",
+                      "scheduler-heartbeat",
                       "queue-claim",
                       "registry-resolution",
                       "check-provenance",
@@ -520,8 +643,8 @@
                       "branch-cleanup"
                     ]
                   },
-                  "minItems": 10,
-                  "maxItems": 10,
+                  "minItems": 11,
+                  "maxItems": 11,
                   "uniqueItems": true
                 }
               }
@@ -559,7 +682,7 @@
             "requiredGates": {
               "type": "array",
               "items": { "$ref": "#/$defs/gate" },
-              "minItems": 13,
+              "minItems": 15,
               "uniqueItems": true
             },
             "onFailure": { "const": "fail-closed" },
@@ -873,11 +996,14 @@
                   "publication",
                   "read-back",
                   "liveness-canary",
-                  "branch-cleanup"
+                  "branch-cleanup",
+                  "scheduler-heartbeat",
+                  "missed-cycle",
+                  "effect-reconciliation"
                 ]
               },
-              "minItems": 19,
-              "maxItems": 19,
+              "minItems": 22,
+              "maxItems": 22,
               "uniqueItems": true
             },
             "redaction": { "const": "secret-free" },
@@ -949,8 +1075,8 @@
         "protectedBoundaries"
       ],
       "properties": {
-        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v5" },
-        "schema": { "const": "wellmanifest.autonomy/profile/v5" },
+        "$schema": { "const": "https://wellmanifest.com/schemas/autonomy-manifest/v6" },
+        "schema": { "const": "wellmanifest.autonomy/profile/v6" },
         "id": { "$ref": "#/$defs/id" },
         "version": { "$ref": "#/$defs/semver" },
         "status": { "enum": ["experimental", "stable", "deprecated"] },
@@ -981,6 +1107,9 @@
             "profileDigestExternal",
             "durableQueueProtected",
             "watchdogPrincipalIndependent",
+            "heartbeatEvidenceExternal",
+            "invocationCorrelationProtected",
+            "effectReceiptExternal",
             "registryDigestExternal",
             "effectivePolicyExternal",
             "approvalEventObservedExternally",
@@ -994,6 +1123,9 @@
             "profileDigestExternal": { "const": true },
             "durableQueueProtected": { "const": true },
             "watchdogPrincipalIndependent": { "const": true },
+            "heartbeatEvidenceExternal": { "const": true },
+            "invocationCorrelationProtected": { "const": true },
+            "effectReceiptExternal": { "const": true },
             "registryDigestExternal": { "const": true },
             "effectivePolicyExternal": { "const": true },
             "approvalEventObservedExternally": { "const": true },

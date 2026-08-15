@@ -7,7 +7,7 @@ stateDiagram-v2
     [*] --> Dispatch
     Dispatch --> Claim: protected automatic delivery
     Dispatch --> Degraded: trigger silence
-    Degraded --> Claim: independent watchdog recovery
+    Degraded --> Claim: missed-cycle receipt + independent recovery
     Claim --> Observe: idempotent lease acquired
     Observe --> Evidence
     Evidence --> Plan: fresh runnable candidate
@@ -29,7 +29,10 @@ stateDiagram-v2
     ExactHeadGate --> IndependentValidate: candidate head changed
     ExactHeadGate --> PostApprovalConvergence: trusted approval
     PostApprovalConvergence --> PostApprovalConvergence: new/pending check; reset stability
-    PostApprovalConvergence --> ProtectedMerge: two stable reads + terminal success
+    PostApprovalConvergence --> EffectReconcile: two stable reads + terminal success
+    EffectReconcile --> ProtectedMerge: no authoritative effect exists
+    EffectReconcile --> PostMergeVerify: exact effect already applied
+    EffectReconcile --> Escalated: stale / ambiguous / closed-unmerged
     ProtectedMerge --> PostMergeVerify
     PostMergeVerify --> Checkpoint: read-back pass
     Checkpoint --> Continue: durable outcome
@@ -45,7 +48,10 @@ stateDiagram-v2
 
 ```text
 AUTONOMOUS_MERGE_ALLOWED =
-  automatic_trigger_receipt is fresh
+  trigger_or_recovery_receipt is fresh and origin-classified
+  AND scheduler_heartbeat_status is independently evaluated
+  AND provider_run > pre_dispatch_observation_boundary
+  AND provider_run binds strategy + repository + target + head + correlation
   AND durable_claim is idempotently bound
   AND intent_checkpoint precedes implementation
   AND accepted_base = candidate.intent.accepted_base
@@ -73,6 +79,7 @@ AUTONOMOUS_MERGE_ALLOWED =
   AND every post-approval required check = authoritative_terminal_success
   AND unresolved_critical_findings = 0
   AND implementer != validator != publisher
+  AND external_effect_receipt is absent or exact already-applied
   AND native_platform_auto_merge = disabled
 ```
 
@@ -93,7 +100,9 @@ sequenceDiagram
     participant G as Git provider
     participant A as Audit
 
-    T->>Q: automatic cycle delivery
+    T->>A: protected scheduler heartbeat
+    C->>G: capture pre-dispatch provider run boundary
+    T->>Q: automatic/recovery delivery with correlation
     C->>Q: claim idempotency tuple
     Q-->>C: durable lease + checkpoint
     C->>R: resolve repository execution policy
@@ -107,13 +116,18 @@ sequenceDiagram
     C->>C: compile plan and check standing grant
     C->>I: bounded Process Envelope
     I-->>C: candidate head + tests + receipt
-    C->>V: validate exact head under protected profile
+    C->>V: validate exact head + strategy + correlation after boundary
     V-->>G: bound trusted review/attestation
     C->>G: discover effective policy after approval
     G-->>C: approval-triggered checks + protected policy digest
     C->>G: wait for two stable terminal-success reads
     C->>G: rebind base, head, approval, policy, registry and checks
-    C->>G: one mutation: merge
+    C->>G: reconcile exact external effect receipt
+    alt no authoritative effect
+        C->>G: one mutation: merge
+    else exact effect already applied
+        G-->>C: existing approval + merge receipt; no mutation
+    end
     G-->>C: merged SHA
     C->>A: append publication + read-back receipts
     C->>Q: checkpoint and close only after verified read-back
@@ -132,8 +146,14 @@ bundle another request. Unresolved work keeps both branch and open PR.
 |---|---|
 | No fresh runnable item | `waiting` or `no_candidate`; no mutation |
 | Primary trigger is silent | `degraded`; independent watchdog enqueues/reconciles a cycle |
-| Manual dispatch succeeds | diagnostic path evidence only; liveness remains unproven |
+| Heartbeat deadline plus grace expires | append a protected missed-cycle receipt and start/reconcile one bounded recovery |
+| Manual or recovery dispatch succeeds | execution evidence only; scheduler liveness remains unproven until a new scheduler heartbeat |
+| Scheduled delivery arrives after recovery | deduplicate against the same effect subject; no second review or merge |
 | Duplicate delivery | reuse the idempotency tuple and resume from checkpoint; no duplicate effect |
+| Candidate provider run is pre-boundary or lacks exact correlation bindings | reject it; workflow name, title and timing are not identity |
+| Multiple post-boundary runs match incompletely | fail closed as ambiguous; do not select the newest by guess |
+| Exact subject is externally merged with bound approval and merge receipt | return `already-applied`; reuse the authoritative receipt without another mutation |
+| Subject is closed-unmerged, stale or lacks a trusted receipt | fail closed; it is not `already-applied` |
 | Registry projection drifts | stop the affected repository before claim or publication |
 | Effective ruleset/branch policy differs from registry | fail closed; repair the protected registry or repository policy before approval/merge |
 | Unrelated matrix target fails | preserve aggregate failure visibility; do not block a passing target's own gates |

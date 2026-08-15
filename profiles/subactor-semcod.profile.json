@@ -1,8 +1,8 @@
 {
-  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
-  "schema": "wellmanifest.autonomy/profile/v5",
+  "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v6",
+  "schema": "wellmanifest.autonomy/profile/v6",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
@@ -50,7 +50,13 @@
         "contract-consumer-inventory",
         "provider-read-fallback",
         "watchdog-reconcile",
-        "repository-isolation"
+        "repository-isolation",
+        "scheduler-heartbeat",
+        "missed-cycle-recovery",
+        "correlation-bound-run-selection",
+        "post-boundary-run-discovery",
+        "matrix-child-correlation",
+        "late-delivery-deduplication"
       ],
       "contracts": [
         "repo://subactor/autonom/autonom/pull_request_state.py",
@@ -58,7 +64,9 @@
         "repo://subactor/autonom/scripts/deploy-pr-controller.sh",
         "repo://subactor/autonom/systemd/subactor-pr-controller.service",
         "repo://subactor/autonom/systemd/subactor-pr-controller.timer",
-        "repo://subactor/validator-agent/config/direct-pr-registry.json"
+        "repo://subactor/validator-agent/config/direct-pr-registry.json",
+        "repo://subactor/validator-agent/.github/workflows/validator.yml",
+        "repo://subactor/validator-agent/bin/dispatch-direct-pr.sh"
       ],
       "restrictions": [
         "at-least-once",
@@ -77,7 +85,11 @@
         "all-validation-surfaces",
         "bounded-provider-retries",
         "manual-dispatch-not-liveness",
-        "registry-digest-required"
+        "registry-digest-required",
+        "heartbeat-slo-required",
+        "manual-recovery-not-heartbeat",
+        "old-run-rejected",
+        "ambiguous-run-fails-closed"
       ]
     },
     {
@@ -297,7 +309,9 @@
         "post-approval-check-convergence",
         "provider-coupled-pr-closure",
         "lossless-superseded-branch-disposition",
-        "durable-publication-checkpoint"
+        "durable-publication-checkpoint",
+        "idempotent-effect-reconciliation",
+        "already-applied-exact-receipt"
       ],
       "contracts": [
         "repo://subactor/autonom/autonom/pull_request_controller.py",
@@ -321,7 +335,11 @@
         "provider-coupled-close-read-back",
         "unresolved-superseded-pr-remains-open",
         "validator-identity-from-registry",
-        "native-auto-merge-forbidden"
+        "native-auto-merge-forbidden",
+        "at-most-one-authoritative-effect",
+        "closed-unmerged-fails-closed",
+        "missing-or-stale-receipt-fails-closed",
+        "duplicate-review-merge-forbidden"
       ]
     },
     {
@@ -356,6 +374,9 @@
     "profileDigestExternal": true,
     "durableQueueProtected": true,
     "watchdogPrincipalIndependent": true,
+    "heartbeatEvidenceExternal": true,
+    "invocationCorrelationProtected": true,
+    "effectReceiptExternal": true,
     "registryDigestExternal": true,
     "effectivePolicyExternal": true,
     "approvalEventObservedExternally": true,
