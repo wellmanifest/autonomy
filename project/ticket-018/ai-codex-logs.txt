@@ -32,3 +32,17 @@
       PASS
     implementation file count
       exactly 2 declared files: README.md and CHANGELOG.md
+
+[3] Protected publication
+    Pull request: wellmanifest/autonomy#34.
+    Exact candidate head: 9fd3d9bbeeb9fa78d27c27433ef51d1b2bc0691b.
+    Hosted autonomy conformance: 31856627266 success.
+    Hosted remote lifecycle: 31856627257 success.
+    Pre-dispatch run-ID boundary: 31856383207.
+    Correlation: autonomy-pr-34-ticket-018-root-9fd3d9bbee.
+    Validator run: 31856647275 success.
+    Validator App review: 4942337032 APPROVED on exact head.
+    Protected convergence: 2 stable reads.
+    Merge: 3e15a442a07ade17d6d42bd4fc2434aaac6db484.
+    Protected main read-back: exact merge SHA.
+    Source branch read-back: absent.
