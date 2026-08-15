@@ -2,7 +2,7 @@
   "$schema": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
   "schema": "wellmanifest.autonomy/profile/v5",
   "id": "wellmanifest.autonomy.profile/subactor-semcod",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "status": "stable",
   "ownership": {
     "standardOwner": "wellmanifest/autonomy",
