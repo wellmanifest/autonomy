@@ -33,11 +33,11 @@
     "go.mod"
   ],
   "stacks": [],
-  "dependsOn": ["ticket-019"],
+  "dependsOn": [],
   "conflictsWith": [],
   "integrationTicket": null,
   "delivery": {
-    "acceptedBaseSha": "7544593f89dd95f0e4a8c0fd3d2b4b4c9be0b2d7",
+    "acceptedBaseSha": "7544593e6fb727691ee0df886bf400148d005c42",
     "targetBranch": "main",
     "outcome": "Record governance-aligned continuity expectations for subactor multi-agent autonomy and document observed non-merging edge-cases without modifying normative or integration artifacts.",
     "nonGoals": [
@@ -69,8 +69,12 @@
         }
       ],
       "responsibilityChanges": false,
-      "interfaceChanges": ["No API surface changes"],
-      "dataChanges": ["No normative data contracts changed"],
+      "interfaceChanges": [
+        "No API surface changes"
+      ],
+      "dataChanges": [
+        "No normative data contracts changed"
+      ],
       "ui": {
         "impact": "none",
         "states": [],
