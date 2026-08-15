@@ -12,19 +12,22 @@ flowchart TB
     Grant[External standing grant\nissuer + scope + expiry]
     Policy[Protected policy/profile store]
     Registry[Protected repository registry\nbase + checks + validator + merge]
-    Trigger[Primary trigger + independent watchdog]
+    Trigger[Primary trigger + scheduler heartbeat]
+    Monitor[Independent missed-cycle monitor]
     Queue[Durable at-least-once queue\nclaim + checkpoint]
     Observer[Doctor + autonom + twin-probes\nread-only evidence]
     Planner[Planner / orchestrator\npropose-only]
     Edit[Repair or coding agent\nisolated branch]
     Validate[Independent validator\nexact head]
+    Reconcile[External effect reconciliation\napplied or already-applied]
     Publish[Protected PR controller\nValidator App + merge]
-    Audit[Receipts + read-back]
+    Audit[Receipts + heartbeat + read-back]
 
     WM --> Policy
     WM --> Registry
     Grant --> Policy
-    Trigger --> Queue --> Observer --> Planner --> Edit --> Validate --> Publish --> Audit
+    Trigger --> Queue --> Observer --> Planner --> Edit --> Validate --> Reconcile --> Publish --> Audit
+    Trigger --> Monitor --> Queue
     Registry --> Trigger
     Registry --> Validate
     Registry --> Publish
@@ -33,6 +36,7 @@ flowchart TB
     Policy --> Validate
     Policy --> Publish
     Audit --> Queue
+    Audit --> Monitor
 ```
 
 ## Trust zones
@@ -313,3 +317,41 @@ state and `refs/pull/10/head` still bound to exact predecessor
 `4c235afecdf2c6f4da41fce98293e71228ae93b3`. Autonomy 0.7 therefore treats
 this as one provider-coupled effect, not as an agent-authorized bundle, while
 retaining the same archival and fail-closed requirements.
+
+## Heartbeat, invocation and duplicate-effect reference: 2026-08-15
+
+The Autonomy 0.7.1 publication expected its protected scheduled matrix cycle
+at `00:17 UTC`. No scheduled run was visible through `00:45 UTC`, so scheduler
+liveness was missing even though the execution path itself remained usable.
+Recovery first captured provider run boundary `31854361196`, then dispatched
+the same protected `direct-scan` matrix strategy as run `31854603326`.
+Repository outcome isolation allowed the passing Autonomy target to continue:
+Validator App review `4942176742` approved exact head
+`f76a502b78ec18b662834ba98b616a183eec2d03`, two protected reads converged,
+and explicit merge `5a6289c7ed2bc1a752ee1851a70205b9be64c340`
+was read back with source-branch absence.
+
+That recovery proves bounded execution after a missed cycle. It does not prove
+that the scheduler delivered its expected heartbeat, and it cannot synthesize
+one. A separate protected monitor must own the expected interval, grace and
+missed-cycle receipt. If the delayed scheduled invocation arrives after
+recovery, both invocations must converge through the same idempotency subject;
+the late path may report `already-applied`, but must not review or merge again.
+
+Run discovery had separately demonstrated why workflow names and creation time
+are insufficient. Overlapping scheduled and direct runs
+`31851179677`/`31851261754`, and an old-run selection race involving
+`31852788894`/`31852882930`, exposed candidates with similar visible labels.
+The recovery therefore used a pre-dispatch numeric boundary and accepted only
+the post-boundary run carrying the requested strategy, repository target,
+exact head and correlation. Matrix parents and their effect-capable children
+must preserve that same identity.
+
+Validator Agent 0.6.48 then supplied the idempotent terminal proof. Duplicate
+run `31854007167` encountered an exact subject that was already integrated. It
+read back trusted approval `4942134199` and merge
+`3fe9659011372b734bc24302ed83eb0b49f9c95f`, returned the existing
+authoritative receipt and created no second review or merge. This observation
+supports `already-applied` only for an exact merged subject. A closed-unmerged
+PR, stale head, absent approval or mismatched merge receipt remains a failure,
+not a successful duplicate.

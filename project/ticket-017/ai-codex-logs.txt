@@ -12,3 +12,34 @@
       4942134199 and merge 3fe9659011372b734bc24302ed83eb0b49f9c95f
       without a second review or merge.
     Design boundary: recovery execution is not scheduler-liveness evidence.
+
+[2] Autonomy 0.8 exact contract bindings
+    schema: wellmanifest.autonomy/manifest/v6
+    profile version: 0.8.0
+    profile SHA-256:
+      3a5317269418dd31e09b2e630edaf59a4b994e24df9eb2f6bca59f194c81ba64
+    selected example SHA-256:
+      3b62dac06421a49da983f95fbf8ff66160227b5e03edeb8dce95776e1e15e13e
+    DSL artifact bindings: 13 exact paths
+
+[3] Deterministic validation
+    ./project/governance-check.sh --actor agent
+      GOV-PASS: passed (0 errors, 0 warnings)
+    python3 src/autonomy_check.py validate examples/valid/project.autonomy.json profiles/subactor-semcod.profile.json
+      PASS both documents
+    python3 src/autonomy_check.py self-test
+      PASS autonomy self-test
+    python3 -m unittest discover -s tests -v
+      Ran 35 tests; OK
+    python3 -m compileall -q src tests
+      PASS
+    ruff check src tests
+      All checks passed
+    jsonschema Draft 2020-12 schema check + both valid documents
+      JSON-SCHEMA-PASS
+    python3 ../../dsl/src/dsl_check.py validate examples/dsl-manifest.json
+      DSL-PASS: passed (0 errors)
+    git diff --check
+      PASS
+    implementation file count
+      exactly 11 declared files

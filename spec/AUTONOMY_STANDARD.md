@@ -1,4 +1,4 @@
-# Wellmanifest Autonomy Standard 0.7
+# Wellmanifest Autonomy Standard 0.8
 
 Status: stable
 
@@ -20,7 +20,7 @@ closed capability catalog, risk ceiling, resource budget, and protected
 publication boundary. It is not general permission for an LLM to execute tools.
 
 The canonical interchange form is JSON conforming to
-`wellmanifest.autonomy/manifest/v5`. Implementations MAY project the same
+`wellmanifest.autonomy/manifest/v6`. Implementations MAY project the same
 semantics into YAML, Protobuf, CQRS messages, AQL/EQL, or URI Process contracts,
 but a projection MUST preserve every authority restriction and immutable
 binding.
@@ -180,7 +180,7 @@ The initial standard requires these excluded effects in every grant:
 - publication through an untrusted dependency or package identity.
 
 An adopter MAY exclude more effects but MUST NOT remove these exclusions while
-claiming conformance to version 0.7. A repository MAY define a separate,
+claiming conformance to version 0.8. A repository MAY define a separate,
 externally issued high-risk profile; that profile is not the default autonomous
 code-development grant.
 
@@ -218,6 +218,22 @@ checkpoint and authoritative external read-back. It MUST clean an obsolete
 queue or claim remnant for an already committed checkpoint and MUST NOT replay
 that operation.
 
+Every external mutation MUST converge to at most one authoritative effect for
+its complete idempotency subject. The controller MUST classify success as
+either `applied` or `already-applied`; it MUST NOT infer either status from a
+local checkpoint alone. Before returning `already-applied`, it MUST read the
+external authority and bind the exact repository, target, head SHA, ticket,
+correlation ID, operation and external effect identifier. For an already
+merged publication it MUST additionally bind the pull request, base SHA,
+trusted approval ID, merge commit SHA and merge timestamp. It MUST NOT submit
+a second review or merge request for that subject.
+
+A closed-unmerged pull request is not an already-applied merge. A stale head,
+missing trusted approval, missing merge receipt, ambiguous external effect or
+mismatched binding MUST fail closed. A late delivery, retry, watchdog recovery
+and original invocation that share one idempotency subject MUST reconcile to
+the same effect receipt instead of producing independent mutations.
+
 The queue MUST expose a deterministic `runnable` decision based on status,
 dependencies, scope ownership, freshness, deduplication, conflict, active
 lease, and human-boundary labels.
@@ -252,6 +268,21 @@ detect silence within `maxSilenceSeconds`, mark the execution plane `degraded`,
 and autonomously enqueue or reconcile a cycle. A manual dispatch MAY diagnose a
 broken path, but MUST NOT count as liveness or canary evidence.
 
+The execution plane MUST declare an expected heartbeat interval and delivery
+grace for its primary automatic-delivery source. Every expected heartbeat MUST
+produce an externally observable `scheduler-heartbeat` receipt from a protected
+source. An independent protected monitor MUST declare a missed cycle only after
+the expected deadline plus grace, mark liveness degraded, append a
+`missed-cycle` receipt, and start or reconcile one bounded recovery. A
+successful manual or recovery invocation MUST NOT repair, synthesize, or
+replace the missing scheduler heartbeat. Only a subsequent scheduler-originated
+receipt can restore scheduler-liveness status.
+
+Scheduled delivery MAY arrive after recovery has started. The late scheduled
+cycle and recovery MUST share the declared idempotency subject and use
+`deduplicate-with-recovery`; whichever observes the externally completed
+effect MUST return `already-applied` without issuing a second mutation.
+
 Trigger liveness does not override source integrity. A delivered cycle whose
 runtime or authority-policy preflight fails MUST perform zero external
 mutations, record the degraded condition, and wait for a protected deployment
@@ -263,6 +294,21 @@ Duplicate delivery is expected under at-least-once semantics, so a claim and
 every external effect MUST be idempotent over the declared bindings. Recovery
 MUST resume from a durable checkpoint and MUST NOT silently replay an
 unidentified effect.
+
+Before requesting any provider invocation, the controller MUST record a
+protected observation boundary that identifies the greatest provider run or
+equivalent event already visible. The request MUST carry a stable correlation
+ID into the provider's run identity. A watcher MUST accept only a post-boundary
+run whose strategy, repository, target, exact head SHA, and correlation ID all
+match the request. Display name, workflow name, PR title, branch name, or
+creation-time proximity alone is insufficient. Zero or multiple matching runs
+are ambiguous and MUST fail closed.
+
+This rule applies equally to direct-PR and repository-scan or matrix
+strategies. A matrix parent receipt MUST bind the dispatched correlation, and
+each effect-capable child MUST retain that correlation while additionally
+binding its repository target and exact head. A pre-boundary run or a child
+from a different matrix invocation MUST NOT satisfy the request.
 
 A checkpoint is the authority for completed local continuation state. A
 failure between checkpoint commit and creation of a derived receipt index,
@@ -283,10 +329,11 @@ runtime configuration are projections of that registry. Duplicated hand-edited
 allowlists are non-conforming, and detected drift MUST stop the affected target.
 
 The execution plane MUST continuously produce a fresh
-`protected-low-risk-pr` canary. Its proof includes automatic trigger delivery,
-queue claim, registry resolution, deterministic validation, independent
-validation, protected publication, read-back, and branch cleanup. A stale,
-manual, skipped, or partially executed canary is not operational proof.
+`protected-low-risk-pr` canary. Its proof includes scheduler heartbeat,
+automatic trigger delivery, queue claim, registry resolution, deterministic
+validation, independent validation, protected publication, read-back, and
+branch cleanup. A stale, manual, skipped, or partially executed canary is not
+operational proof.
 
 ## 10. Normative lifecycle
 
@@ -295,12 +342,14 @@ The ordered states are:
 ```text
 dispatch → claim → observe → evidence → plan → grant-check → isolated-edit →
 deterministic-validate → independent-validate → publish-pr →
-exact-head-gate → protected-merge → post-merge-verify → checkpoint → continue
+exact-head-gate → post-approval-convergence → protected-merge →
+post-merge-verify → checkpoint → continue
 ```
 
 Required behavior:
 
-1. **Dispatch** receives a protected event or watchdog recovery signal.
+1. **Dispatch** records the provider observation boundary and receives a
+   protected event or watchdog recovery signal with stable correlation.
 2. **Claim** acquires one replay-safe queue lease using exact idempotency keys.
 3. **Observe** the target and current base without mutation.
 4. **Evidence** materializes provenance-bound repository, runtime, contract,
@@ -320,9 +369,10 @@ Required behavior:
 12. **Post-approval convergence** starts a new evidence epoch after the trusted
     review or attestation. It discovers the effective protected policy and
     waits for every exact-head required check to reach terminal success.
-13. **Protected merge** is explicitly performed by the protected publisher
-    identity. Platform-native queued auto-merge and direct default-branch push
-    are forbidden.
+13. **Protected merge** first reconciles the idempotency subject with external
+    state, then is explicitly performed by the protected publisher identity
+    only when no authoritative effect exists. Platform-native queued
+    auto-merge and direct default-branch push are forbidden.
 14. **Post-merge verify** reads back the default branch, deployment or release
     result as declared by the task.
 15. **Checkpoint** durably commits the verified outcome and releases the claim.
@@ -465,15 +515,16 @@ provider-coupled effect and completely read back.
 
 ## 12. Receipts and audit
 
-Required receipt classes are `observation`, `trigger-delivery`, `queue-claim`,
-`registry-resolution`, `plan`, `intent-checkpoint`, `grant-check`, `change`,
-`base-refresh`, `contract-migration`, `deterministic-validation`,
-`check-provenance`, `policy-convergence`, `supersession-disposition`,
-`independent-validation`, `publication`, `read-back`, `liveness-canary`, and
+Required receipt classes are `observation`, `scheduler-heartbeat`,
+`trigger-delivery`, `missed-cycle`, `queue-claim`, `registry-resolution`,
+`plan`, `intent-checkpoint`, `grant-check`, `change`, `base-refresh`,
+`contract-migration`, `deterministic-validation`, `check-provenance`,
+`policy-convergence`, `supersession-disposition`, `independent-validation`,
+`publication`, `effect-reconciliation`, `read-back`, `liveness-canary`, and
 `branch-cleanup`. Receipts MUST share a correlation ID and contain immutable
 subject bindings. They MUST be secret-free, append-only, retained for the
-declared period, and distinguish attempted, skipped, failed, rolled-back, and
-completed effects.
+declared period, and distinguish attempted, skipped, failed, rolled-back,
+`applied`, and `already-applied` effects.
 
 An approval receipt is authoritative only when produced or verified outside the
 candidate checkout. An agent-written receipt is evidence of a claim, not proof
@@ -510,10 +561,12 @@ A manifest conforms when it:
 4. contains all mandatory exclusions, roles, lifecycle states, change-control
    rules, gates, bindings, receipts, and stop conditions;
 5. demonstrates at least one valid routine-code example and invalid examples
-   for self-approval and grant expiry;
+   for self-approval, grant expiry and duplicate-effect run selection;
 6. passes the target repository's own governance and deterministic tests; and
 7. for runtime conformance, exposes a fresh automatic canary receipt set no
-   older than `maximumAgeSeconds` and an independent watchdog recovery test.
+   older than `maximumAgeSeconds`, an independently observed scheduler
+   heartbeat, and an independent missed-cycle recovery test whose recovery
+   receipt is not substituted for scheduler liveness.
 
 Schema and checker success establish static contract conformance only. They do
 not prove trigger delivery, credential separation, scheduler behavior, or a

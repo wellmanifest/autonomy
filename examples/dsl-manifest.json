@@ -3,7 +3,7 @@
   "schema": "wellmanifest.dsl/manifest/v1",
   "id": "wellmanifest.autonomy",
   "name": "Wellmanifest Autonomy Standard",
-  "version": "0.7.1",
+  "version": "0.8.0",
   "status": "stable",
   "purpose": "Durable, independently watched autonomous software-development continuation without per-pull-request human approval",
   "domain": "autonomous-development",
@@ -23,7 +23,7 @@
   "source": {
     "repository": "wellmanifest/autonomy",
     "path": "schemas/autonomy-manifest.schema.json",
-    "declaredVersion": "5",
+    "declaredVersion": "6",
     "canonical": "json-ast",
     "mediaType": "application/schema+json",
     "selectors": [
@@ -46,27 +46,27 @@
     {
       "path": "schemas/autonomy-manifest.schema.json",
       "role": "normative-source",
-      "digest": "sha256:4ee49d873b1f4c48dc2ee87f78915c82b491bdf35ebf54efdba5167883a2362c"
+      "digest": "sha256:4e3c0ea244499e323b1562b99dd39568ba8d95fc0c67c01d07178217cf628ad1"
     },
     {
       "path": "spec/AUTONOMY_STANDARD.md",
       "role": "documentation",
-      "digest": "sha256:21889e38f1fbb6748c295ee79d1093fd8e213bd8f6c6773967b53a69add8b5f2"
+      "digest": "sha256:21f70232aac0b29f3c4b99d4660007bb864c881d17014599d3aeb0f0e092cc18"
     },
     {
       "path": "profiles/subactor-semcod.profile.json",
       "role": "profile",
-      "digest": "sha256:55aca1af0489f8f2c081bb1e8d262d359526481b66703a813f685dbb57c496ec"
+      "digest": "sha256:3a5317269418dd31e09b2e630edaf59a4b994e24df9eb2f6bca59f194c81ba64"
     },
     {
       "path": "src/autonomy_check.py",
       "role": "parser-contract",
-      "digest": "sha256:0459b0f695695abcfd7bc8fc9309eb62d2e76e4af9822dd065d0e589f95ccb67"
+      "digest": "sha256:4f31e3a1781198ef10bfe18846eacd238c1a6684cfef73aa3b4cea4043b187e2"
     },
     {
       "path": "examples/valid/project.autonomy.json",
       "role": "example",
-      "digest": "sha256:e4a6fb7491130d1aeaf8905c111503a41fe44c7bb3f20896a58ef126bfd065f3"
+      "digest": "sha256:3b62dac06421a49da983f95fbf8ff66160227b5e03edeb8dce95776e1e15e13e"
     },
     {
       "path": "examples/invalid/self-approval.autonomy.json",
@@ -79,14 +79,19 @@
       "digest": "sha256:7f4116a9ad10d2ea6e609b65cda9f73c89183e0a02863cc835f0b2dde1fdad88"
     },
     {
+      "path": "examples/invalid/duplicate-effect.autonomy.json",
+      "role": "example",
+      "digest": "sha256:890e00897aab1714205889c8fa2cd8fcbfbe0619dc9d36b49a6c8d3f47eb75e0"
+    },
+    {
       "path": "docs/ARCHITECTURE.md",
       "role": "documentation",
-      "digest": "sha256:bde10241e37f8116f77a5dc1910351b1b3c8412a2da6473a5751ad8f0aa854d6"
+      "digest": "sha256:fbabd996d01eafdebe023622ee7a2acac756d274b9513a005353a74ae9dae639"
     },
     {
       "path": "docs/LOGIC_FLOW.md",
       "role": "documentation",
-      "digest": "sha256:c9388afbd70772e5fd25c88b1c5af25d01350737f58b87f2fb7e9cf173e7d973"
+      "digest": "sha256:45a97aa4eab6e3d7e6a3e8933625a965f5fc4321e188ad248c7767fe802d2af6"
     },
     {
       "path": "docs/ERROR/AUTONOMY-SYNTAX-001.md",
@@ -144,16 +149,16 @@
   "semantics": {
     "effectModel": "controlled-effects",
     "unknownPolicy": "reject",
-    "authoritySchema": "https://wellmanifest.com/schemas/autonomy-manifest/v5#/$defs/manifest"
+    "authoritySchema": "https://wellmanifest.com/schemas/autonomy-manifest/v6#/$defs/manifest"
   },
   "llm": {
     "mode": "input",
     "requestSchemas": [
-      "https://wellmanifest.com/schemas/autonomy-manifest/v5"
+      "https://wellmanifest.com/schemas/autonomy-manifest/v6"
     ],
     "responseSchemas": [],
     "naturalLanguage": "typed-source-only",
-    "sourceSchema": "https://wellmanifest.com/schemas/autonomy-manifest/v5",
+    "sourceSchema": "https://wellmanifest.com/schemas/autonomy-manifest/v6",
     "modelAuthority": "propose-only",
     "strict": true
   },
@@ -197,7 +202,8 @@
     ],
     "invalidExamples": [
       "examples/invalid/self-approval.autonomy.json",
-      "examples/invalid/expired-grant.autonomy.json"
+      "examples/invalid/expired-grant.autonomy.json",
+      "examples/invalid/duplicate-effect.autonomy.json"
     ]
   },
   "mappings": [

@@ -3,7 +3,7 @@
 - **ID**: ticket-017
 - **Owner**: unresolved:human
 - **Status**: IN_PROGRESS
-- **Workflow state**: EDIT
+- **Workflow state**: PUBLICATION
 - **Created**: 2026-08-15
 
 ## Goal and scope
@@ -16,22 +16,22 @@ authoritative external receipt without issuing a second review or merge.
 
 ## Acceptance criteria
 
-- [ ] AC-01: The user's continuation request authorizes implementation from
+- [x] AC-01: The user's continuation request authorizes implementation from
       exact protected `main@0f5f80ab` without a second per-PR confirmation.
-- [ ] AC-02: Manifest v6 requires a scheduler heartbeat SLO, protected
+- [x] AC-02: Manifest v6 requires a scheduler heartbeat SLO, protected
       missed-cycle monitoring and explicit late-delivery deduplication; manual
       recovery cannot be counted as scheduler-liveness evidence.
-- [ ] AC-03: Manifest v6 requires pre-dispatch observation boundaries and
+- [x] AC-03: Manifest v6 requires pre-dispatch observation boundaries and
       exact repository, target, head, strategy and correlation bindings for
       both direct and matrix child run selection.
-- [ ] AC-04: Manifest v6 requires at most one authoritative external effect;
+- [x] AC-04: Manifest v6 requires at most one authoritative external effect;
       an `already-applied` outcome is valid only after exact external
       read-back, while stale, ambiguous and closed-unmerged subjects fail
       closed.
-- [ ] AC-05: The Subactor/Semcod profile, valid and invalid examples,
+- [x] AC-05: The Subactor/Semcod profile, valid and invalid examples,
       architecture and logic flow encode the observed missed heartbeat,
       bounded recovery and duplicate no-op publication evidence precisely.
-- [ ] AC-06: Governance, semantic, schema, unit, compile, lint and external
+- [x] AC-06: Governance, semantic, schema, unit, compile, lint and external
       DSL validation pass with exact artifact digests and no new runtime
       dependency.
 - [ ] AC-07: Publication occurs only through independent exact-head Validator

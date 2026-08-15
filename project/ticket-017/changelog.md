@@ -7,3 +7,7 @@
 - Accepted an eleven-file Autonomy 0.8 standard change from exact protected
   main, derived from missed-heartbeat recovery, run-selection races and an
   already-merged exact-subject no-op receipt.
+- Advanced the closed schema to v6 and added enforceable heartbeat,
+  post-boundary correlation and authoritative effect-reconciliation contracts.
+- Bound the 0.8.0 profile and thirteen DSL artifacts to exact bytes and passed
+  every deterministic and cross-standard conformance gate.

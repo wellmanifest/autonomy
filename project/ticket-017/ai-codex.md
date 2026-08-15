@@ -29,6 +29,22 @@ external, exact, idempotent receipts instead of relying on timing or prose.
 
 - Initialized the bounded ticket and recorded SESSION_EXECUTION_AUTHORIZATION
   from the request to execute this work.
+- Advanced the stable standard to 0.8.0 and the closed manifest/profile schema
+  to v6 with heartbeat, invocation identity and effect-reconciliation objects.
+- Required independent missed-cycle detection, explicit grace, late-delivery
+  deduplication and the rule that recovery cannot replace scheduler evidence.
+- Required a pre-dispatch provider boundary plus exact strategy, repository,
+  target, head and correlation bindings for direct and matrix child runs.
+- Required one authoritative external effect and exact `already-applied`
+  read-back while rejecting duplicate review/merge, stale and closed-unmerged
+  subjects.
+- Added a negative duplicate-effect fixture, practice-backed architecture and
+  logic-flow evidence, protected profile capabilities and three new receipt
+  classes.
+- Passed governance, both documents, self-test, 35 unit tests, compile, Ruff,
+  Draft 2020-12 validation, external DSL validation and whitespace checks.
+- Verified exactly eleven declared implementation files and advanced the
+  candidate to `PUBLICATION` for independent App review.
 
 ## Blockers
 
