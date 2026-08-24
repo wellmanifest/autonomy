@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Added governance-facing continuity documentation for multi-agent continuation in this
+  repository. The README now records the ticket handoff model and boundary for non-merge
+  validator events; TODO and ticket index now include governance ownership for ticket-020.
+
 ## 0.8.0 - 2026-08-15
 
 - Advanced the stable contract to `wellmanifest.autonomy/manifest/v6` and
