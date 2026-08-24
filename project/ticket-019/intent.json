@@ -10,6 +10,8 @@
   },
   "allowedPaths": [
     "project/ticket-019/**",
+    "project/ticket-021/README.md",
+    "project/TICKETS.md",
     "spec/AUTONOMY_STANDARD.md",
     "profiles/subactor-semcod.profile.json",
     "tests/test_autonomy.py",
