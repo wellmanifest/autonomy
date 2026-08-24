@@ -12,7 +12,7 @@
     "profile": {
       "id": "wellmanifest.autonomy.profile/subactor-semcod",
       "version": "0.8.1",
-      "digest": "sha256:b9ba8b969057a855358529a4bc543560e3a20a7a3433134baa80d4280eff0465"
+      "digest": "sha256:9c458d9a399b7329a4ee35336b22c7f5d5afe7a77f45a8535f9dfcc280bf6199"
     }
   },
   "grant": {
