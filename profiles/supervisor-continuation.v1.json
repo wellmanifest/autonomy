@@ -1,0 +1,16 @@
+{
+  "schema": "wellmanifest.autonomy/supervisor-continuation-profile/v1",
+  "id": "wellmanifest.autonomy/supervisor-continuation/v1",
+  "version": "1.0.0",
+  "authority": "advisory-conformance-only",
+  "requirements": {
+    "SC-001": "Resolve protected validator capability and existing subject-bound authority before requesting human review; availability alone never grants authority.",
+    "SC-002": "Dispatch independent validation only for a current frozen subject with successful trusted checks; pending checks wait, failing checks enter bounded repair.",
+    "SC-003": "Reconcile already merged subjects from exact external approval, merge and readback evidence without a second review or merge.",
+    "SC-004": "Use a durable publication key binding repository, pull request, head and base; concurrent callers reconcile a single claim.",
+    "SC-005": "Do not invoke an LLM again solely because polling timestamps, counters or narration changed; reassess on semantic change, a due bounded follow-up or periodic review.",
+    "SC-006": "Measure progress through accepted state transitions and independently verified effects, not healthy services, plans, cycle counts or command exit status.",
+    "SC-007": "Present goal, subject, operation, actor, reason, time and evidence references when recorded; explicitly mark unknown and truncated data and keep historical plans separate from recent activity.",
+    "SC-008": "Adoption requires an exact published standard revision and digest, executable validation and runtime evidence for effect-capable consumers; static adoption never proves runtime execution."
+  }
+}

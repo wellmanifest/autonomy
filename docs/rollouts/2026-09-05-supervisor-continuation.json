@@ -1,0 +1,733 @@
+{
+  "schema": "wellmanifest.autonomy/continuation-rollout-inventory/v1",
+  "observedAt": "2026-09-05T18:43:11.310100+00:00",
+  "scopeSources": [
+    "github://subactor/repositories",
+    "profiles/subactor-semcod.profile.json@4409e994c88a710e46f5f4432c70f6bba9f1092e"
+  ],
+  "expected": [
+    "semcod/docval",
+    "semcod/goal",
+    "semcod/koru",
+    "semcod/planfile",
+    "semcod/prefact",
+    "semcod/redup",
+    "semcod/regres",
+    "semcod/repatch",
+    "semcod/testless",
+    "semcod/todo2code",
+    "semcod/vallm",
+    "subactor/agents",
+    "subactor/api",
+    "subactor/automatyzacjaprocesow-pl",
+    "subactor/autonom",
+    "subactor/autonomicznosc-pl",
+    "subactor/autonomy-lab",
+    "subactor/brand",
+    "subactor/browser-agent",
+    "subactor/c2004-mask-services",
+    "subactor/calendar",
+    "subactor/chat-subactor-com",
+    "subactor/coding-agent",
+    "subactor/config",
+    "subactor/connectors",
+    "subactor/contractor-portal",
+    "subactor/contracts",
+    "subactor/contracts-subactor-com",
+    "subactor/core",
+    "subactor/credential-vault",
+    "subactor/deployment",
+    "subactor/diagit",
+    "subactor/docs",
+    "subactor/docs-stage-subactor-com",
+    "subactor/docs-subactor-com",
+    "subactor/doctor-agent",
+    "subactor/dorywcze-pl",
+    "subactor/download-mask-services",
+    "subactor/eql",
+    "subactor/examples",
+    "subactor/forms",
+    "subactor/founder-subactor-com",
+    "subactor/github-com",
+    "subactor/guard-agent",
+    "subactor/hostguard",
+    "subactor/identity",
+    "subactor/intent-contract-dsl-runtime",
+    "subactor/llm-account-hub",
+    "subactor/llm-account-inventory",
+    "subactor/llm-code-benchmark",
+    "subactor/logo",
+    "subactor/logo-subactor-com",
+    "subactor/marketing",
+    "subactor/mobile",
+    "subactor/observability",
+    "subactor/obslugabiurowa-pl",
+    "subactor/offer",
+    "subactor/onedev-agent",
+    "subactor/orchestrator",
+    "subactor/persony-pl",
+    "subactor/phpts",
+    "subactor/planfile-orchestration",
+    "subactor/platform",
+    "subactor/platform-028",
+    "subactor/policy",
+    "subactor/process-identity",
+    "subactor/queue-agent",
+    "subactor/registry",
+    "subactor/repair-agent",
+    "subactor/report",
+    "subactor/repository-publisher-agent",
+    "subactor/resource-broker",
+    "subactor/runtime",
+    "subactor/rutyny-pl",
+    "subactor/scripts",
+    "subactor/shell",
+    "subactor/site-generator",
+    "subactor/skills-agent",
+    "subactor/status-mask-services",
+    "subactor/status-subactor-com",
+    "subactor/strategy",
+    "subactor/subactor-improvement",
+    "subactor/subauth",
+    "subactor/subllm",
+    "subactor/supervisor",
+    "subactor/teacher-agent",
+    "subactor/test-agent",
+    "subactor/testkit",
+    "subactor/ticket-radar",
+    "subactor/trigger-agent",
+    "subactor/twin",
+    "subactor/twin-developer",
+    "subactor/twin-probes",
+    "subactor/twin-subactor",
+    "subactor/validator-agent",
+    "subactor/views",
+    "subactor/www-sub-actor",
+    "subactor/www-subactor-com",
+    "subactor/www-subactor-com-retired",
+    "wellmanifest/autonomy",
+    "wellmanifest/how-to-use-subactor",
+    "wellmanifest/new-project",
+    "wellmanifest/sop"
+  ],
+  "records": [
+    {
+      "repository": "semcod/docval",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/goal",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/koru",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/planfile",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/prefact",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/redup",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/regres",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/repatch",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/testless",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "semcod/todo2code",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": false
+    },
+    {
+      "repository": "semcod/vallm",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/agents",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/api",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/automatyzacjaprocesow-pl",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/autonom",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/autonomicznosc-pl",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/autonomy-lab",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/brand",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/browser-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/c2004-mask-services",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/calendar",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/chat-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/coding-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/config",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/connectors",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/contractor-portal",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/contracts",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/contracts-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/core",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/credential-vault",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/deployment",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/diagit",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/docs",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/docs-stage-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/docs-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/doctor-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/dorywcze-pl",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/download-mask-services",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/eql",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/examples",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/forms",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/founder-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/github-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/guard-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/hostguard",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/identity",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/intent-contract-dsl-runtime",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/llm-account-hub",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/llm-account-inventory",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/llm-code-benchmark",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/logo",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/logo-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/marketing",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/mobile",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/observability",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/obslugabiurowa-pl",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/offer",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/onedev-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/orchestrator",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/persony-pl",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/phpts",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/planfile-orchestration",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/platform",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/platform-028",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/policy",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/process-identity",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/queue-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/registry",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/repair-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/report",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/repository-publisher-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/resource-broker",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/runtime",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/rutyny-pl",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/scripts",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/shell",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/site-generator",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/skills-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/status-mask-services",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/status-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/strategy",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/subactor-improvement",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/subauth",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/subllm",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/supervisor",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/teacher-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/test-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/testkit",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/ticket-radar",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/trigger-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/twin",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/twin-developer",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/twin-probes",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/twin-subactor",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/validator-agent",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/views",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/www-sub-actor",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/www-subactor-com",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "subactor/www-subactor-com-retired",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "wellmanifest/autonomy",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "wellmanifest/how-to-use-subactor",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "wellmanifest/new-project",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": true
+    },
+    {
+      "repository": "wellmanifest/sop",
+      "applicable": null,
+      "status": "pending-assessment",
+      "localCheckout": false
+    }
+  ]
+}
