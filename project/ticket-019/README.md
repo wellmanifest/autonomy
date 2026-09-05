@@ -45,3 +45,10 @@ autonomy to per-task manual approval.
 - Pending: this is an in-progress implementation ticket. It must pass local
   governance, profile check, autonomy self-test, and unit tests before proposing
   publication evidence and merge cleanup.
+
+## Supervisor continuation extension
+
+SESSION_EXECUTION_AUTHORIZATION: Founder requested improving standards in wellmanifest and adopting them across Subactor and related projects on 2026-09-05. The current default branch still reserves this matching integration ticket. Extend its convergence scope with a separately versioned continuation profile and conformance fixtures.
+
+- AC-05: deterministic checks reject human-only routing when authorized independent validation is available, unbounded unchanged reassessment and false completion.
+- AC-06: fleet inventory distinguishes applicable, adopted, verified and blocked consumers using exact revision/digest and runtime evidence; missing repositories cannot be counted as covered.

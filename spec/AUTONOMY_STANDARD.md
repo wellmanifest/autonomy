@@ -605,3 +605,13 @@ runtime receipts from the current protected execution plane.
 
 The Subactor/Semcod profile is informative about concrete product ownership but
 normative when an adopter selects its exact ID, version, and digest.
+
+## Additive supervisor continuation conformance
+
+Consumers adopting `wellmanifest.autonomy/supervisor-continuation/v1` MUST meet
+the requirements in `profiles/supervisor-continuation.v1.json`. This separately
+versioned profile adds evidence-based validator handoff, semantic assessment
+triggers, honest history and exhaustive adoption accounting without changing
+manifest v6 or granting authority. See `docs/SUPERVISOR_CONTINUATION.md` for
+normalization and protected-evidence boundaries. Static conformance is never
+a substitute for authenticated runtime evidence.

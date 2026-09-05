@@ -16,7 +16,13 @@
     "profiles/subactor-semcod.profile.json",
     "tests/test_autonomy.py",
     "examples/valid/project.autonomy.json",
-    "examples/dsl-manifest.json"
+    "examples/dsl-manifest.json",
+    "profiles/supervisor-continuation.v1.json",
+    "src/continuation_check.py",
+    "tests/test_continuation.py",
+    "docs/SUPERVISOR_CONTINUATION.md",
+    "docs/rollouts/2026-09-05-supervisor-continuation.json",
+    "docs/rollouts/2026-09-05-supervisor-continuation.md"
   ],
   "forbiddenPaths": [
     "project/ticket-*/user-*.md",
@@ -28,13 +34,15 @@
     "pyproject.toml"
   ],
   "stacks": [],
-  "dependsOn": ["ticket-018"],
+  "dependsOn": [
+    "ticket-018"
+  ],
   "conflictsWith": [],
   "integrationTicket": null,
   "delivery": {
-    "acceptedBaseSha": "93ddd2dcbf9850682ba1858c42b6a9e1e2d7e0fb",
+    "acceptedBaseSha": "4409e994c88a710e46f5f4432c70f6bba9f1092e",
     "targetBranch": "main",
-    "outcome": "Clarify branch-continuity and orphan handling requirements in the autonomy standard and profile so unresolved non-default branches cannot be implicitly deleted.",
+    "outcome": "Define verifiable supervisor continuation, independent validator handoff, semantic progress and complete fleet adoption evidence; preserve authority boundaries.",
     "nonGoals": [
       "Change runtime code or the validator execution container",
       "Introduce dynamic branch cleanup policies outside manifest/policy evidence",
@@ -50,15 +58,19 @@
     },
     "architecture": {
       "status": "accepted",
-      "decision": "Keep changes in normative and profile layers only, preserving release semantics while adding explicit branch inventory requirements.",
+      "decision": "An additive versioned conformance profile validates evidence and adoption; existing manifest v6 and grants stay compatible.",
       "components": [
         {
           "name": "normative-contract",
-          "paths": ["spec/AUTONOMY_STANDARD.md"]
+          "paths": [
+            "spec/AUTONOMY_STANDARD.md"
+          ]
         },
         {
           "name": "integration-profile",
-          "paths": ["profiles/subactor-semcod.profile.json"]
+          "paths": [
+            "profiles/subactor-semcod.profile.json"
+          ]
         },
         {
           "name": "semantic-profile-evidence",
@@ -69,13 +81,34 @@
         },
         {
           "name": "governance-test",
-          "paths": ["tests/test_autonomy.py"]
+          "paths": [
+            "tests/test_autonomy.py"
+          ]
+        },
+        {
+          "name": "supervisor-continuation",
+          "paths": [
+            "profiles/supervisor-continuation.v1.json",
+            "src/continuation_check.py",
+            "tests/test_continuation.py",
+            "docs/SUPERVISOR_CONTINUATION.md",
+            "docs/rollouts/2026-09-05-supervisor-continuation.json",
+            "docs/rollouts/2026-09-05-supervisor-continuation.md"
+          ]
         }
       ],
       "responsibilityChanges": false,
-      "interfaceChanges": ["None for runtime contracts"],
-      "dataChanges": ["No deployment/runtime schema bindings changed"],
-      "ui": {"impact": "none", "states": [], "evidence": []},
+      "interfaceChanges": [
+        "None for runtime contracts"
+      ],
+      "dataChanges": [
+        "No deployment/runtime schema bindings changed"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
       "rollback": "Revert documentation and profile restriction updates if policy tests fail in protected evidence gates."
     },
     "runtimeDependencies": [],
