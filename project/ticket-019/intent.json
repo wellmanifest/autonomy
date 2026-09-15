@@ -40,13 +40,14 @@
   "conflictsWith": [],
   "integrationTicket": null,
   "delivery": {
-    "acceptedBaseSha": "4409e994c88a710e46f5f4432c70f6bba9f1092e",
+    "acceptedBaseSha": "3f8733262eefc11f2c72eb2424ff58768fc8a78a",
     "targetBranch": "main",
-    "outcome": "Define verifiable supervisor continuation, independent validator handoff, semantic progress and complete fleet adoption evidence; preserve authority boundaries.",
+    "outcome": "Define verifiable supervisor continuation, independent validator handoff, semantic progress, human-assistance escalation and complete fleet adoption evidence; preserve authority boundaries.",
     "nonGoals": [
       "Change runtime code or the validator execution container",
       "Introduce dynamic branch cleanup policies outside manifest/policy evidence",
-      "Change the core permission model or workstream ownership boundaries"
+      "Change the core permission model or workstream ownership boundaries",
+      "Treat a human response as a grant or as permission to change the task subject"
     ],
     "complexity": "L",
     "estimatedMinutes": 20,
@@ -99,10 +100,11 @@
       ],
       "responsibilityChanges": false,
       "interfaceChanges": [
-        "None for runtime contracts"
+        "Additive human-assistance/v1 evidence contract",
+        "Additive continuation-checker human-request and human-response CLI kinds; no runtime authority API change"
       ],
       "dataChanges": [
-        "No deployment/runtime schema bindings changed"
+        "Human request/response records are digest-bound evidence; no deployment/runtime schema bindings changed"
       ],
       "ui": {
         "impact": "none",
@@ -120,6 +122,13 @@
           "python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json",
           "python3 src/autonomy_check.py self-test",
           "python3 -m unittest discover -s tests -v"
+        ],
+        "evidence": "project/ticket-019/ai-codex-logs.txt"
+      },
+      {
+        "criterion": "AC-08",
+        "commands": [
+          "python3 -m unittest tests.test_continuation -v"
         ],
         "evidence": "project/ticket-019/ai-codex-logs.txt"
       }

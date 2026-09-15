@@ -418,6 +418,8 @@ class AutonomyConformanceTests(unittest.TestCase):
                 "post-boundary-run-discovery",
                 "matrix-child-correlation",
                 "late-delivery-deduplication",
+                "human-assistance-request",
+                "human-assistance-wait",
             },
             set(dispatch["capabilities"]),
         )
@@ -445,6 +447,8 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn("exact-contract-version-allowlist", dispatch["restrictions"])
         self.assertIn("all-validation-surfaces", dispatch["restrictions"])
         self.assertIn("bounded-provider-retries", dispatch["restrictions"])
+        self.assertIn("human-assistance-request-bound", dispatch["restrictions"])
+        self.assertIn("human-assistance-effects-frozen", dispatch["restrictions"])
         self.assertLessEqual(
             {
                 "exact-head-app-review",
@@ -500,6 +504,11 @@ class AutonomyConformanceTests(unittest.TestCase):
             "provider-branch-inventory-authority",
             publish["restrictions"],
         )
+        self.assertIn("human-assistance-response-bound", publish["restrictions"])
+        self.assertIn(
+            "human-assistance-approval-does-not-widen-grant",
+            publish["restrictions"],
+        )
 
     def test_normative_durability_and_receipt_origin_rules_are_published(self) -> None:
         standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
@@ -537,6 +546,11 @@ class AutonomyConformanceTests(unittest.TestCase):
             "closed-unmerged pull request is not an already-applied merge",
             "non-default branches with no authoritative owner mapping are treated as\n"
             "   unresolved work and MUST be preserved",
+            "structured human-assistance request",
+            "`effectsFrozen=true`",
+            "MUST NOT\nedit, push, approve, merge, acquire a secret",
+            "silently infer consent from\nan LLM",
+            "exact, non-expired `approve` response",
         )
         for phrase in required_text:
             with self.subTest(phrase=phrase):

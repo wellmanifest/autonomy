@@ -7,7 +7,10 @@
   State: `IN_PROGRESS / EDIT`; classification: `SERVICE / P1 / regression`;
   workstream: `governance`.
 - [x] [`ticket-021`](project/ticket-021/README.md) — Subactor runtime ADOPT binding map in autonomy profile 0.8.1. State: `DONE / DONE`; workstream: `integration`.
-- [x] [`ticket-019`](project/ticket-019/README.md) — Strengthen orphan-branch and practice-based convergence standards. State: `DONE / DONE`; workstream: `integration`.
+- [ ] [`ticket-019`](project/ticket-019/README.md) — Strengthen convergence and
+  human-assistance boundary standards: exact orphan-branch disposition,
+  digest-bound human request/response, and fail-closed waiting. State:
+  `IN_PROGRESS / EDIT`; workstream: `integration`.
 - [x] [`ticket-018`](project/ticket-018/README.md) — align root README and
   changelog with stable Autonomy 0.8, manifest v6 and exact correlation-bound
   publication evidence. State: `DONE / DONE`; classification:

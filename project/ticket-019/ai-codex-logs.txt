@@ -23,3 +23,12 @@ All checks passed!
 2026-08-15T00:00:00+02:00 DSL manifest check:
 python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json
 DSL-PASS: passed (0 errors)
+
+2026-09-15T09:15:08Z human-assistance extension:
+- ./project/governance-check.sh --actor agent -> GOV-PASS: passed (0 errors, 0 warnings)
+- python3 ../../../dsl/src/dsl_check.py validate examples/dsl-manifest.json -> DSL-PASS: passed (0 errors)
+- python3 src/autonomy_check.py validate examples/valid profiles/subactor-semcod.profile.json -> PASS
+- python3 src/autonomy_check.py self-test -> PASS
+- python3 -m unittest discover -s tests -v -> Ran 44 tests in 0.078s, OK
+- python3 -m compileall -q src tests -> PASS
+- ruff check src tests -> All checks passed!

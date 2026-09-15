@@ -1,6 +1,6 @@
 # Evidence-based supervisor continuation
 
-Profile: `wellmanifest.autonomy/supervisor-continuation/v1`, version 1.0.0.
+Profile: `wellmanifest.autonomy/supervisor-continuation/v1`, version 1.1.0.
 This additive profile preserves the autonomy manifest v6 and grants no authority.
 Its normative requirement catalog is `profiles/supervisor-continuation.v1.json`.
 
@@ -26,6 +26,52 @@ History presents recorded goal, subject, operation, actor, rationale, timestamps
 and evidence references. Missing fields remain unknown. Truncation is marked.
 Old plans are distinguished from recent activity. A pinned immutable deployment
 is identified by its release evidence; detached HEAD alone is not development.
+
+## Human assistance protocol
+
+Human help is a typed boundary, not an informal prompt. Use the
+`wellmanifest.autonomy/human-assistance/v1` request when the risk ceiling,
+excluded effects, ownership or protected evidence prevents autonomous
+continuation. The request is bound to one repository, ticket, head SHA, base
+SHA and selected continuation profile:
+
+```json
+{
+  "kind": "human-assistance-request",
+  "requestId": "human-assist/example-1",
+  "requestDigest": "sha256:<64 lowercase hex>",
+  "profile": "wellmanifest.autonomy/human-assistance/v1",
+  "subject": {
+    "repository": "example/example-api",
+    "ticket": "ticket-123",
+    "headSha": "<40 lowercase hex>",
+    "baseSha": "<40 lowercase hex>",
+    "profile": "wellmanifest.autonomy/supervisor-continuation/v1"
+  },
+  "riskTier": "high",
+  "reason": "the requested effect is outside the standing grant",
+  "question": "Approve the one bounded operation?",
+  "requestedDecision": "approve",
+  "issuedAt": "2026-09-15T08:00:00Z",
+  "expiresAt": "2026-09-15T09:00:00Z",
+  "status": "pending",
+  "effectsFrozen": true
+}
+```
+
+Validate it with `python3 src/continuation_check.py human-request request.json`.
+While it is pending, the only conforming continuation is `wait` (or protected
+observation/reconciliation); edit, push, approval, merge and secret access are
+frozen. A response must carry the same request digest and subject, a response
+digest, and an authenticated `human` or `external-authority` actor. Validate a
+response with `python3 src/continuation_check.py human-response response.json`.
+An LLM answer, bot comment or Markdown approval is never consent. An expired
+request is blocked and must be renewed by the external authority as a new
+request; it is not a successful continuation.
+
+When the active grant already provides a verified independent validator, use
+that path instead of escalating to a human. The checker rejects a
+human-only loop in that case (`SC-001`/`SC-012`).
 
 ## Conformance and adoption
 

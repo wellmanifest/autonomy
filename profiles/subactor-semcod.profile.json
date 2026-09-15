@@ -60,7 +60,9 @@
         "correlation-bound-run-selection",
         "post-boundary-run-discovery",
         "matrix-child-correlation",
-        "late-delivery-deduplication"
+        "late-delivery-deduplication",
+        "human-assistance-request",
+        "human-assistance-wait"
       ],
       "contracts": [
         "repo://subactor/autonom/autonom/pull_request_state.py",
@@ -93,7 +95,9 @@
         "heartbeat-slo-required",
         "manual-recovery-not-heartbeat",
         "old-run-rejected",
-        "ambiguous-run-fails-closed"
+        "ambiguous-run-fails-closed",
+        "human-assistance-request-bound",
+        "human-assistance-effects-frozen"
       ]
     },
     {
@@ -388,7 +392,9 @@
         "missing-or-stale-receipt-fails-closed",
         "duplicate-review-merge-forbidden",
         "orphan-branch-preservation-policy",
-        "provider-branch-inventory-authority"
+        "provider-branch-inventory-authority",
+        "human-assistance-response-bound",
+        "human-assistance-approval-does-not-widen-grant"
       ]
     },
     {
