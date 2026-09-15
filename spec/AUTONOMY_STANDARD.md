@@ -184,6 +184,40 @@ claiming conformance to version 0.8. A repository MAY define a separate,
 externally issued high-risk profile; that profile is not the default autonomous
 code-development grant.
 
+### 6.1 Human assistance boundary
+
+When a task crosses the grant's risk ceiling, enters an excluded effect, has
+ambiguous ownership or authority, or has conflicting protected evidence, the
+controller MUST create a structured human-assistance request. The request
+MUST use `wellmanifest.autonomy/human-assistance/v1` and bind a unique request
+ID and digest to the exact repository, ticket, head SHA, base SHA and selected
+supervisor-continuation profile. It MUST state the risk tier, reason, concrete
+question, requested decision, issuance time and expiry time.
+
+The request MUST be durably recorded with `status=pending` and
+`effectsFrozen=true`. While it is pending or expired, the controller MUST NOT
+edit, push, approve, merge, acquire a secret, or silently infer consent from
+an LLM, a previous prompt, a timeout, or a missing response. It MAY observe,
+reconcile protected read-back, and report the blocked state. Expiry is a
+blocked outcome, never success.
+
+A response MUST bind the exact request ID, request digest and subject, include
+an immutable response digest, and identify a trusted `human` or
+`external-authority` actor. The decision MUST be one of `approve`, `reject`,
+`clarify`, `withdraw`, or `expire`, and MUST arrive before the request expiry.
+Conditions, when present, MUST be finite and digest-bound. Natural-language
+LLM output, bot narration, or a repository-authored Markdown note is advisory
+and MUST NOT satisfy the response contract. Only a protected adapter may turn
+an authenticated response into an authority check; an `approve` response does
+not widen the original grant or change the task subject.
+
+The deterministic continuation decision is `request_human` followed by
+`wait` when the boundary is unresolved. A mutating action MUST remain stopped
+until an exact, non-expired `approve` response is independently verified.
+When an authorized independent validator can perform the operation within the
+active grant, the controller MUST continue through that validator path rather
+than manufacture a human-only loop.
+
 ## 7. Resource and change budgets
 
 The manifest MUST bound files, components, public interfaces, runtime
@@ -609,9 +643,10 @@ normative when an adopter selects its exact ID, version, and digest.
 ## Additive supervisor continuation conformance
 
 Consumers adopting `wellmanifest.autonomy/supervisor-continuation/v1` MUST meet
-the requirements in `profiles/supervisor-continuation.v1.json`. This separately
-versioned profile adds evidence-based validator handoff, semantic assessment
-triggers, honest history and exhaustive adoption accounting without changing
-manifest v6 or granting authority. See `docs/SUPERVISOR_CONTINUATION.md` for
-normalization and protected-evidence boundaries. Static conformance is never
-a substitute for authenticated runtime evidence.
+the requirements in `profiles/supervisor-continuation.v1.json` (version 1.1.0).
+This separately versioned profile adds evidence-based validator handoff,
+semantic assessment triggers, human-assistance escalation, honest history and
+exhaustive adoption accounting without changing manifest v6 or granting
+authority. See `docs/SUPERVISOR_CONTINUATION.md` for normalization and
+protected-evidence boundaries. Static conformance is never a substitute for
+authenticated runtime evidence.

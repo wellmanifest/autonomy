@@ -51,12 +51,17 @@
     {
       "path": "spec/AUTONOMY_STANDARD.md",
       "role": "documentation",
-      "digest": "sha256:472d40d64c23d2d06426ced28523f1bc694d62f0c230a4a4ee5897897c164634"
+      "digest": "sha256:1459c94fea273952e2efb9dfe9652aa71e93736ac8af43928ce6b726d9c0edd9"
     },
     {
       "path": "profiles/subactor-semcod.profile.json",
       "role": "profile",
-      "digest": "sha256:9c458d9a399b7329a4ee35336b22c7f5d5afe7a77f45a8535f9dfcc280bf6199"
+      "digest": "sha256:8ff78f6a8961b5365979257d033c4f2602d4761c83cc0a7542630b0eadec66ac"
+    },
+    {
+      "path": "profiles/supervisor-continuation.v1.json",
+      "role": "profile",
+      "digest": "sha256:8bc8ff9208f543949813d10d0892b0dc3b21e160006f9f9da23b0d1bf1abf529"
     },
     {
       "path": "src/autonomy_check.py",
@@ -64,9 +69,14 @@
       "digest": "sha256:4f31e3a1781198ef10bfe18846eacd238c1a6684cfef73aa3b4cea4043b187e2"
     },
     {
+      "path": "src/continuation_check.py",
+      "role": "parser-contract",
+      "digest": "sha256:15f09275bd63f4141d58fe18f69be1d8f7c09855ecf252eb6c9f920367c1e409"
+    },
+    {
       "path": "examples/valid/project.autonomy.json",
       "role": "example",
-      "digest": "sha256:916d2ab74b99f8612cda7616e605ae5879b04b852faa97db59ca9d7af93885c7"
+      "digest": "sha256:29fb294f213c0b7b1967c079659800d9ec7eda1214363d48cd2f6ff67f7ad6df"
     },
     {
       "path": "examples/invalid/self-approval.autonomy.json",
@@ -112,6 +122,11 @@
       "path": "docs/SUBACTOR_RUNTIME_ADOPT.md",
       "role": "documentation",
       "digest": "sha256:973536b20a11f8e3bad11a2ce522f9f63c83fc343867ad3f7da1627b5b8a3839"
+    },
+    {
+      "path": "docs/SUPERVISOR_CONTINUATION.md",
+      "role": "documentation",
+      "digest": "sha256:698c1f29634ae644f8e51e55d298e232d0b3693f8131279003722c6c563a0a0c"
     }
   ],
   "namespaces": [
@@ -157,13 +172,16 @@
     "authoritySchema": "https://wellmanifest.com/schemas/autonomy-manifest/v6#/$defs/manifest"
   },
   "llm": {
-    "mode": "input",
+    "mode": "bidirectional",
     "requestSchemas": [
       "https://wellmanifest.com/schemas/autonomy-manifest/v6"
     ],
-    "responseSchemas": [],
+    "responseSchemas": [
+      "https://wellmanifest.com/schemas/autonomy-manifest/v6"
+    ],
     "naturalLanguage": "typed-source-only",
     "sourceSchema": "https://wellmanifest.com/schemas/autonomy-manifest/v6",
+    "decisionProtocol": "nl-to-dsl-input-output",
     "modelAuthority": "propose-only",
     "strict": true
   },

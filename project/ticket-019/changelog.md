@@ -1,5 +1,15 @@
 # Ticket Changelog (ticket-019)
 
+## [0.2.0] - 2026-09-15
+
+- Defined `wellmanifest.autonomy/human-assistance/v1` for bounded human help.
+- Bound requests and responses to repository, ticket, head, base and profile
+  digests; expired or pending requests freeze effect-capable actions.
+- Added deterministic request/response checks, CLI entry points and Subactor
+  profile restrictions; LLM output remains advisory and cannot be consent.
+- Repaired the DSL manifest's typed-source LLM decision boundary and refreshed
+  all changed artifact digests.
+
 ## [0.1.0] - 2026-08-15
 
 - Initial governance scaffold created.

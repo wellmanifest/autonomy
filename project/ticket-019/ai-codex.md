@@ -26,6 +26,16 @@ agent execution.
    `examples/valid/project.autonomy.json` so profile/standard artifact checks
    remain exact-byte true.
 
+## Human-assistance extension
+
+The Founder request on 2026-09-15 is recorded as
+`SESSION_EXECUTION_AUTHORIZATION`. I will reuse this matching integration
+ticket rather than allocate a competing integration ticket. The extension
+formalizes a typed `human-assistance/v1` request and response, exact subject
+and digest bindings, expiry, and an effect-frozen waiting state. It remains
+advisory until a protected adapter authenticates the actor; LLM output cannot
+be consent.
+
 ## Actual changes
 
 - Added branch-continuity/orphan-handling requirements to
@@ -38,6 +48,12 @@ agent execution.
   `tests/test_autonomy.py`.
 - Confirmed evidence updates for this implementation were limited to this
   ticket's scope.
+- Added SC-009..SC-012 requirements to the supervisor continuation profile.
+- Added pure request/response and waiting-state checks to
+  `src/continuation_check.py`, with CLI kinds `human-request` and
+  `human-response`.
+- Added protocol documentation, Subactor dispatch/publish restrictions and
+  conformance tests.
 
 ## Blockers
 
