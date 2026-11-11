@@ -27,4 +27,6 @@ This file indexes governance tickets without taking ownership of
 | **ticket-019** | [`README.md`](./ticket-019/README.md) | [`preprompt.md`](./ticket-019/preprompt.md) | - |  [`ai-codex.md`](./ticket-019/ai-codex.md) |  [`ai-codex-logs.txt`](./ticket-019/ai-codex-logs.txt) | [`changelog.md`](./ticket-019/changelog.md) |
 | **ticket-020** | [`README.md`](./ticket-020/README.md) | [`preprompt.md`](./ticket-020/preprompt.md) | - |  [`ai-codex.md`](./ticket-020/ai-codex.md) |  [`ai-codex-logs.txt`](./ticket-020/ai-codex-logs.txt) | [`changelog.md`](./ticket-020/changelog.md) |
 | **ticket-021** | [`README.md`](./ticket-021/README.md) | [`preprompt.md`](./ticket-021/preprompt.md) | - |  [`ai-cursor-composer.md`](./ticket-021/ai-cursor-composer.md) |  [`ai-cursor-composer-logs.txt`](./ticket-021/ai-cursor-composer-logs.txt) | [`changelog.md`](./ticket-021/changelog.md) |
+| **ticket-022** | [`README.md`](./ticket-022/README.md) | [`preprompt.md`](./ticket-022/preprompt.md) | - |  [`ai-glm.md`](./ticket-022/ai-glm.md) |  [`ai-glm-logs.txt`](./ticket-022/ai-glm-logs.txt) | [`changelog.md`](./ticket-022/changelog.md) |
+| **ticket-023** | [`README.md`](./ticket-023/README.md) | - | - | - | - | - |
 <!-- AUTO:TICKET_INDEX:END -->
