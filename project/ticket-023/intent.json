@@ -1,0 +1,94 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-023",
+  "summary": "Harden continuation_check against unhashable JSON, non-dict payloads, and unsafe file I/O",
+  "workstream": "integration",
+  "classification": {
+    "kind": "BUG",
+    "priority": "P2",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-023/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "examples/dsl-manifest.json",
+    "src/continuation_check.py",
+    "tests/test_continuation.py"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "9175e08ac5608567f69cdbda2dd6f9b305012f3d",
+    "targetBranch": "main",
+    "outcome": "Harden src/continuation_check.py against unhashable/non-dict JSON inputs and unsafe CLI file reads while refreshing its pinned digest in examples/dsl-manifest.json.",
+    "nonGoals": [
+      "Do not alter public autonomy manifest schema generations or grant boundaries.",
+      "Do not modify root governance files outside ticket indexing."
+    ],
+    "complexity": "S",
+    "estimatedMinutes": 20,
+    "budgets": {
+      "maxImplementationFiles": 3,
+      "maxAffectedComponents": 2,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Enforce strict string/dict type guards before set membership and field traversal in continuation_check.py, read CLI inputs via O_NOFOLLOW regular-file descriptors with duplicate-key and non-finite constant rejection, and update the parser-contract digest in examples/dsl-manifest.json.",
+      "components": [
+        {
+          "name": "continuation-checker",
+          "paths": [
+            "src/continuation_check.py",
+            "tests/test_continuation.py"
+          ]
+        },
+        {
+          "name": "cross-standard-binding",
+          "paths": [
+            "examples/dsl-manifest.json"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [
+        "Update src/continuation_check.py parser-contract SHA-256 digest in examples/dsl-manifest.json"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert this bounded commit via protected PR delivery."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-02",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "ruff check src/continuation_check.py tests/test_continuation.py"
+        ],
+        "evidence": "project/ticket-023/README.md"
+      },
+      {
+        "criterion": "AC-03",
+        "commands": [
+          "python3 src/autonomy_check.py self-test",
+          "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json",
+          "./project/governance-check.sh --actor agent",
+          "wellman check"
+        ],
+        "evidence": "project/ticket-023/README.md"
+      }
+    ]
+  }
+}
