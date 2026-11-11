@@ -271,6 +271,22 @@ class ContinuationTests(unittest.TestCase):
                 rc = continuation_main(["fleet", str(bad_fleet)])
             self.assertEqual(rc, 1)
 
+            deep_obj = root / "deep_obj.json"
+            deep_obj.write_text('{"a":' * 128 + "1" + "}" * 128, encoding="utf-8")
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = continuation_main(["decision", str(deep_obj)])
+            self.assertEqual(rc, 1)
+            self.assertEqual(json.loads(buf.getvalue())["errors"], ["AUTONOMY-SYNTAX-001"])
+
+            deep_arr = root / "deep_arr.json"
+            deep_arr.write_text("[" * 50000 + "]" * 50000, encoding="utf-8")
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = continuation_main(["decision", str(deep_arr)])
+            self.assertEqual(rc, 1)
+            self.assertEqual(json.loads(buf.getvalue())["errors"], ["AUTONOMY-SYNTAX-001"])
+
 
 if __name__ == "__main__":
     unittest.main()

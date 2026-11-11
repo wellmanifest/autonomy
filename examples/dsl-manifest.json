@@ -71,7 +71,7 @@
     {
       "path": "src/continuation_check.py",
       "role": "parser-contract",
-      "digest": "sha256:6f76da851b4b7bd56fd4fabc77d75882eb67dc4b360b860f85629bc6c78f7386"
+      "digest": "sha256:6c20c64555d431989def44c0c05bf04d814db795fbc74109a9725789d83e8a49"
     },
     {
       "path": "examples/valid/project.autonomy.json",

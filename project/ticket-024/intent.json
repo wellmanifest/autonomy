@@ -1,0 +1,94 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-024",
+  "summary": "Guard continuation_check CLI against deeply nested JSON RecursionError",
+  "workstream": "integration",
+  "classification": {
+    "kind": "BUG",
+    "priority": "P2",
+    "origin": "regression"
+  },
+  "allowedPaths": [
+    "project/ticket-024/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "examples/dsl-manifest.json",
+    "src/continuation_check.py",
+    "tests/test_continuation.py"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "182469c1b7b0eda6063b6acdf1ca84e9d8cc81b1",
+    "targetBranch": "main",
+    "outcome": "Fail closed with AUTONOMY-SYNTAX-001 when continuation_check CLI receives deeply nested JSON inputs and keep examples/dsl-manifest.json synchronized.",
+    "nonGoals": [
+      "Do not alter continuation or autonomy wire schemas.",
+      "Do not add external runtime dependencies."
+    ],
+    "complexity": "S",
+    "estimatedMinutes": 15,
+    "budgets": {
+      "maxImplementationFiles": 3,
+      "maxAffectedComponents": 2,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Catch RecursionError around json.loads and enforce an iterative 64-level JSON nesting depth ceiling in _load_json_file, updating the parser-contract digest in examples/dsl-manifest.json.",
+      "components": [
+        {
+          "name": "continuation-checker",
+          "paths": [
+            "src/continuation_check.py",
+            "tests/test_continuation.py"
+          ]
+        },
+        {
+          "name": "cross-standard-binding",
+          "paths": [
+            "examples/dsl-manifest.json"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [
+        "Update src/continuation_check.py parser-contract SHA-256 digest in examples/dsl-manifest.json"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert this bounded commit via protected PR delivery."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-02",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "ruff check src/continuation_check.py tests/test_continuation.py"
+        ],
+        "evidence": "project/ticket-024/README.md"
+      },
+      {
+        "criterion": "AC-03",
+        "commands": [
+          "python3 src/autonomy_check.py self-test",
+          "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json",
+          "./project/governance-check.sh --actor ci --base 182469c1b7b0eda6063b6acdf1ca84e9d8cc81b1 --head HEAD",
+          "wellman check"
+        ],
+        "evidence": "project/ticket-024/README.md"
+      }
+    ]
+  }
+}
