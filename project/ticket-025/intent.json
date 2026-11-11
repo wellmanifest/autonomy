@@ -1,0 +1,111 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-025",
+  "summary": "Modularize autonomy_check under 500 lines and harden JSON, profile, and pointer bounds",
+  "workstream": "integration",
+  "classification": {
+    "kind": "BUG",
+    "priority": "P2",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-025/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "examples/dsl-manifest.json",
+    "src/autonomy_change_shapes.py",
+    "src/autonomy_check.py",
+    "src/autonomy_constants.py",
+    "src/autonomy_liveness_shapes.py",
+    "src/autonomy_primitives.py",
+    "src/autonomy_semantics.py",
+    "tests/test_autonomy.py",
+    "tests/test_autonomy_profile_docs.py"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "617c862391d5a3ec939eb0cf1a0f1b122754a3fc",
+    "targetBranch": "main",
+    "outcome": "Decompose src/autonomy_check.py and tests/test_autonomy.py into <500-line modules, harden file/JSON/profile/pointer/timestamp/glob validation to fail closed, and synchronize examples/dsl-manifest.json.",
+    "nonGoals": [
+      "Do not modify schemas/autonomy-manifest.schema.json, profiles/*.json, or spec/AUTONOMY_STANDARD.md",
+      "Do not add runtime dependencies"
+    ],
+    "complexity": "M",
+    "estimatedMinutes": 30,
+    "budgets": {
+      "maxImplementationFiles": 9,
+      "maxAffectedComponents": 3,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Split Validator into focused <500-line mixins (primitives, liveness shapes, change-control shapes, manifest semantics) plus constants/strict-JSON helpers, re-export all public symbols from src/autonomy_check.py, split test_autonomy.py into two <500-line suites, and update examples/dsl-manifest.json parser-contract entries.",
+      "components": [
+        {
+          "name": "autonomy-validator",
+          "paths": [
+            "src/autonomy_check.py",
+            "src/autonomy_constants.py",
+            "src/autonomy_primitives.py",
+            "src/autonomy_liveness_shapes.py",
+            "src/autonomy_change_shapes.py",
+            "src/autonomy_semantics.py"
+          ]
+        },
+        {
+          "name": "autonomy-conformance-tests",
+          "paths": [
+            "tests/test_autonomy.py",
+            "tests/test_autonomy_profile_docs.py"
+          ]
+        },
+        {
+          "name": "dsl-manifest-binding",
+          "paths": [
+            "examples/dsl-manifest.json"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [
+        "Update parser-contract SHA-256 digests in examples/dsl-manifest.json"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert this bounded commit via protected PR delivery."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-01",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "ruff check src tests"
+        ],
+        "evidence": "project/ticket-025/README.md"
+      },
+      {
+        "criterion": "AC-03",
+        "commands": [
+          "python3 src/autonomy_check.py self-test",
+          "python3 ../dsl/src/dsl_check.py validate examples/dsl-manifest.json",
+          "./project/governance-check.sh --actor ci --base 617c862391d5a3ec939eb0cf1a0f1b122754a3fc --head HEAD",
+          "wellman check"
+        ],
+        "evidence": "project/ticket-025/README.md"
+      }
+    ]
+  }
+}

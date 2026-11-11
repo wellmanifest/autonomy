@@ -66,7 +66,32 @@
     {
       "path": "src/autonomy_check.py",
       "role": "parser-contract",
-      "digest": "sha256:4f31e3a1781198ef10bfe18846eacd238c1a6684cfef73aa3b4cea4043b187e2"
+      "digest": "sha256:4227205835ed94f953909350a3ade761e649b7ad9f7a275e51de47a7c01e4dfc"
+    },
+    {
+      "path": "src/autonomy_constants.py",
+      "role": "parser-contract",
+      "digest": "sha256:98acd3d965cd2addbb3fb88701bba03186af556e250927f2c14cb42d0c1dd0a5"
+    },
+    {
+      "path": "src/autonomy_primitives.py",
+      "role": "parser-contract",
+      "digest": "sha256:5e059be08afc4405843b2f7077341739e7a4b2f97b309c27048ce6800d1d76c5"
+    },
+    {
+      "path": "src/autonomy_liveness_shapes.py",
+      "role": "parser-contract",
+      "digest": "sha256:ce1c04be7db9beb1a04f444007cfc2e96911c508258b31363eaf983c890860be"
+    },
+    {
+      "path": "src/autonomy_change_shapes.py",
+      "role": "parser-contract",
+      "digest": "sha256:bc5c921006721128129ca9f4ce697ea4b6a8379f4efbc1f0604a50b021f8a0d6"
+    },
+    {
+      "path": "src/autonomy_semantics.py",
+      "role": "parser-contract",
+      "digest": "sha256:53e62e441edb9bcb5e067c17c1df8795d9b7ca02b08ef9faa27d39adb17e35c5"
     },
     {
       "path": "src/continuation_check.py",
