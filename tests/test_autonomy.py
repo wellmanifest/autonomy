@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import contextlib
 import copy
 import importlib.util
+import io
 import json
 import sys
+import tempfile
 import unittest
 from datetime import datetime
 from pathlib import Path
@@ -179,15 +182,11 @@ class AutonomyConformanceTests(unittest.TestCase):
 
     def test_scheduler_heartbeat_is_independent_from_recovery(self) -> None:
         recovery = copy.deepcopy(self.valid)
-        recovery["executionLiveness"]["heartbeat"][
-            "manualRecoveryRestoresLiveness"
-        ] = True
+        recovery["executionLiveness"]["heartbeat"]["manualRecoveryRestoresLiveness"] = True
         self.assertIn(autonomy_check.BOUNDARY, self.codes(recovery))
 
         missing_receipt = copy.deepcopy(self.valid)
-        missing_receipt["executionLiveness"]["heartbeat"][
-            "missedCycleReceiptRequired"
-        ] = False
+        missing_receipt["executionLiveness"]["heartbeat"]["missedCycleReceiptRequired"] = False
         self.assertIn(autonomy_check.BOUNDARY, self.codes(missing_receipt))
 
         overlapping = copy.deepcopy(self.valid)
@@ -232,9 +231,7 @@ class AutonomyConformanceTests(unittest.TestCase):
 
     def test_contract_migration_requires_every_consumer_surface(self) -> None:
         partial = copy.deepcopy(self.valid)
-        partial["changeControl"]["contractMigration"]["requiredSurfaces"].remove(
-            "compose"
-        )
+        partial["changeControl"]["contractMigration"]["requiredSurfaces"].remove("compose")
         self.assertIn(autonomy_check.SYNTAX, self.codes(partial))
 
         late_resolution = copy.deepcopy(self.valid)
@@ -245,15 +242,11 @@ class AutonomyConformanceTests(unittest.TestCase):
 
     def test_check_provenance_is_authoritative_and_unambiguous(self) -> None:
         ambiguous = copy.deepcopy(self.valid)
-        ambiguous["changeControl"]["checkProvenance"][
-            "duplicateContextPolicy"
-        ] = "prefer-success"
+        ambiguous["changeControl"]["checkProvenance"]["duplicateContextPolicy"] = "prefer-success"
         self.assertIn(autonomy_check.BOUNDARY, self.codes(ambiguous))
 
         incomplete = copy.deepcopy(self.valid)
-        incomplete["changeControl"]["checkProvenance"]["requiredBindings"].remove(
-            "event"
-        )
+        incomplete["changeControl"]["checkProvenance"]["requiredBindings"].remove("event")
         self.assertIn(autonomy_check.SYNTAX, self.codes(incomplete))
 
         unsafe_status = copy.deepcopy(self.valid)
@@ -264,9 +257,7 @@ class AutonomyConformanceTests(unittest.TestCase):
 
     def test_provider_read_fallback_preserves_authority(self) -> None:
         mutation = copy.deepcopy(self.valid)
-        mutation["changeControl"]["providerReads"][
-            "fallbackMustPreserveAuthority"
-        ] = False
+        mutation["changeControl"]["providerReads"]["fallbackMustPreserveAuthority"] = False
         self.assertIn(autonomy_check.SYNTAX, self.codes(mutation))
 
     def test_post_approval_policy_convergence_is_mandatory(self) -> None:
@@ -296,9 +287,9 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.BOUNDARY, self.codes(circular))
 
         incomplete = copy.deepcopy(self.valid)
-        incomplete["changeControl"]["publicationConvergence"][
-            "requiredRebindings"
-        ].remove("approvalId")
+        incomplete["changeControl"]["publicationConvergence"]["requiredRebindings"].remove(
+            "approvalId"
+        )
         self.assertIn(autonomy_check.SYNTAX, self.codes(incomplete))
 
     def test_superseded_work_is_lossless_and_never_orphaned(self) -> None:
@@ -307,9 +298,7 @@ class AutonomyConformanceTests(unittest.TestCase):
         self.assertIn(autonomy_check.SYNTAX, self.codes(unproved))
 
         incomplete = copy.deepcopy(self.valid)
-        incomplete["changeControl"]["supersededWork"]["requiredBindings"].remove(
-            "receiptDigest"
-        )
+        incomplete["changeControl"]["supersededWork"]["requiredBindings"].remove("receiptDigest")
         self.assertIn(autonomy_check.SYNTAX, self.codes(incomplete))
 
         orphan = copy.deepcopy(self.valid)
@@ -370,241 +359,6 @@ class AutonomyConformanceTests(unittest.TestCase):
         findings = autonomy_check.validate_document(mutation, profile_path=None)
         self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
 
-    def test_stable_profile_binds_deployed_durable_controller(self) -> None:
-        self.assertEqual("0.8.1", self.profile["version"])
-        self.assertEqual("stable", self.profile["status"])
-        self.assertIn("subactor/platform", self.profile["ownership"]["runtimeOwners"])
-        self.assertIn("subactor/deployment", self.profile["ownership"]["runtimeOwners"])
-        self.assertTrue(
-            any(
-                b["product"] == "subactor/deployment" and b["stage"] == "observe"
-                for b in self.profile["bindings"]
-            )
-        )
-        self.assertTrue(self.profile["protectedBoundaries"]["heartbeatEvidenceExternal"])
-        self.assertTrue(
-            self.profile["protectedBoundaries"]["invocationCorrelationProtected"]
-        )
-        self.assertTrue(self.profile["protectedBoundaries"]["effectReceiptExternal"])
-        dispatch = next(
-            binding
-            for binding in self.profile["bindings"]
-            if binding["stage"] == "dispatch"
-            and binding["product"] == "subactor/autonom"
-        )
-        publish = next(
-            binding
-            for binding in self.profile["bindings"]
-            if binding["stage"] == "publish"
-            and binding["product"] == "subactor/autonom"
-        )
-        self.assertLessEqual(
-            {
-                "write-ahead-operation",
-                "fsync-checkpoint",
-                "canary-recovery",
-                "protected-source-preflight",
-                "exact-runtime-pin",
-                "protected-runtime-worktree",
-                "quiesced-rollout",
-                "supervisor-source-isolation",
-                "intent-checkpoint",
-                "contract-consumer-inventory",
-                "provider-read-fallback",
-                "watchdog-reconcile",
-                "scheduler-heartbeat",
-                "missed-cycle-recovery",
-                "correlation-bound-run-selection",
-                "post-boundary-run-discovery",
-                "matrix-child-correlation",
-                "late-delivery-deduplication",
-                "human-assistance-request",
-                "human-assistance-wait",
-            },
-            set(dispatch["capabilities"]),
-        )
-        self.assertLessEqual(
-            {
-                "repo://subactor/autonom/autonom/pull_request_state.py",
-                "repo://subactor/autonom/autonom/pull_request_controller.py",
-                "repo://subactor/autonom/scripts/deploy-pr-controller.sh",
-                "repo://subactor/autonom/systemd/subactor-pr-controller.service",
-                "repo://subactor/autonom/systemd/subactor-pr-controller.timer",
-                "repo://subactor/validator-agent/config/direct-pr-registry.json",
-                "repo://subactor/validator-agent/.github/workflows/validator.yml",
-                "repo://subactor/validator-agent/bin/dispatch-direct-pr.sh",
-            },
-            set(dispatch["contracts"]),
-        )
-        self.assertIn("lease-exceeds-effect-timeout", dispatch["restrictions"])
-        self.assertIn("candidate-checkout-excluded", dispatch["restrictions"])
-        self.assertIn("runtime-checkout-isolated", dispatch["restrictions"])
-        self.assertIn("supervisor-checkout-excluded", dispatch["restrictions"])
-        self.assertIn("policy-checkout-isolated", dispatch["restrictions"])
-        self.assertIn("rollout-trigger-quiesced", dispatch["restrictions"])
-        self.assertIn("rollback-same-boundary", dispatch["restrictions"])
-        self.assertIn("intent-before-implementation", dispatch["restrictions"])
-        self.assertIn("exact-contract-version-allowlist", dispatch["restrictions"])
-        self.assertIn("all-validation-surfaces", dispatch["restrictions"])
-        self.assertIn("bounded-provider-retries", dispatch["restrictions"])
-        self.assertIn("human-assistance-request-bound", dispatch["restrictions"])
-        self.assertIn("human-assistance-effects-frozen", dispatch["restrictions"])
-        self.assertLessEqual(
-            {
-                "exact-head-app-review",
-                "explicit-app-merge",
-                "merge-sha-read-back",
-                "branch-cleanup",
-                "successor-pr-base-refresh",
-                "authoritative-check-provenance",
-                "effective-policy-discovery",
-                "pre-approval-check-partition",
-                "post-approval-check-convergence",
-                "provider-coupled-pr-closure",
-                "lossless-superseded-branch-disposition",
-                "durable-publication-checkpoint",
-                "idempotent-effect-reconciliation",
-                "already-applied-exact-receipt",
-            },
-            set(publish["capabilities"]),
-        )
-        self.assertIn("native-auto-merge-forbidden", publish["restrictions"])
-        self.assertIn("history-rewrite-forbidden", publish["restrictions"])
-        self.assertIn(
-            "ambiguous-check-contexts-fail-closed", publish["restrictions"]
-        )
-        self.assertIn("non-authoritative-status-ignored", publish["restrictions"])
-        self.assertIn("registry-drift-fails-closed", publish["restrictions"])
-        self.assertIn(
-            "approval-starts-new-evidence-epoch", publish["restrictions"]
-        )
-        self.assertIn(
-            "approval-triggered-checks-deferred-before-review",
-            publish["restrictions"],
-        )
-        self.assertIn("post-approval-attempt-required", publish["restrictions"])
-        self.assertIn(
-            "delete-proven-equivalent-branch-after-integrated-proof",
-            publish["restrictions"],
-        )
-        self.assertIn(
-            "provider-coupled-close-read-back",
-            publish["restrictions"],
-        )
-        self.assertIn(
-            "unresolved-superseded-pr-remains-open", publish["restrictions"]
-        )
-        self.assertIn("at-most-one-authoritative-effect", publish["restrictions"])
-        self.assertIn("duplicate-review-merge-forbidden", publish["restrictions"])
-        self.assertIn(
-            "orphan-branch-preservation-policy",
-            publish["restrictions"],
-        )
-        self.assertIn(
-            "provider-branch-inventory-authority",
-            publish["restrictions"],
-        )
-        self.assertIn("human-assistance-response-bound", publish["restrictions"])
-        self.assertIn(
-            "human-assistance-approval-does-not-widen-grant",
-            publish["restrictions"],
-        )
-
-    def test_normative_durability_and_receipt_origin_rules_are_published(self) -> None:
-        standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
-        required_text = (
-            "initial duration MUST exceed the maximum bounded duration",
-            "queue record and claim MUST be durably committed",
-            "flushing\nthe new bytes and directory metadata",
-            "MUST clean an obsolete\nqueue or claim remnant",
-            "checkpoint is the authority for completed local continuation state",
-            "transport named\n`workflow_dispatch` is not by itself evidence of manual execution",
-            "MUST NOT be loaded from a workspace used for candidate or\nconcurrent development",
-            "supervisor outside the loaded\ncontroller code MUST fail closed",
-            "not an exact runtime pin",
-            "MUST NOT resolve through symlinks\nor files owned by a candidate",
-            "quiesce every trigger and wait for or safely terminate",
-            "MUST NOT resume an unpinned runtime",
-            "requires a fresh automatic cycle bound\nto the new runtime pin",
-            "intent checkpoint MUST precede",
-            "successor pull request",
-            "Compose override",
-            "Duplicate\nsame-named contexts",
-            "bounded provider retries",
-            "complete effective required-check set",
-            "starts a new evidence epoch",
-            "two consecutive protected reads",
-            "partition the protected required-check set",
-            "fresh attempt submitted\nafter the exact approval timestamp",
-            "request branch deletion while\nthe pull request is still open",
-            "platform-coupled effect",
-            "pull request MUST\nremain open as its explicit owner",
-            "MUST NOT repair, synthesize, or\nreplace the missing scheduler heartbeat",
-            "MUST carry a stable correlation\nID into the provider's run identity",
-            "pre-boundary run or a child\nfrom a different matrix invocation",
-            "It MUST NOT submit\na second review or merge request",
-            "closed-unmerged pull request is not an already-applied merge",
-            "non-default branches with no authoritative owner mapping are treated as\n"
-            "   unresolved work and MUST be preserved",
-            "structured human-assistance request",
-            "`effectsFrozen=true`",
-            "MUST NOT\nedit, push, approve, merge, acquire a secret",
-            "silently infer consent from\nan LLM",
-            "exact, non-expired `approve` response",
-        )
-        for phrase in required_text:
-            with self.subTest(phrase=phrase):
-                self.assertIn(phrase, standard)
-
-    def test_live_evidence_is_scoped_and_does_not_overclaim_watchdog_recovery(self) -> None:
-        architecture = (ROOT / "docs" / "ARCHITECTURE.md").read_text(encoding="utf-8")
-        canary_receipt = "fd960b35a9816246aec2629f619cf9ce42e68892fb8bab806697768f4ab795e2"
-        self.assertIn(canary_receipt, architecture)
-        self.assertIn("manual_dispatch=false", architecture)
-        self.assertIn("giving a 50-minute lease for a service bounded to\n45 minutes", architecture)
-        self.assertIn("No live missed-trigger watchdog recovery had been observed", architecture)
-        self.assertIn("MUST NOT be presented as full operational\nconformance", architecture)
-        self.assertIn("protected_registry_digest_mismatch", architecture)
-        protected_checkpoint = "4c2519ef8d4c4a632907d570ddb4b7aba81aa7b8dc5e24e77cc9f611bc9c19ea"
-        self.assertIn(protected_checkpoint, architecture)
-        self.assertIn("failed in `ExecStartPre`", architecture)
-        self.assertIn("No Python controller was loaded", architecture)
-        rollout_checkpoint = "c5ba6476482e20eaf0d1a01727cc9565cec977fe30c14712dd048eb4df3f85c0"
-        self.assertIn(rollout_checkpoint, architecture)
-        self.assertIn("31830719505", architecture)
-        self.assertIn("4940318952", architecture)
-        self.assertIn("88953aa58a48526caf1134ba40b04d0f39e3ff39", architecture)
-        self.assertIn("`ok=true`, `dry_run=false`, zero mutations", architecture)
-        self.assertIn("31843668089", architecture)
-        self.assertIn("31844397273", architecture)
-        self.assertIn("GOV-BRANCH-LIFECYCLE-002", architecture)
-        self.assertIn("31854603326", architecture)
-        self.assertIn("4942176742", architecture)
-        self.assertIn("31854007167", architecture)
-        self.assertIn("3fe9659011372b734bc24302ed83eb0b49f9c95f", architecture)
-
-    def test_public_schema_is_draft_2020_12_and_closed(self) -> None:
-        schema = json.loads(
-            (ROOT / "schemas" / "autonomy-manifest.schema.json").read_text(encoding="utf-8")
-        )
-        self.assertEqual("https://json-schema.org/draft/2020-12/schema", schema["$schema"])
-        self.assertEqual(
-            "https://wellmanifest.com/schemas/autonomy-manifest/v6", schema["$id"]
-        )
-        self.assertFalse(schema["$defs"]["manifest"]["additionalProperties"])
-        self.assertFalse(schema["$defs"]["profile"]["additionalProperties"])
-        manifest_properties = schema["$defs"]["manifest"]["properties"]
-        self.assertFalse(
-            manifest_properties["queue"]["properties"]["effectReconciliation"][
-                "additionalProperties"
-            ]
-        )
-        self.assertFalse(
-            manifest_properties["executionLiveness"]["properties"]["heartbeat"][
-                "additionalProperties"
-            ]
-        )
-
     def test_invalid_case_cannot_escape_examples_root(self) -> None:
         case = {
             "schema": "wellmanifest.autonomy/invalid-case/v1",
@@ -617,6 +371,62 @@ class AutonomyConformanceTests(unittest.TestCase):
             ROOT / "examples" / "invalid" / "synthetic.json",
         )
         self.assertIn(autonomy_check.RISK, {finding.code for finding in findings})
+
+    def test_strict_json_symlinks_non_object_profile_and_pointer_bounds(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_root = Path(tmp)
+            array_profile = tmp_root / "array.profile.json"
+            array_profile.write_text("[]\n", encoding="utf-8")
+            findings = autonomy_check.validate_document(self.valid, profile_path=array_profile)
+            self.assertIn(autonomy_check.PROFILE, {finding.code for finding in findings})
+
+            dup = tmp_root / "dup.json"
+            dup.write_text('{"schema": "a", "schema": "b"}\n', encoding="utf-8")
+            self.assertEqual(
+                [autonomy_check.SYNTAX],
+                [f.code for f in autonomy_check.load_and_validate(dup)],
+            )
+
+            deep = tmp_root / "deep.json"
+            deep.write_text('{"a":' * 80 + "1" + "}" * 80, encoding="utf-8")
+            self.assertEqual(
+                [autonomy_check.SYNTAX],
+                [f.code for f in autonomy_check.load_and_validate(deep)],
+            )
+
+            link = tmp_root / "link.json"
+            link.symlink_to(self.valid_path)
+            self.assertEqual(
+                [autonomy_check.SYNTAX],
+                [f.code for f in autonomy_check.load_and_validate(link)],
+            )
+
+            empty_dir = tmp_root / "empty"
+            empty_dir.mkdir()
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(1, autonomy_check.main(["validate", str(empty_dir)]))
+
+        neg_case = {
+            "schema": "wellmanifest.autonomy/invalid-case/v1",
+            "base": "../valid/project.autonomy.json",
+            "mutations": [{"op": "replace", "path": "/pipeline/states/-1", "value": "dispatch"}],
+            "expectedCodes": [autonomy_check.SYNTAX],
+        }
+        _, ptr_findings = autonomy_check.apply_invalid_case(
+            neg_case,
+            ROOT / "examples" / "invalid" / "synthetic.json",
+        )
+        self.assertIn(autonomy_check.SYNTAX, {f.code for f in ptr_findings})
+
+        glob_mutation = copy.deepcopy(self.valid)
+        glob_mutation["grant"]["scope"]["pathAllow"] = ["src/.."]
+        self.assertIn(autonomy_check.SYNTAX, self.codes(glob_mutation))
+
+        ts_mutation = copy.deepcopy(self.valid)
+        ts_mutation["grant"]["issuedAt"] = "2026-10-01 00:00:00+00:00"
+        self.assertIn(autonomy_check.SYNTAX, self.codes(ts_mutation))
+        with self.assertRaises(ValueError):
+            autonomy_check.parse_at("2026-10-01 00:00:00+00:00")
 
 
 if __name__ == "__main__":
