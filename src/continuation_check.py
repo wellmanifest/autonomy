@@ -29,6 +29,7 @@ DECISION_ACTIONS = {
     "no_action",
 }
 MAX_CONTINUATION_FILE_BYTES = 4 * 1024 * 1024
+MAX_CONTINUATION_JSON_DEPTH = 64
 
 
 def _is_nonempty_str(value: object) -> bool:
@@ -354,9 +355,24 @@ def _load_json_file(path: Path) -> Any:
     finally:
         os.close(fd)
     text = b"".join(chunks).decode("utf-8")
-    return json.loads(
-        text, object_pairs_hook=_reject_duplicate_keys, parse_constant=_reject_nonfinite
-    )
+    try:
+        parsed = json.loads(
+            text, object_pairs_hook=_reject_duplicate_keys, parse_constant=_reject_nonfinite
+        )
+    except RecursionError as error:
+        raise ValueError("JSON nesting depth exceeded") from error
+    stack: list[tuple[Any, int]] = [(parsed, 0)]
+    while stack:
+        current, depth = stack.pop()
+        if depth > MAX_CONTINUATION_JSON_DEPTH:
+            raise ValueError("JSON nesting depth exceeded")
+        if isinstance(current, dict):
+            stack.extend(
+                (val, depth + 1) for val in current.values() if isinstance(val, (dict, list))
+            )
+        elif isinstance(current, list):
+            stack.extend((val, depth + 1) for val in current if isinstance(val, (dict, list)))
+    return parsed
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -368,7 +384,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         data = _load_json_file(args.file)
-    except (OSError, UnicodeDecodeError, ValueError):
+    except (OSError, UnicodeDecodeError, ValueError, RecursionError):
         result: dict[str, Any] = {"ok": False, "errors": ["AUTONOMY-SYNTAX-001"]}
         print(json.dumps(result, indent=2, sort_keys=True))
         return 1
