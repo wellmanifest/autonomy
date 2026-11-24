@@ -218,6 +218,32 @@ When an authorized independent validator can perform the operation within the
 active grant, the controller MUST continue through that validator path rather
 than manufacture a human-only loop.
 
+### 6.2 Human manual control and autonomy failure override
+
+Autonomy is an assistive default, never a lock against the repository owner.
+When autonomous CI, local OneDev verification, independent Validator review or
+merge, rate-limit budgets, or controller pipelines fail, stall, time out, or
+degrade (`autonomy-degraded`), the authenticated human owner retains
+unconditional authority to steer work manually and execute direct manual merges.
+
+- **Preserve human manual merges**: Controllers and agents MUST NOT
+  auto-revert, overwrite, or reject commits merged directly by an
+  authenticated human owner merely because an autonomous Validator App approval
+  receipt is absent.
+- **Distinct audit classification**: A human manual merge MUST be recorded as
+  `manual-owner-override` (distinct from `autonomous-validator-proof` and
+  operational liveness canary evidence) and SHOULD record the autonomy failure
+  condition that prompted manual intervention.
+- **Strict AI-agent boundary**: This manual override applies strictly to an
+  authenticated human owner acting directly; an implementing or interactive AI
+  agent MUST NOT self-approve, execute personal `gh pr merge`, bypass branch
+  protection, or impersonate the human owner.
+- **Continuation after manual override**: When the human owner performs a
+  manual merge and explicitly directs continuation or deployment, automation MAY
+  reconcile lifecycle state, retire verified clean owned worktrees, and proceed
+  with the owner-authorized follow-up while preserving `manual-owner-override`
+  provenance.
+
 ## 7. Resource and change budgets
 
 The manifest MUST bound files, components, public interfaces, runtime
@@ -266,7 +292,10 @@ A closed-unmerged pull request is not an already-applied merge. A stale head,
 missing trusted approval, missing merge receipt, ambiguous external effect or
 mismatched binding MUST fail closed. A late delivery, retry, watchdog recovery
 and original invocation that share one idempotency subject MUST reconcile to
-the same effect receipt instead of producing independent mutations.
+the same effect receipt instead of producing independent mutations. When
+degraded autonomy prompts a direct merge by the authenticated human owner,
+section 6.2 governs `manual-owner-override` preservation and owner-directed
+continuation.
 
 The queue MUST expose a deterministic `runnable` decision based on status,
 dependencies, scope ownership, freshness, deduplication, conflict, active

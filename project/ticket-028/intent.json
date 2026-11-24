@@ -1,0 +1,81 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-028",
+  "summary": "Add human manual control and autonomy failure override to autonomy standard",
+  "workstream": "integration",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "requested"
+  },
+  "allowedPaths": [
+    "project/ticket-028/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "examples/dsl-manifest.json",
+    "spec/**",
+    "tests/test_autonomy_profile_docs.py"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "45c3dd3e7fed1f0c4e71800bb688cc58dbea38ba",
+    "targetBranch": "main",
+    "outcome": "Document human manual steering, direct owner manual merge override on autonomy failure, preservation of human manual merges, and unchanged AI-agent restrictions in spec/AUTONOMY_STANDARD.md with synchronized manifest digest and docs conformance tests.",
+    "nonGoals": [
+      "Allowing interactive or coding AI agents to self-approve, run personal gh pr merge, or impersonate the human owner.",
+      "Modifying schemas/autonomy-manifest.schema.json or src/ modules."
+    ],
+    "complexity": "S",
+    "estimatedMinutes": 25,
+    "budgets": {
+      "maxImplementationFiles": 3,
+      "maxAffectedComponents": 1,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Add normative Section 6.2 and a Section 8 cross-reference to spec/AUTONOMY_STANDARD.md, refresh its SHA-256 digest in examples/dsl-manifest.json, and assert the published normative phrases in tests/test_autonomy_profile_docs.py.",
+      "components": [
+        {
+          "name": "autonomy-standard-manual-override",
+          "paths": [
+            "spec/AUTONOMY_STANDARD.md",
+            "examples/dsl-manifest.json",
+            "tests/test_autonomy_profile_docs.py"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [
+        "Update spec/AUTONOMY_STANDARD.md SHA-256 digest in examples/dsl-manifest.json"
+      ],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "git revert"
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-03",
+        "commands": [
+          "python3 -m unittest discover -s tests -v",
+          "python3 src/autonomy_check.py self-test",
+          "python3 -m compileall -q src tests",
+          "wellman check"
+        ],
+        "evidence": "All unit tests, self-test, compilation, and wellman checks pass."
+      }
+    ]
+  }
+}
