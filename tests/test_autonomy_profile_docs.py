@@ -235,5 +235,18 @@ class AutonomyProfileAndDocumentationTests(unittest.TestCase):
         )
 
 
+    def test_human_manual_override_on_autonomy_failure_is_published(self) -> None:
+        standard = (ROOT / "spec" / "AUTONOMY_STANDARD.md").read_text(encoding="utf-8")
+        for expected in (
+            "### 6.2 Human manual control and autonomy failure override",
+            "Autonomy is an assistive default, never a lock against the repository owner.",
+            "auto-revert, overwrite, or reject commits merged directly by an",
+            "`manual-owner-override`",
+            "AI\n  agent MUST NOT self-approve, execute personal `gh pr merge`",
+            "section 6.2 governs `manual-owner-override` preservation",
+        ):
+            self.assertIn(expected, standard)
+
+
 if __name__ == "__main__":
     unittest.main()

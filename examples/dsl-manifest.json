@@ -51,7 +51,7 @@
     {
       "path": "spec/AUTONOMY_STANDARD.md",
       "role": "documentation",
-      "digest": "sha256:1459c94fea273952e2efb9dfe9652aa71e93736ac8af43928ce6b726d9c0edd9"
+      "digest": "sha256:af322adc607fa3c7fa455e17f4c59b271b0803cd175d755eb1e21c1089db0643"
     },
     {
       "path": "profiles/subactor-semcod.profile.json",
